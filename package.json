@@ -1,0 +1,23 @@
+{
+  "name": "matters-altra",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/isomorphic-fetch": "0.0.35",
+    "@types/mongodb": "^3.5.2",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "apollo-boost": "^0.4.7",
+    "graphql": "^14.6.0",
+    "graphql-tag": "^2.10.3",
+    "isomorphic-fetch": "^2.2.1",
+    "mongodb": "^3.5.5"
+  }
+}

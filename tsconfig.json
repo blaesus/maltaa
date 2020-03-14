@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         "strict": true,
-        "outDir": "built"
+        "target": "es2018",
+        "module": "commonjs",
+        "outDir": "built",
+        "jsx": "react"
     }
 }

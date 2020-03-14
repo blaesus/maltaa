@@ -1,0 +1,16 @@
+daemon off;
+
+events {
+}
+
+http {
+    server {
+        listen 2020;
+        location / {
+            proxy_pass http://localhost:1990;
+        }
+        location /api {
+            proxy_pass http://localhost:2000;
+        }
+    }
+}

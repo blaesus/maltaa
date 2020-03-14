@@ -4,20 +4,36 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "sh dev/dev.sh"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@types/isomorphic-fetch": "0.0.35",
+    "@types/koa": "^2.11.2",
+    "@types/koa-router": "^7.4.0",
     "@types/mongodb": "^3.5.2",
-    "typescript": "^3.8.3"
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "@types/uuid": "^7.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "pm2": "^4.2.3",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
     "apollo-boost": "^0.4.7",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "isomorphic-fetch": "^2.2.1",
-    "mongodb": "^3.5.5"
+    "koa": "^2.11.0",
+    "koa-router": "^8.0.8",
+    "mongodb": "^3.5.5",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "uuid": "^7.0.2"
   }
 }

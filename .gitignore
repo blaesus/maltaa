@@ -1,3 +1,5 @@
 .idea
 built
 node_modules
+.DS_Store
+dev/db

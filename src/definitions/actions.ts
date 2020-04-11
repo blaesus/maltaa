@@ -1,5 +1,5 @@
 import { ArticleSort } from "../sorts";
-import { Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf } from "./data-types";
+import {Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf, AccountId} from "./data-types";
 import {PageName} from "../client/web/states/uiReducer";
 import {AuthToken} from "./authToken";
 
@@ -10,6 +10,8 @@ export interface BaseAction {
         acid?: string,
 
         token?: AuthToken
+
+        account?: AccountId,
     },
 }
 

@@ -10,7 +10,7 @@ import {
     UserId, Tag, TagId, ArticleId, CommentId,
     Account, SiteConfig, SpiderRecordEntity,
 } from "../definitions/data-types";
-import {AuthToken} from "../definitions/authToken";
+import {AuthToken, AuthTokenId} from "../definitions/authToken";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -144,6 +144,10 @@ const mongodb = {
         {
             await mdb.createIndex("tags", {id: 1}, {unique: true});
         }
+        {
+            await mdb.createIndex("tokens", {id: 1}, {unique: true});
+        }
+
 
     },
     article: {
@@ -547,6 +551,12 @@ const mongodb = {
                 {upsert: true},
             );
         },
+        async findById(id: AuthTokenId): Promise<AuthToken | null> {
+            return mdb && mdb.collection("tokens").findOne({
+                id
+            });
+        },
+
     },
     siteConfig: {
         async get(): Promise<SiteConfig | null> {

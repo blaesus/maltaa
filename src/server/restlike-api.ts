@@ -125,9 +125,36 @@ const AUTH_TOKEN_SECRET_KEY = "TOKEN_SECRET";
 
 async function handleAction(context: Koa.Context, next: any) {
     context.response.type = "json";
+
+    async function authenticateFromCookie(request: MaltaaAction, context: Koa.Context): Promise<MaltaaAction> {
+        const targetTokenId = context.cookies.get(AUTH_TOKEN_ID_KEY);
+        if (!targetTokenId) {
+            return request;
+        }
+        const token = await db.token.findById(targetTokenId);
+        if (!token) {
+            return request
+        }
+        const claimedSecret = context.cookies.get(AUTH_TOKEN_SECRET_KEY);
+        if (!claimedSecret) {
+            return request;
+        }
+        if (token.secret !== claimedSecret) {
+            return request;
+        }
+        return {
+            ...request,
+            meta: {
+                ...request.meta,
+                account: token.holder,
+            }
+        }
+    }
+
     try {
         const request = verifyActionForm(JSON.parse(context.request.body));
-        const response = await respond(request);
+        const authenticatedRequest = await authenticateFromCookie(request, context);
+        const response = await respond(authenticatedRequest);
         const token = response?.meta?.token;
         if (token) {
             context.cookies.set(AUTH_TOKEN_ID_KEY, token.id);

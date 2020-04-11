@@ -1,27 +1,122 @@
 import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
+
 import * as fetch from "isomorphic-fetch"
-import { dedupe, last } from "../utils";
-import { Article, Comment, Transaction, UserId, UserPublic } from "../data-types";
+import { dedupe, last, SECOND, sleep } from "../utils";
+import {Article, ArticleId, Comment, CommentId, Tag, Transaction, UserId, UserPublic} from "../data-types";
 import { v4 as uuidv4 } from "uuid";
 
-const TX_REQUEST_COUNT = 200;
-const COMMENT_REQUEST_COUNT = 200;
+// To test high edge,
+// appreciations: bafyreifckcbis24jqthtjxq7b52h7s2os5oszlkrhb4pdrzl3i53avdgma
+// comments: zdpuApwK98VnSKQS4ucPeWWzQf852wPHg7dAaNB2Bf5VCkvGd
 
-function typenameRemoveMapper<T>(obj: T): T {
-    let x: any = {
-        ...obj,
-    };
-    delete x['__typename'];
-    return x
+const EDGE_REQUEST_LIMIT = 100;
+const EDGE_REQUEST_INTERVAL = 0.5 * SECOND;
+
+const EDGE_REQUEST_LOW_LIMIT = 10;
+
+function deepClean<T extends any>(obj: T, undesirableField: string): T {
+    if (Array.isArray(obj)) {
+        return obj.map((element: any) => deepClean(element, undesirableField));
+    }
+    else if (typeof obj === "object") {
+        const result: T = {
+            ...obj
+        };
+        delete result[undesirableField];
+        for (let key in result) {
+            if (result.hasOwnProperty(key)) {
+                result[key] = deepClean(result[key], undesirableField);
+            }
+        }
+        return result;
+    }
+    else {
+        return obj;
+    }
 }
 
-const apolloClient = new ApolloClient({
+const deepCleanTypename = <T>(obj: T) => deepClean<T>(obj, "__typename");
+
+// Make a new one for each session to ensure no cache.
+const getApolloClient = () => new ApolloClient({
     uri: "https://server.matters.news/graphql",
     fetch,
 });
 
-type ArticleQueryMode = "newest" | "hottest";
+function enforceNumber(input: any, fallback = 0): number {
+    if (typeof input === "number")  {
+        return input;
+    }
+    else {
+        return fallback;
+    }
+}
+
+function enforceNumberOrNull(input: any): number | null {
+    if (typeof input === "number")  {
+        return input;
+    }
+    else {
+        return null;
+    }
+}
+
+
+
+function enforceString(input: any, fallback = ""): string {
+    if (typeof input === "string")  {
+        return input;
+    }
+    else {
+        return fallback;
+    }
+}
+
+function enforceStringOrNull(input: any): string | null {
+    if (typeof input === "string")  {
+        return input;
+    }
+    else {
+        return null;
+    }
+}
+
+async function fetchAllEdges<N>(
+    seedEdges: Edge<N>[],
+    getNewEdges: (cursor: string) => Promise<Edge<N>[]>
+): Promise<Edge<N>[]> {
+    let edges = [ ...seedEdges ];
+
+    if (edges.length === EDGE_REQUEST_LIMIT) {
+        let lastCursor = last(edges)?.cursor;
+        if (!lastCursor) {
+            return edges;
+        }
+        while (true) {
+            await sleep(EDGE_REQUEST_INTERVAL);
+            const newEdges = await getNewEdges(lastCursor);
+            if (!newEdges.length) {
+                break;
+            }
+            edges = [
+                ...edges,
+                ...newEdges,
+            ];
+            lastCursor = last(edges)?.cursor;
+            if (!lastCursor) {
+                break;
+            }
+            if (newEdges.length < EDGE_REQUEST_LIMIT) {
+                break;
+            }
+        }
+    }
+
+    return edges;
+}
+
+export type ArticleQueryMode = "newest" | "hottest";
 
 function getArticleDigestQuery(mode: "newest" | "hottest") {
     return gql`
@@ -33,7 +128,6 @@ function getArticleDigestQuery(mode: "newest" | "hottest") {
               cursor,
               node {
                 id,
-                mediaHash,
               }
             }
           }
@@ -43,20 +137,20 @@ function getArticleDigestQuery(mode: "newest" | "hottest") {
 `;
 }
 
-interface ArticleSummaryResponseInner {
-    id: string,
-    mediaHash: string,
+type Edge<N> = {
+    cursor: string,
+    node: N,
 }
 
+interface ArticleSummaryResponseInner {
+    id: string,
+}
 
 interface ArticleSummaryResponse {
     viewer: {
         recommendation: {
             [key in ArticleQueryMode]?: {
-                edges: {
-                    cursor: string,
-                    node: ArticleSummaryResponseInner
-                }[]
+                edges: Edge<ArticleSummaryResponseInner>[]
             }
         }
     }
@@ -64,15 +158,16 @@ interface ArticleSummaryResponse {
 
 export type ArticleDigest = Pick<
     Article,
-    "mediaHash"
+    "id"
 >
 
-export async function fetchArticleMHs(
+export async function fetchArticleIds(
     count: number,
     mode: ArticleQueryMode = "newest",
-    cursor?: string,
-): Promise<{mhs: string[], lastCursor: string}> {
-    const response = await apolloClient.query<ArticleSummaryResponse>({
+    cursor?: string | null,
+): Promise<{ids: ArticleId[], lastCursor: string | null}> {
+    const client = getApolloClient();
+    const response = await client.query<ArticleSummaryResponse>({
         query: getArticleDigestQuery(mode),
         variables: {
             first: count,
@@ -83,19 +178,18 @@ export async function fetchArticleMHs(
     if (!edges) {
         throw new Error("Empty response");
     }
-    const summaries: ArticleDigest[] = edges.map(edge => edge.node).map(typenameRemoveMapper);
-    const lastCursor = last(edges)?.cursor || "";
+    const summaries: ArticleDigest[] = edges.map(edge => edge.node).map(deepCleanTypename);
+    const lastCursor = last(edges)?.cursor || null;
     return {
-        mhs: summaries.map(s => s.mediaHash),
+        ids: summaries.map(s => s.id),
         lastCursor,
     };
 }
 
-const fetchOneArticleQuery = gql`
-query($mediaHash: String!) {
- article(input: {mediaHash: $mediaHash}) {
-    mediaHash
+function articleBasicGql() {
+    return `
     id
+    mediaHash
     topicScore
     slug
     createdAt
@@ -114,26 +208,23 @@ query($mediaHash: String!) {
     tags {
       id
     }
-    appreciationsReceived(input: {first: ${TX_REQUEST_COUNT}}) {
-        edges {
-            cursor,
-            node {
-                amount,
-                createdAt,
-                sender {
-                    id,
-                    displayName
-                },
-            }
-        }
-    }
-    
-    comments(input: {sort: newest, first: ${COMMENT_REQUEST_COUNT}}) {
+`
+}
+
+function commentEdgeGql(after?: string) {
+    return `
+      comments(input: {
+        sort: newest,
+        first: ${EDGE_REQUEST_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+      }) {
       totalCount,
       edges {
+        cursor, 
         node {
           id,
           createdAt,
+          state,
           content,
           author {
             id,
@@ -143,15 +234,159 @@ query($mediaHash: String!) {
           },
           replyTo {
             id,
-          }
+          },
+          upvotes,
+          downvotes,
         }
       }
+    }
+    `
+}
+
+function appreciationEdgeGql(after?: string) {
+    return `
+    appreciationsReceived(input: {
+        first: ${EDGE_REQUEST_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+    }) {
+        totalCount,
+        edges {
+            cursor,
+            node {
+                amount,
+                sender {
+                    id,
+                    displayName
+                },
+            }
+        }
+    }
+    `
+}
+
+function collectionEdgeGql(after?: string) {
+    return `
+    collection(input: {
+        first: ${EDGE_REQUEST_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+    }) {
+        totalCount,
+        edges {
+            cursor,
+            node {
+                id,
+            }
+        }
+    }
+    `
+}
+
+function relatedArticlesEdgeGql(after?: string) {
+    return `
+    relatedArticles(input: {
+        first: ${EDGE_REQUEST_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+    }) {
+        totalCount,
+        edges {
+            cursor,
+            node {
+                id,
+            }
+        }
+    }
+    `
+}
+
+function subscribersEdgeGql(after?: string) {
+    return `
+    subscribers(input: {
+        first: ${EDGE_REQUEST_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+    }) {
+        totalCount,
+        edges {
+            cursor,
+            node {
+                id,
+            }
+        }
+    }
+    `
+}
+
+function featuredCommentsEdgeGql(after?: string) {
+    return `
+    featuredComments(input: {
+        first: ${EDGE_REQUEST_LOW_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+    }) {
+        totalCount,
+        edges {
+            cursor,
+            node {
+                id,
+            }
+        }
+    }
+    `
+}
+
+function pinnedComments() {
+    return `
+    pinnedComments {
+        id,
+    }
+    `
+}
+
+
+function articleGql(options: {
+    basics?: boolean,
+    comment?: boolean,
+    collection?: boolean,
+    relatedArticles?: boolean,
+    appreciations?: boolean,
+    subscribers?: boolean,
+    featuredComments?: boolean,
+    pinnedComments?: boolean,
+
+    commentCursor?: string,
+    appreciationCursor?: string,
+    collectionCursor?: string,
+    relatedArticlesCursor?: string,
+    subscribersCursor?: string,
+    featuredCommentsCursor?: string,
+} = {
+    basics: true,
+    comment: true,
+    appreciations: true,
+    collection: true,
+    relatedArticles: true,
+    subscribers: true,
+    featuredComments: true,
+    pinnedComments: true,
+}) {
+    return gql`
+query($id: ID!) {
+ node(input: {id: $id}) {
+     id,
+    ... on Article {
+        ${options.basics ? articleBasicGql() : ""}
+        ${options.appreciations ? appreciationEdgeGql(options.appreciationCursor) : ""}
+        ${options.comment ? commentEdgeGql(options.commentCursor) : ""}
+        ${options.collection ? collectionEdgeGql(options.collectionCursor) : ""}
+        ${options.relatedArticles ? relatedArticlesEdgeGql(options.relatedArticlesCursor) : ""}
+        ${options.subscribers ? subscribersEdgeGql(options.subscribersCursor) : ""}
+        ${options.featuredComments ? featuredCommentsEdgeGql(options.featuredCommentsCursor) : ""}
+        ${options.pinnedComments ? pinnedComments() : ""}
     }
  }
 }
 `;
+}
 
-interface CommentResponseNode extends Omit<Comment, "author"| "replyTarget" | "parent" | "rootPost"> {
+interface CommentResponseNode extends Omit<Comment, "author"| "replyTarget" | "parent" | "rootPost" | "derived"> {
     author: {
         id: string
     },
@@ -161,6 +396,8 @@ interface CommentResponseNode extends Omit<Comment, "author"| "replyTarget" | "p
     replyTo: {
         id: string,
     } | null
+    upvotes: number,
+    downvotes: number,
 }
 
 interface AppreciationResponseNode extends Omit<Transaction,
@@ -172,92 +409,212 @@ interface AppreciationResponseNode extends Omit<Transaction,
     createdAt: string,
 }
 
-interface ArticleResponseNode extends Omit<Article, "author" | "comments" | "createdAt" | "tags" | "appreciations"> {
+interface ArticleResponseFullNode extends Omit<Article,
+    "author" | "comments" | "createdAt" | "tags" | "appreciations" | "upstreams" | "subscribers" | "derived"
+    | "featuredComments" | "pinnedComments"
+> {
     createdAt: string,
     author: {id: string},
     tags: {id: string}[],
     comments: {
-        edges: {
-            node: CommentResponseNode,
-        }[]
+        totalCount: number,
+        edges: Edge<CommentResponseNode>[],
     },
     appreciationsReceived: {
-        edges: {
-            node: AppreciationResponseNode,
-        }[]
+        totalCount: number,
+        edges: Edge<AppreciationResponseNode>[],
     },
+    collection: {
+        totalCount: number,
+        edges: Edge<{id: string}>[],
+    }
+    relatedArticles: {
+        totalCount: number,
+        edges: Edge<{id: string}>[],
+    }
+    subscribers: {
+        totalCount: number,
+        edges: Edge<{id: string}>[],
+    }
+    featuredComments: {
+        totalCount: number,
+        edges: Edge<{id: string}>[],
+    }
+    pinnedComments: {id: string}[]
+
 }
 
-interface ArticleResponseData {
-    article: ArticleResponseNode | null
+interface ArticleResponseFullData {
+    node: ArticleResponseFullNode | null
 }
+
+interface ArticleResponseCommentData {
+    node: Pick<ArticleResponseFullNode, "comments"> | null
+}
+
+interface ArticleResponseAppreciationData {
+    node: Pick<ArticleResponseFullNode, "appreciationsReceived"> | null
+}
+
+interface ArticleResponseSubscribersData {
+    node: Pick<ArticleResponseFullNode, "subscribers"> | null
+}
+
 
 interface ArticleFetchData {
-    article: Article,
+    entity: Article,
     comments: Comment[],
     transactions: Transaction[],
     mentionedUsers: UserId[],
 }
 
-export async function fetchArticle(mediaHash: string): Promise<ArticleFetchData | null> {
-    const response = await apolloClient.query<ArticleResponseData>({
-        query: fetchOneArticleQuery,
+export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | null> {
+    const client = getApolloClient();
+    const response = await client.query<ArticleResponseFullData>({
+        query: articleGql(),
         variables: {
-            mediaHash,
+            id,
         }
     });
-    if (!response.data.article) {
+    if (!response.data.node) {
         return null
     }
-    const { article: articleResponse } = response.data;
+    const { node: articleResponse } = response.data;
 
-    const comments: Comment[] = articleResponse.comments.edges.map(edge => ({
+    const commentEdges = await fetchAllEdges(articleResponse.comments.edges, async function(cursor) {
+        const response = await client.query<ArticleResponseCommentData>({
+            query: articleGql({
+                basics: false,
+                comment: true,
+                commentCursor: cursor,
+            }),
+            variables: {
+                id,
+            }
+        });
+        if (!response.data.node) {
+            return [];
+        }
+        else {
+            return response.data.node.comments.edges;
+        }
+    });
+
+    const comments: Comment[] = commentEdges.map(edge => ({
         ...edge.node,
         author: edge.node.author.id,
-        replyTarget: edge.node.replyTo && edge.node.replyTo.id,
-        parent: edge.node.parentComment ? edge.node.parentComment.id : "",
+        replyTarget: edge.node.replyTo ? edge.node.replyTo.id : articleResponse.id,
+        parent: edge.node.parentComment ? edge.node.parentComment.id : articleResponse.id,
         createdAt: +new Date(edge.node.createdAt),
-    })).map(typenameRemoveMapper);
+        derived: {
+            upvotes: edge.node.upvotes,
+            downvotes: edge.node.downvotes,
+        }
+    })).map(deepCleanTypename);
 
-    const transactions: Transaction[] = articleResponse.appreciationsReceived.edges.map(edge => ({
+    for (const c of comments) {
+        delete (c as any)["parentComment"];
+        delete (c as any)["replyTo"];
+        delete (c as any)["upvotes"];
+        delete (c as any)["downvotes"];
+    }
+
+    const appreciationsEdges = await fetchAllEdges(
+        articleResponse.appreciationsReceived.edges,
+        async function(cursor) {
+            const response = await client.query<ArticleResponseAppreciationData>({
+                query: articleGql({
+                    basics: false,
+                    appreciations: true,
+                    appreciationCursor: cursor,
+                }),
+                variables: {
+                    id,
+                }
+            });
+            if (!response.data.node) {
+                return [];
+            }
+            else {
+                return response.data.node.appreciationsReceived.edges;
+            }
+        }
+    );
+
+    const subscriberEdges = await fetchAllEdges(
+        articleResponse.subscribers.edges,
+        async function(cursor) {
+            const response = await client.query<ArticleResponseSubscribersData>({
+                query: articleGql({
+                    basics: false,
+                    subscribers: true,
+                    subscribersCursor: cursor,
+                }),
+                variables: {
+                    id,
+                }
+            });
+            if (!response.data.node) {
+                return [];
+            }
+            else {
+                return response.data.node.subscribers.edges;
+            }
+        }
+    );
+
+    const transactions: Transaction[] = appreciationsEdges.map(edge => ({
         ...edge.node,
         mid: uuidv4(),
         sender: edge.node.sender.id,
         createdAt: +new Date(edge.node.createdAt),
-        target: articleResponse.mediaHash,
+        target: articleResponse.id,
         recipient: articleResponse.author.id,
-    })).map(typenameRemoveMapper);
+    })).map(deepCleanTypename);
 
-    const article: Article = typenameRemoveMapper({
+    const article: Article = deepCleanTypename({
         ...articleResponse,
+        topicScore: enforceNumberOrNull(articleResponse.topicScore),
         author: articleResponse.author.id,
         tags: articleResponse.tags.map(node => node.id),
         createdAt: +new Date(articleResponse.createdAt),
-        comments: comments.map(comment => comment.id),
-        appreciations: transactions.map(tx => tx.mid),
+        upstreams: articleResponse.collection.edges.map(edge => edge.node.id),
+        subscribers: subscriberEdges.map(edge => edge.node.id),
+        pinnedComments: articleResponse.pinnedComments.map(node => node.id),
+        derived: {
+            comments: comments.length,
+            commenters: comments.map(c => c.author).filter(dedupe).length,
+            appreciations: transactions.length,
+            appreciationAmount: transactions.map(tx => tx.amount).reduce((sum, v) => sum + v, 0),
+            appreciators: transactions.map(tx => tx.sender).filter(dedupe).length,
+            featuredComments: articleResponse.featuredComments.edges.map(edge => edge.node.id),
+        }
     });
+
+    delete (article as any)["relatedArticles"];
+    delete (article as any)["featuredComments"];
+    delete (article as any)["comments"];
+    delete (article as any)["collection"];
 
     const mentionedUsers: UserId[] = [
         ...comments.map(comment => comment.author),
         ...transactions.map(tx => tx.sender),
+        ...article.subscribers,
         article.author
     ].filter(dedupe);
 
     // Inherited from response
     delete (article as any)["appreciationsReceived"];
     return {
-        article,
+        entity: article,
         comments,
         transactions,
         mentionedUsers,
     };
 }
 
-const fetchOneUserQuery = gql`
-query($id: ID!) {
-  node(input: {id: $id} ) {
-    ... on User {
-      id,
+function userBasicsGql() {
+    return `
       uuid,
       userName,
       displayName,
@@ -269,16 +626,21 @@ query($id: ID!) {
         agreeOn,
         profileCover,
       }
-      followers(input: {first: 200}) {
-        totalCount,
-        edges {
-          cursor,
-          node {
-            id
-          }
-        }   
+      status {
+        state,
+        role,
+        unreadFolloweeArticles,
+        unreadResponseInfoPopUp,
       }
-      followees(input: {first: 200}) {
+    `
+}
+
+function followeeEdgeGql(after?: string) {
+    return `
+    followees(input: {
+        first: ${EDGE_REQUEST_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+    }) {
         totalCount,
         edges {
           cursor,
@@ -287,16 +649,72 @@ query($id: ID!) {
           }
         }
       }
-      status {
-        state,
-        role,
-        unreadFolloweeArticles,
-        unreadResponseInfoPopUp,
+    `
+}
+
+function followerEdgeGql(after?: string) {
+    return `
+      followers(input: {
+          first: ${EDGE_REQUEST_LIMIT},
+          ${after ? `after: "${after}"` : ""}
+      }) {
+        totalCount,
+        edges {
+          cursor,
+          node {
+            id
+          }
+        }   
       }
+    `
+}
+
+function articlesEdgeGql(after?: string) {
+    return `
+    articles(input: {
+        first: ${EDGE_REQUEST_LIMIT},
+        ${after ? `after: "${after}"` : ""}
+    }) {
+        totalCount,
+        edges {
+          cursor,
+          node {
+            id,
+          }
+        }
+      }
+    `
+}
+
+
+function userGql(options: {
+    basics?: boolean,
+    followers?: boolean,
+    followees?: boolean,
+    articles?: boolean,
+    followerCursor?: string,
+    followeeCursor?: string,
+    articlesCursor?: string,
+} = {
+    basics: true,
+    followers: true,
+    followees: true,
+    articles: true,
+}) {
+    return gql`
+query($id: ID!) {
+  node(input: {id: $id}) {
+    ... on User {
+      id,
+      ${options.basics ? userBasicsGql() : ""}
+      ${options.followers ? followerEdgeGql(options.followerCursor) : ""}
+      ${options.followees ? followeeEdgeGql(options.followeeCursor) : ""}
+      ${options.articles ? articlesEdgeGql(options.articlesCursor) : ""}
     }
   }
 }
 `;
+}
 
 interface UserResponseNode extends Omit<UserPublic, "followees" | "info"> {
     info: {
@@ -306,28 +724,43 @@ interface UserResponseNode extends Omit<UserPublic, "followees" | "info"> {
         agreeOn: string,
         profileCover: string | null,
     }
+    articles: {
+        totalCount: number,
+        edges: Edge<{id: string}>[],
+    }
     followees: {
         totalCount: number,
-        edges: {cursor: string, node: {id: string}}[],
+        edges: Edge<{id: string}>[],
     }
     followers: {
         totalCount: number,
-        edges: {cursor: string, node: {id: string}}[],
+        edges: Edge<{id: string}>[],
     }
 }
 
-type UserResponse = {
+type UserFullResponse = {
     node: UserResponseNode,
 }
 
-interface UserFetchData {
-    user: UserPublic,
+type UserFolloweeResponse = {
+    node: Pick<UserResponseNode, "followees">,
+}
+
+type UserFollowerResponse = {
+    node: Pick<UserResponseNode, "followers">,
+}
+
+
+export interface UserFetchData {
+    entity: UserPublic,
+    mentionedArticles: ArticleId[],
     mentionedUsers: UserId[],
 }
 
 export async function fetchUser(id: string): Promise<UserFetchData | null> {
-    const response = await apolloClient.query<UserResponse>({
-        query: fetchOneUserQuery,
+    const client = getApolloClient();
+    const response = await client.query<UserFullResponse>({
+        query: userGql(),
         variables: {
             id,
         }
@@ -338,27 +771,225 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
         return null;
     }
 
-    const user: UserPublic = typenameRemoveMapper({
+    const followeeEdges = await fetchAllEdges(userResponse.followees.edges, async function(cursor) {
+        const response = await client.query<UserFolloweeResponse>({
+            query: userGql({
+                followees: true,
+                followeeCursor: cursor,
+            }),
+            variables: {
+                id,
+            }
+        });
+        if (!response.data.node) {
+            return [];
+        }
+        else {
+            return response.data.node.followees.edges;
+        }
+    });
+
+    const followees: UserId[] = followeeEdges.map(edge => edge.node.id);
+
+    const followerEdges = await fetchAllEdges(userResponse.followers.edges, async function(cursor) {
+        const response = await client.query<UserFollowerResponse>({
+            query: userGql({
+                followers: true,
+                followerCursor: cursor,
+            }),
+            variables: {
+                id,
+            }
+        });
+        if (!response.data.node) {
+            return [];
+        }
+        else {
+            return response.data.node.followers.edges;
+        }
+    });
+
+    const followers: UserId[] = followerEdges.map(edge => edge.node.id);
+
+    const user: UserPublic = deepCleanTypename({
         ...userResponse,
-        followees: userResponse.followees.edges.map(edge => edge.node.id),
+        followees,
         info: {
             createdAt: +new Date(userResponse.info.createdAt),
             userNameEditable: userResponse.info.userNameEditable,
-            description: userResponse.info.description,
+            description: enforceString(userResponse.info.description),
             agreeOn: +new Date(userResponse.info.agreeOn),
-            profileCover: userResponse.info.profileCover,
+            profileCover: enforceStringOrNull(userResponse.info.profileCover),
         }
     });
     const mentionedUsers = [
-        ...userResponse.followees.edges.map(edge => edge.node.id),
-        ...userResponse.followees.edges.map(edge => edge.node.id),
+        ...userResponse.followers.edges.map(edge => edge.node.id),
+        ...followees,
+        ...followers,
         user.id,
     ].filter(dedupe);
+    const mentionedArticles = userResponse.articles.edges.map(edge => edge.node.id);
     delete (user as any).followers;
-    delete (user as any).status.__typename;
+    delete (user as any).articles;
 
     return {
-        user,
+        entity: user,
         mentionedUsers,
+        mentionedArticles,
     };
 }
+
+const fetchOneTag = gql`
+query($id: ID!) {
+  node(input: {id:$id} ) {
+    ... on Tag {
+      id,
+      content,
+      createdAt,
+      cover,
+      description,
+    }
+  }
+}
+`;
+
+interface TagResponseNode extends Omit<Tag, "createdAt"> {
+    createdAt: string,
+}
+
+type TagResponse = {
+    node: TagResponseNode,
+}
+
+interface TagFetchData {
+    entity: Tag
+}
+
+interface GraphQLError {
+    message: string,
+    location: {
+        line: number,
+        column: number
+    },
+    path: string[],
+    extensions: {
+        code: string,
+        exception: {
+            level: string
+        }
+    }
+}
+
+interface GraphQLErrorResponse {
+    graphQLErrors: GraphQLError[]
+}
+
+export async function fetchTag(id: string): Promise<TagFetchData | null> {
+    const client = getApolloClient();
+    try {
+        const response = await client.query<TagResponse>({
+            query: fetchOneTag,
+            variables: {
+                id,
+            }
+        });
+
+        const tagResponse = response.data.node;
+        if (!tagResponse) {
+            throw new Error("Missing node in tag response");
+        }
+        const tag: Tag = deepCleanTypename({
+            ...tagResponse,
+            createdAt: +new Date(tagResponse.createdAt),
+        });
+        return {entity: tag};
+    }
+    catch (error) {
+        const typedError = error as GraphQLErrorResponse;
+        if (typedError.graphQLErrors) {
+            const firstError = typedError.graphQLErrors[0];
+            if (firstError) {
+                if (firstError.message === "target does not exist") {
+                    return null
+                }
+            }
+        }
+        throw error;
+    }
+}
+
+interface LoginResponse {
+    userLogin: {
+        token: string,
+    }
+}
+
+function userLoginMutation() {
+    return gql`
+    mutation($email: EmailAddress!, $password: String!) {
+        userLogin(input: { email: $email, password: $password }) {
+            token
+        }
+    }`;
+}
+
+
+export async function loginToMatters(credential: {
+    email: string, password: string
+}): Promise<{token: string} | null>  {
+    const client = getApolloClient();
+    const {email, password} = credential;
+    try {
+        const response = await client.mutate<LoginResponse>({
+            mutation: userLoginMutation(),
+            variables: {
+                email,
+                password,
+            }
+        });
+        if (response.data) {
+            return {
+                token: response.data.userLogin.token
+            };
+        }
+        else {
+            return null;
+        }
+    }
+    catch (error) {
+        return null
+    }
+}
+
+const myIdQuery = gql`
+query {
+  viewer {
+        id,
+  }
+}`;
+
+interface MyIdResponse {
+    viewer: {
+        id: string,
+    }
+}
+
+export async function getMyId(token: string): Promise<string | null>  {
+    try {
+        const authedClient = new ApolloClient({
+            uri: "https://server.matters.news/graphql",
+            fetch,
+            headers: {
+                'x-access-token': token,
+            }
+        });
+        const response = await authedClient.query<MyIdResponse>({
+            query: myIdQuery,
+        });
+        return response.data.viewer.id;
+    }
+    catch (error) {
+        return null
+    }
+}
+

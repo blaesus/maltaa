@@ -1,4 +1,3 @@
-console.info("****")
 module.exports = {
   apps : [
     {
@@ -9,9 +8,9 @@ module.exports = {
     },
     {
       name: 'dev-server',
-      script: 'node_modules/.bin/webpack-dev-server',
+      script: 'node_modules/.bin/webpack-dev-server --config src/client/web/webpack.config.js',
       args: "",
-      cwd: 'src/client',
+      cwd: '.',
     },
     {
       name: 'nginx',
@@ -26,20 +25,24 @@ module.exports = {
       cwd: '.',
     },
     {
-      name: 'malta-api',
-      script: 'server/malta-api.js',
+      name: 'maltaa-api',
+      script: 'server/restlike-api.js',
       cwd: 'built',
 
-      instances: 1,
       autorestart: true,
-      watch: true,
+      watch: `${__dirname}/../built/server`,
       max_memory_restart: '1G',
-      env: {
-        NODE_ENV: 'development'
-      },
-      env_production: {
-        NODE_ENV: 'production'
-      }
     },
+    {
+      name: 'spider',
+      script: 'server/spider.js',
+      cwd: 'built',
+
+      autorestart: true,
+      // watch: `${__dirname}/../built/server`,
+      watch: false,
+      max_memory_restart: '1G',
+    },
+
   ],
 };

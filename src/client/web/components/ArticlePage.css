@@ -1,0 +1,40 @@
+.ArticlePage {
+    font-family:
+            "Avenir Next", "Segoe UI", "Helvetica Neue", Arial,
+            "Hiragino Sans GB", "PingFang SC", "Heiti SC", "Microsoft YaHei UI", "Microsoft YaHei", "Source Han Sans",
+            sans-serif;
+    overflow-x: hidden;
+    margin: 0 var(--side-margin);
+}
+
+.ArticlePage .root-content h1 {
+    margin: 1rem 0;
+    font-size: 1.5rem;
+    font-weight: bolder;
+}
+
+.ArticlePage .root-content h2 {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    font-weight: bolder;
+}
+
+.ArticlePage .Internals {
+    display: block;
+    font-size: 0.8rem;
+    font-family: monospace;
+    text-align: right;
+}
+
+.ArticlePage .Internals .MattersOrigin {
+    font-size: 1rem;
+}
+
+.ArticlePage .CommentSection {
+    font-size: 0.9rem;
+}
+
+.ArticlePage .root-content {
+    margin: 1rem 0;
+}
+

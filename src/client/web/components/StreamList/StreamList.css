@@ -1,0 +1,14 @@
+.StreamList {
+    font-size: 0.9rem;
+}
+
+.StreamList .StreamLabel {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+.StreamList .StreamLabel .AnchorButton {
+    margin: 0 0.5rem;
+}
+

@@ -1,0 +1,13 @@
+.AnchorButton {
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+}
+
+@media only screen and (min-width: 769px) {
+    .AnchorButton:hover {
+        border-bottom-color: #333;
+    }
+    .AnchorButton:active {
+        border-bottom-color: black;
+    }
+}

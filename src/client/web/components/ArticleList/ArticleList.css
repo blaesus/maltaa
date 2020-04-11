@@ -1,0 +1,19 @@
+.ArticleList .More {
+    display: block;
+    background: none;
+    border: 1px solid black;
+    font-size: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    padding: 0.5rem 0;
+}
+
+@media only screen and (min-width: 769px) {
+    .ArticleList .More:hover {
+        background: #eee;
+    }
+
+    .ArticleList .More:active {
+        background: #ccc;
+    }
+}

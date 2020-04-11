@@ -1,0 +1,63 @@
+.HtmlRender {
+    text-rendering: optimizeLegibility;
+    --base-left-offset: 2em;
+}
+
+.HtmlRender em {
+    font-style: normal;
+    font-weight: bolder;
+}
+
+.HtmlRender p {
+    margin: 0.7rem 0 0.7rem;
+    font-size: 1.1rem;
+    line-height: 1.6em;
+    text-indent: var(--base-left-offset);
+    text-align: justify;
+}
+
+.HtmlRender ul, .HtmlRender ol {
+    margin-left: var(--base-left-offset);
+
+}
+
+.HtmlRender p:first-of-type {
+    margin-top: 0;
+}
+
+.HtmlRender a:link {
+    word-break: break-all;
+}
+
+.HtmlRender p > br:only-child {
+    display: none;
+}
+
+.HtmlRender figure.image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.HtmlRender img {
+    max-width: 100%;
+    max-height: 50vh;
+}
+
+.HtmlRender li {
+    line-height: 1.5;
+    margin: 0.5rem 0;
+    list-style-type: trad-chinese-informal;
+}
+
+.HtmlRender blockquote {
+    margin: 0 0 0 2.4em;
+    padding: 0.2rem 0 0.2rem 1rem;
+    border-left: 5px solid black;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.HtmlRender blockquote:last-of-type {
+    margin-bottom: 0.7rem;
+}

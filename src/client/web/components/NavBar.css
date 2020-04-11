@@ -1,0 +1,81 @@
+.NavBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: black;
+    color: white;
+    padding: 5px 10px;
+    font-size: 20px;
+    font-weight: bolder;
+    font-family: monospace;
+    height: var(--top-bar-height);
+}
+
+.NavBar .HomeButton {
+    cursor: pointer;
+    user-select: none;
+    color: white;
+}
+
+.NavBarSpacer {
+    height: var(--top-bar-height);
+}
+
+.NavBar .Breadcrumb {
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+.NavBar .Content {
+    max-width: var(--main-max-width);
+    margin: 0 auto;
+}
+
+.NavBar .RightSection {
+    float: right;
+}
+
+.NavBar .SearchInput {
+    max-width: 10rem;
+    height: calc(var(--top-bar-height) - 8px);
+}
+
+.NavBar .MenuContainer {
+    display: block;
+    position: relative;
+    float: right;
+    color: white;
+}
+
+.NavBar .MenuButton {
+    color: white;
+}
+
+.NavBar .MainMenu {
+    position: absolute;
+    width: 300px;
+    max-height: 0;
+    right: 0;
+    background: black;
+    overflow: hidden;
+}
+
+.NavBar .MainMenu.extend {
+    max-height: 300px;
+}
+
+.NavBar .MenuItem {
+    display: inline-block;
+    color: white;
+    padding: 0.5em 0.2em;
+    width: 100%;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .NavBar .Breadcrumb {
+        display: none;
+    }
+}

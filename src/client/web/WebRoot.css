@@ -1,0 +1,30 @@
+body {
+    font-size: 16px;
+    font-family: sans-serif;
+    max-width: var(--main-max-width);
+    margin: 0 auto 1rem;
+
+    overflow: scroll;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --top-bar-height: 36px;
+    --main-max-width: 1024px;
+
+    --side-margin: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+    body {
+        --side-margin: 0.5rem;
+    }
+}
+
+a {
+    color: black;
+}
+
+* {
+    box-sizing: border-box;
+}

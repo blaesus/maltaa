@@ -1,0 +1,59 @@
+.ArticleSummary {
+    display: flex;
+    position: relative;
+    cursor: pointer;
+    padding: 0.5em 0.2em;
+    align-items: baseline;
+    text-decoration: none;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+}
+
+@media only screen and (min-width: 769px) {
+    .ArticleSummary:hover {
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        background: #eee;
+    }
+    .ArticleSummary:active {
+        background: #ddd;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .ArticleSummary {
+        flex-direction: column;
+        border-bottom: 1px solid #ccc;
+    }
+    .ArticleSummary .Title {
+        margin-bottom: 0.5rem;
+    }
+}
+
+
+.ArticleSummary .Title {
+    display: inline-block;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.ArticleSummary .Title .AuthorLine {
+    font-size: 0.75em;
+}
+
+.ArticleSummary .Meta {
+    flex-shrink: 0;
+    align-self: flex-end;
+}
+
+.ArticleSummary .comments,
+.ArticleSummary .appreciations {
+    display: inline-block;
+    width: 3.5em;
+    text-align: right;
+    font-family: monospace;
+}
+
+.ArticleSummary .TimeTag {
+    margin-left: 1em;
+}

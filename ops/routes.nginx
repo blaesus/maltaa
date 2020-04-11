@@ -1,0 +1,44 @@
+server {
+    listen 80 default_server;
+    server_name www.maltaa.org maltaa.org;
+    return 301 https://maltaa.org$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.maltaa.org;
+
+    ssl_certificate /etc/letsencrypt/live/maltaa.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/maltaa.org/privkey.pem;
+
+    return 301 https://maltaa.org$request_uri;
+}
+
+server {
+    server_name maltaa.org;
+    root /var/maltaa/web;
+
+    location / {
+        expires off;
+        try_files $uri $uri/ /index.html;
+    }
+    location /api {
+        expires off;
+        proxy_pass http://localhost:2000;
+    }
+
+    location ~ \.(js|css)$ {
+        expires 90d;
+        add_header Pragma public;
+        add_header Cache-Control "public";
+    }
+
+    listen [::]:443 ssl ipv6only=on;
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/maltaa.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/maltaa.org/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+

@@ -1,0 +1,16 @@
+.DialogContainer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    bottom: 0;
+}
+
+.DialogContent {
+    max-width: 80%;
+    margin: 0 auto;
+    background: white;
+    --dialog-padding: 0.5rem;
+}

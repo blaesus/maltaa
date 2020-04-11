@@ -1,0 +1,43 @@
+.ArticlePreview {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    .ArticlePreview {
+        display: none;
+    }
+}
+
+.ArticlePreview.upwards {
+    top: 0;
+    bottom: initial;
+    right: 0;
+}
+
+.ArticlePreview.upwards .Content {
+    top: initial;
+    bottom: 0;
+    box-shadow: 0 -5px 5px rgba(0, 0, 0, 0.5);
+}
+
+.ArticlePreview .Content {
+    position: absolute;
+    background: #eee;
+    width: 500px;
+    height: 500px;
+    top: 0;
+    right: 0;
+    overflow: scroll;
+    padding: 1rem;
+    z-index: 1;
+    border: 1px solid black;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+@media only screen and (max-height: 1000px) {
+    .ArticlePreview .Content {
+        height: 300px;
+    }
+}

@@ -251,7 +251,7 @@ export function PreferencesDialog(props: {
                 }}
             />
             <CommentSection
-                label="一級評論"
+                label="二級評論"
                 sort={preferences.comments.secondLevel.sort}
                 onChooseSort={sort => {
                     dispatch({

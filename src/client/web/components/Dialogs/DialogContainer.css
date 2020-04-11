@@ -13,4 +13,6 @@
     margin: 0 auto;
     background: white;
     --dialog-padding: 0.5rem;
+    max-height: 100vh;
+    overflow: scroll;
 }

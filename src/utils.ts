@@ -1,4 +1,4 @@
-import { Article, ObjectMap, ObjectWithId, Preferences, UserPublic } from "./data-types";
+import { Article, ObjectMap, ObjectWithId, Preferences, UserPublic } from "./definitions/data-types";
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;

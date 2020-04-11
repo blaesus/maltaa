@@ -1,5 +1,5 @@
 import { ArticleSort } from "../sorts";
-import { Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf } from "../data-types";
+import { Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf } from "./data-types";
 import {PageName} from "../client/web/states/uiReducer";
 
 export interface BaseAction {

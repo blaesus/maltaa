@@ -12,7 +12,7 @@ import {
 } from "./matters-graphq-api";
 import { db } from "./db";
 import {DAY, dedupe, HOUR, MINUTE, promiseWithTimeout, range, SECOND, sleep} from "../utils";
-import { ArticleId, EntityState, SpiderRecordEntityArticle, SpiderState, TagId, UserId } from "../data-types";
+import { ArticleId, EntityState, SpiderRecordEntityArticle, SpiderState, TagId, UserId } from "../definitions/data-types";
 import {
     articleIdToSerial,
     articleSerialToId, tagIdToSerial,

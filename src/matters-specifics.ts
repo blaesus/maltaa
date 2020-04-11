@@ -1,4 +1,4 @@
-import { Article, ArticleId, CommentId, TagId, UserId, UserPublic } from "./data-types";
+import { Article, ArticleId, CommentId, TagId, UserId, UserPublic } from "./definitions/data-types";
 
 export function articleSerialToId(serial: number, btoa: (s: string) => string): ArticleId {
     return btoa(`Article:${serial}`).replace(/=/g, "");

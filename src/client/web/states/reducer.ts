@@ -4,7 +4,7 @@ import { preferencesReducer } from "./preferencesReducer";
 import { entitiesReducer, EntitiesState } from "./entitiesReducer";
 import { crossPostReducer, crossPreReducer } from "./crossReducer";
 import { getFallbackPreferences } from "../../../utils";
-import {Preferences} from "../../../data-types";
+import {Preferences} from "../../../definitions/data-types";
 
 function newEmptyObject() {
     return Object.create(null);

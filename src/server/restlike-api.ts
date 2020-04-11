@@ -5,7 +5,7 @@ import * as KoaBody from "koa-body";
 import * as URL from "url";
 import { db } from "./db";
 import { fetchArticle, fetchTag, fetchUser, getMyId, loginToMatters } from "./matters-graphq-api";
-import { Article, ArticleId, UserId, Comment, Account } from "../data-types";
+import { Article, ArticleId, UserId, Comment, Account } from "../definitions/data-types";
 import { dedupe, last } from "../utils";
 import {randomBytes} from "crypto"
 import { API_PORT } from "./server-configs";

@@ -8,7 +8,7 @@ import {
     Preferences,
     UserId,
     UserPublic
-} from "../../../../data-types";
+} from "../../../../definitions/data-types";
 import "./CommentTree.css";
 import {commentSorts} from "../../../../sorts";
 import {commentIdToSerial} from "../../../../matters-specifics";

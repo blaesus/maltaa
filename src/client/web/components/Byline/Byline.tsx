@@ -1,6 +1,6 @@
 import * as React from "react"
 import {AuthorTag} from "../AuthorTag";
-import {UserPublic} from "../../../../data-types";
+import {UserPublic} from "../../../../definitions/data-types";
 import {TimeTag} from "../TimeTag/TimeTag";
 
 import "./Byline.css";

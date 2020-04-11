@@ -9,7 +9,7 @@ import {
     UserPublic,
     UserId, Tag, TagId, ArticleId, CommentId,
     Account, SiteConfig, SpiderRecordEntity,
-} from "../data-types";
+} from "../definitions/data-types";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;

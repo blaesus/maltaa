@@ -1,4 +1,4 @@
-import { UserPublic } from "./data-types";
+import { UserPublic } from "./definitions/data-types";
 
 export interface RegisterFromMattersParams {
     mattersEmail: string,

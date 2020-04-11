@@ -1,4 +1,4 @@
-import {Article, Comment, UserPublic} from "../../data-types";
+import {Article, Comment, UserPublic} from "../../definitions/data-types";
 import {ArticleSort} from "../../sorts";
 import {RegisterFromMattersOk, RegisterFromMattersParams} from "../../api-interfaces";
 import {MaltaaAction} from "../../definitions/actions";

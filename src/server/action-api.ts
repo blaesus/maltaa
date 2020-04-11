@@ -2,7 +2,7 @@ import { BinaryLike, scrypt } from "crypto";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { Account, Article, PasswordRecord, Privileges, UserId } from "../data-types";
+import { Account, Article, PasswordRecord, Privileges, UserId } from "../definitions/data-types";
 import { db } from "./db";
 import {daysAgoInEpoch, daysToMs, dedupe, getFallbackPreferences, last} from "../utils";
 import { MaltaaAction } from "../definitions/actions";

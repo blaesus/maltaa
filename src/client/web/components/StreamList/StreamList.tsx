@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useState} from "react";
 
-import {Article, ObjectMap, UserId, UserPublic} from "../../../../data-types";
+import {Article, ObjectMap, UserId, UserPublic} from "../../../../definitions/data-types";
 import {ArticleSort, articleSorts} from "../../../../sorts";
 import {MaltaaAction} from "../../../../definitions/actions";
 import {ArticleSummary} from "../ArticleSummary";

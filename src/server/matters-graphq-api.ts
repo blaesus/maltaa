@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 
 import * as fetch from "isomorphic-fetch"
 import { dedupe, last, SECOND, sleep } from "../utils";
-import {Article, ArticleId, Comment, CommentId, Tag, Transaction, UserId, UserPublic} from "../data-types";
+import {Article, ArticleId, Comment, CommentId, Tag, Transaction, UserId, UserPublic} from "../definitions/data-types";
 import { v4 as uuidv4 } from "uuid";
 
 // To test high edge,

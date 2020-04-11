@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./PreferencesDialog.css";
-import { ObjectMap, Preferences, UserPublic } from "../../../../data-types";
+import { ObjectMap, Preferences, UserPublic } from "../../../../definitions/data-types";
 import { PodiumSortChooser, PodiumPeriodChooser } from "../PreferenceChoosers";
 import {MaltaaDispatch, OptionList} from "../../uiUtils";
 import { Chooser } from "../Chooser/Chooser";

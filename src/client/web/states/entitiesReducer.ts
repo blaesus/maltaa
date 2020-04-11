@@ -1,4 +1,4 @@
-import {AccountSelf, Article, Comment, ObjectMap, UserPublic} from "../../../data-types";
+import {AccountSelf, Article, Comment, ObjectMap, UserPublic} from "../../../definitions/data-types";
 import { MaltaaAction } from "../../../definitions/actions";
 import { mergeArray } from "../../../utils";
 

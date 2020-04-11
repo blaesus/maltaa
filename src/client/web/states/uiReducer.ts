@@ -2,7 +2,7 @@ import { MaltaaAction, ProvideEntities } from "../../../definitions/actions";
 import { THREAD_PREFIX, USER_URL_SIGIL } from "../../../settings";
 import { articleSerialToId } from "../../../matters-specifics";
 import {ArticleSort} from "../../../sorts";
-import {ArticleId, Preferences} from "../../../data-types";
+import {ArticleId, Preferences} from "../../../definitions/data-types";
 
 export interface PaginationStatus {
     nextPage: number,

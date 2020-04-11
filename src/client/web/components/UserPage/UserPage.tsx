@@ -1,5 +1,5 @@
 import * as React from "react";
-import { UserId, UserPublic } from "../../../../data-types";
+import { UserId, UserPublic } from "../../../../definitions/data-types";
 import { USER_URL_SIGIL } from "../../../../settings";
 import { readableDateTime } from "../../../../utils";
 

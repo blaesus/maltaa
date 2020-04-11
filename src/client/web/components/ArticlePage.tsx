@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useEffect} from "react";
-import { ArticleId } from "../../../data-types";
+import { ArticleId } from "../../../definitions/data-types";
 import { MaltaaAction } from "../../../definitions/actions";
 
 import {CommentTree} from "./CommentTree/CommentTree";

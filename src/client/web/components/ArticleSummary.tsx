@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Article, UserPublic } from "../../../data-types";
+import { Article, UserPublic } from "../../../definitions/data-types";
 import "./ArticleSummary.css"
 import {TimeTag} from "./TimeTag/TimeTag";
 import { AuthorTag } from "./AuthorTag";

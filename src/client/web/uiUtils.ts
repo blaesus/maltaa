@@ -1,7 +1,7 @@
 import { MouseEvent } from "react";
 import { THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
 import { articleIdToSerial } from "../../matters-specifics";
-import { ArticleId, Preferences, UserId } from "../../data-types";
+import { ArticleId, Preferences, UserId } from "../../definitions/data-types";
 import { DeepPartial } from "../../utils";
 import { MaltaaAction } from "../../definitions/actions";
 import {ClientUIState} from "./states/uiReducer";

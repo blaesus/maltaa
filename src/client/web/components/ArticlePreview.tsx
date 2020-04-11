@@ -2,7 +2,7 @@ import * as React from "react";
 import { useRef, useState } from "react";
 
 import { HtmlRender } from "./HtmlRender/HtmlRender";
-import { Article } from "../../../data-types";
+import { Article } from "../../../definitions/data-types";
 
 import "./ArticlePreview.css";
 

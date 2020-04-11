@@ -1,4 +1,4 @@
-import {ArticleSort, CommentSort} from "./sorts";
+import {ArticleSort, CommentSort} from "../sorts";
 
 export type UserId = string;
 export type CommentId = string

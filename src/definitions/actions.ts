@@ -67,6 +67,10 @@ export interface StartPreferencesDialog extends BaseAction {
     type: "StartPreferencesDialog",
 }
 
+export interface StartMeDialog extends BaseAction {
+    type: "StartMeDialog",
+}
+
 export interface SetMyPreferences extends BaseAction {
     type: "SetMyPreferences",
     preferencesPatch: Partial<Preferences>,
@@ -121,6 +125,7 @@ export type MaltaaAction =
     | StartPreferencesDialog
     | Register
     | SearchResultArticleRedirect
+    | StartMeDialog
     | GoToPage
 ;
 

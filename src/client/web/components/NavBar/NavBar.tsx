@@ -19,9 +19,11 @@ export function NavBar(props: {
     state: ClientState,
     dispatch: MaltaaDispatch,
 }) {
-    const {dispatch} = props;
+    const {dispatch, state} = props;
     const [input, setInput] = React.useState("");
     const [extendMain, setExtendMain] = React.useState(false);
+
+    const hasAccount = !!state.entities.me;
 
     const ref = React.useRef<HTMLDivElement>(null);
     React.useEffect(() => {
@@ -74,10 +76,21 @@ export function NavBar(props: {
                                     onClick={() => dispatch({type: "StartPreferencesDialog"})}
                                     title="設置"
                                 />
-                                <MenuItem
-                                    onClick={() => dispatch({type: "StartAuthenticationDialog"})}
-                                    title="註冊Malta"
-                                />
+                                {
+                                    !hasAccount &&
+                                    <MenuItem
+                                        onClick={() => dispatch({type: "StartAuthenticationDialog"})}
+                                        title="註冊Malta"
+                                    />
+                                }
+                                {
+                                    hasAccount &&
+                                    <MenuItem
+                                        onClick={() => dispatch({type: "StartMeDialog"})}
+                                        title="我的帳戶"
+                                    />
+                                }
+
                             </div>
                         </div>
                     </span>

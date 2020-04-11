@@ -55,7 +55,7 @@ export type PagesState = {
 
 export interface ClientUIState {
     pages: PagesState,
-    dialog: "auth" | "preferences" | null,
+    dialog: "auth" | "preferences" | "me" | null,
 }
 
 export function getInitialUIState(preferences?: Preferences): ClientUIState {
@@ -308,6 +308,12 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                     ...ui.pages,
                     current: action.page,
                 }
+            }
+        }
+        case "StartMeDialog": {
+            return {
+                ...ui,
+                dialog: "me",
             }
         }
 

@@ -1,11 +1,11 @@
+import * as React from "react";
 import { MaltaaDispatch } from "../../uiUtils";
 import { AuthenticateDialog } from "./AuthenticateDialog";
-import { maltaaApi } from "../../maltaaApiClient";
 import { PreferencesDialog } from "./PreferencesDialog";
-import * as React from "react";
 import { DialogContainer } from "./DialogContainer";
 import {ClientUIState} from "../../states/uiReducer";
 import {ClientState} from "../../states/reducer";
+import {MeDialog} from "./MeDialog";
 
 export function Dialogs(props: {
     dialogState: ClientUIState["dialog"],
@@ -52,6 +52,11 @@ export function Dialogs(props: {
                     dispatch={dispatch}
                 />
             }
+            {
+                dialogState === "me" &&
+                <MeDialog />
+            }
+
         </DialogContainer>
     )
 }

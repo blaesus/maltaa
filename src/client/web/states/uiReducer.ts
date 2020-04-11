@@ -3,7 +3,6 @@ import { THREAD_PREFIX, USER_URL_SIGIL } from "../../../settings";
 import { articleSerialToId } from "../../../matters-specifics";
 import {ArticleSort} from "../../../sorts";
 import {ArticleId, Preferences} from "../../../data-types";
-import {PageName} from "../../../utils";
 
 export interface PaginationStatus {
     nextPage: number,
@@ -36,11 +35,22 @@ export interface UserPageState {
     name: string | null,
 }
 
+export type PageName =
+    "podium"
+    | "explore"
+    | "article"
+    | "user"
+
+export interface ExplorePageState {
+
+}
+
 export type PagesState = {
     current: PageName,
     podium: PodiumPageState,
     article: ArticlePageState,
     user: UserPageState,
+    explore: ExplorePageState,
 }
 
 export interface ClientUIState {
@@ -63,6 +73,9 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             },
             user: {
                 name: "",
+            },
+            explore: {
+
             },
         },
         dialog: null,
@@ -275,6 +288,15 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
             }
             else {
                 return ui;
+            }
+        }
+        case "GoToPage": {
+            return {
+                ...ui,
+                pages: {
+                    ...ui.pages,
+                    current: action.page,
+                }
             }
         }
 

@@ -1,7 +1,5 @@
 import { Article, ObjectMap, ObjectWithId, Preferences, UserPublic } from "./data-types";
 
-export type PageName = "podium" | "article" | "user"
-
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
 export const HOUR = 60 * MINUTE;

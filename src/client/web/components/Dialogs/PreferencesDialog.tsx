@@ -2,7 +2,7 @@ import * as React from "react";
 import "./PreferencesDialog.css";
 import { ObjectMap, Preferences, UserPublic } from "../../../../data-types";
 import { PodiumSortChooser, PodiumPeriodChooser } from "../PreferenceChoosers";
-import { MaltaaDispatch } from "../../uiUtils";
+import {MaltaaDispatch, OptionList} from "../../uiUtils";
 import { Chooser } from "../Chooser/Chooser";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import {CommentSort} from "../../../../sorts";
@@ -19,7 +19,7 @@ const booleanOptions = [
     }
 ];
 
-const commentSortOptions: {value: CommentSort, label: string}[] = [
+const commentSortOptions: OptionList<CommentSort> = [
     {
         label: "從舊到新",
         value: "old",

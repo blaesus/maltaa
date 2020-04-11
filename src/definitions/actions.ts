@@ -1,5 +1,6 @@
 import { ArticleSort } from "../sorts";
 import { Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf } from "../data-types";
+import {PageName} from "../client/web/states/uiReducer";
 
 export interface BaseAction {
     meta?: {
@@ -97,6 +98,11 @@ export interface SearchResultArticleRedirect extends BaseAction {
     id: ArticleId,
 }
 
+export interface GoToPage extends BaseAction {
+    type: "GoToPage",
+    page: PageName,
+}
+
 export type MaltaaAction =
     ChangePathname
     | ProvideEntities
@@ -114,6 +120,7 @@ export type MaltaaAction =
     | StartPreferencesDialog
     | Register
     | SearchResultArticleRedirect
+    | GoToPage
 ;
 
 

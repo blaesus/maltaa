@@ -7,8 +7,7 @@ import { StateInspector, useReducer as useReducerInspected } from "reinspect"
 import { ArticlePage } from "./components/ArticlePage";
 import { NavBar } from "./components/NavBar";
 import { UserPage } from "./components/UserPage/UserPage";
-import { PageName } from "../../utils";
-import { loadStoredPreference, MaltaaDispatch, serializeToPathName, storePreference } from "./uiUtils";
+import {loadStoredPreference, MaltaaDispatch, OptionList, serializeToPathName, storePreference} from "./uiUtils";
 import { Podium } from "./components/Podium";
 
 import { MaltaaAction } from "../../definitions/actions";
@@ -19,6 +18,9 @@ import { USER_URL_SIGIL } from "../../settings";
 
 import "./normalize.css"
 import "./WebRoot.css"
+import {Chooser} from "./components/Chooser/Chooser";
+import {PageName} from "./states/uiReducer";
+import {ExplorePage} from "./components/ExplorePage/ExplorePage";
 
 const remoteActions: MaltaaAction["type"][] = [
     "LoadPodiumArticles",
@@ -27,6 +29,17 @@ const remoteActions: MaltaaAction["type"][] = [
     "Register",
     "Search",
 ];
+
+const pageOptions: OptionList<PageName> = [
+    {
+        value: "podium",
+        label: "廣場",
+    },
+    {
+        value: "explore",
+        label: "發現",
+    },
+]
 
 
 const DEV = location.hostname === "localhost";
@@ -149,11 +162,24 @@ function WebRoot(props: {
     return (
         <div id="REACT-ROOT">
             <NavBar dispatch={dispatch} />
+            <div>
+                <Chooser
+                    options={pageOptions}
+                    chosen={state.ui.pages.current}
+                    onChoose={page => {
+                        dispatch({
+                            type: "GoToPage",
+                            page,
+                        })
+                    }}
+                />
+            </div>
             <Podium
                 page={page.podium}
                 state={state}
                 dispatch={dispatch}
             />
+            <ExplorePage state={state} />
             <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state} />
             {
                 page.current === "user" &&

@@ -1,8 +1,9 @@
 import * as React from "react";
 import "./Chooser.css";
+import {OptionList} from "../../uiUtils";
 
 export function Chooser<Value>(props: {
-    options: {label: string, value: Value}[],
+    options: OptionList<Value>,
     chosen: Value,
     onChoose(value: Value): void
 }) {

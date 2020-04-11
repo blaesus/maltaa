@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Chooser } from "./Chooser/Chooser";
 import { ArticleSort } from "../../../sorts";
+import {OptionList} from "../uiUtils";
 
 const DECADE = 10 * 365;
 
-const sortOptions: {label: string, value: ArticleSort}[] = [
+const sortOptions: OptionList<ArticleSort> = [
     {
         value: "comments",
         label: "評論量",
@@ -19,7 +20,7 @@ const sortOptions: {label: string, value: ArticleSort}[] = [
     },
 ];
 
-const periodOptions: {label: string, value: number}[] = [
+const periodOptions: OptionList<number> = [
     {
         value: 1,
         label: "24小时",

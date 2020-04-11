@@ -2,7 +2,7 @@ import { MouseEvent } from "react";
 import { THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
 import { articleIdToSerial } from "../../matters-specifics";
 import { ArticleId, Preferences, UserId } from "../../data-types";
-import { DeepPartial, PageName } from "../../utils";
+import { DeepPartial } from "../../utils";
 import { MaltaaAction } from "../../definitions/actions";
 import {ClientUIState} from "./states/uiReducer";
 
@@ -54,3 +54,4 @@ export function getViewportWidth() {
 
 export type MaltaaDispatch = (action: MaltaaAction) => void;
 
+export type OptionList<Value = string> = {value: Value, label: string}[]

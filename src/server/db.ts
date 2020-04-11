@@ -10,6 +10,7 @@ import {
     UserId, Tag, TagId, ArticleId, CommentId,
     Account, SiteConfig, SpiderRecordEntity,
 } from "../definitions/data-types";
+import {AuthToken} from "../definitions/authToken";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -537,13 +538,14 @@ const mongodb = {
                 return false
             }
         },
-        async count(): Promise<number> {
-            if (mdb) {
-                return mdb.collection("accounts").count();
-            }
-            else {
-                return 0;
-            }
+    },
+    token: {
+        async upsert(token: AuthToken) {
+            return mdb && await mdb.collection("tokens").replaceOne(
+                {id: token.id},
+                token,
+                {upsert: true},
+            );
         },
     },
     siteConfig: {

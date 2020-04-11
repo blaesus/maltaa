@@ -1,4 +1,4 @@
-import { Article, ObjectMap, ObjectWithId, Preferences, UserPublic } from "./definitions/data-types";
+import {Account, AccountSelf, Article, ObjectMap, ObjectWithId, Preferences, UserPublic} from "./definitions/data-types";
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -151,5 +151,15 @@ export function getFallbackPreferences(): Preferences {
                 displayThreshold: 2,
             },
         },
+    }
+}
+
+export function protectAccountFromSelf(account: Account): AccountSelf {
+    return {
+        id: account.id,
+        username: account.username,
+        privileges: account.privileges,
+        mattersIds: account.mattersIds,
+        preferences: account.preferences,
     }
 }

@@ -71,22 +71,6 @@ export const maltaaApi = {
             return null;
         }
     },
-    async registerWithMatters(username: string, password: string): Promise<RegisterFromMattersOk | null> {
-        const params: RegisterFromMattersParams = {
-            mattersEmail: username,
-            mattersPassword: password,
-        };
-        const response = await fetch(`/api/account`, {
-            method: "POST",
-            body: JSON.stringify(params)
-        });
-        if (response.status >= 200 && response.status < 300) {
-            return await response.json()
-        }
-        else {
-            return null;
-        }
-    },
     async action(action: MaltaaAction): Promise<MaltaaAction> {
         const request: MaltaaAction = {
             ...action,

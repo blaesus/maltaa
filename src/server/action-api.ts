@@ -1,47 +1,15 @@
-import { BinaryLike, scrypt } from "crypto";
-
 import { v4 as uuidv4 } from "uuid";
 
-import { Account, Article, PasswordRecord, Privileges, UserId } from "../definitions/data-types";
+import { Account, Article, Privileges, UserId } from "../definitions/data-types";
 import { db } from "./db";
 import {daysAgoInEpoch, daysToMs, dedupe, getFallbackPreferences, last} from "../utils";
 import { MaltaaAction } from "../definitions/actions";
 import { ArticleSort } from "../sorts";
 import { findCommentsUnderArticle } from "./restlike-api";
 import { spiderCommander } from "./spider-commander";
-import { randomString } from "./serverUtils";
-import { SCRYPT_KEYLEN, SCRYPT_SALT_LENGTH } from "../settings";
 import * as URL from "url";
 import { isMattersArticleUrl } from "../matters-specifics";
-
-async function scryptAsync(
-    password: BinaryLike,
-    salt: BinaryLike,
-    keylen: number,
-): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-        scrypt(password, salt, keylen, (error, derivedKey) => {
-            if (error) {
-                reject(error)
-            }
-            else {
-                resolve(derivedKey)
-            }
-        })
-    })
-}
-
-async function hashPassword(password: string): Promise<PasswordRecord> {
-    const salt = randomString(SCRYPT_SALT_LENGTH);
-    const keylen = SCRYPT_KEYLEN;
-    const hash = (await scryptAsync(password, salt, keylen)).toString("hex");
-    return {
-        type: "scrypt",
-        hash,
-        salt,
-        keylen,
-    }
-}
+import {register} from "./mappers/register";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -163,35 +131,7 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
             }
         }
         case "Register": {
-            const {username, password, preferences} = request;
-            const accountPreferences = preferences || getFallbackPreferences();
-            const existing = await db.account.findByUserName(username);
-            if (existing) {
-                return {
-                    type: "GenericError",
-                    reason: "duplicated username"
-                }
-            }
-            const currentCount = await db.account.count();
-            const privileges: Privileges[] = currentCount ? ["normal"] : ["admin", "normal"];
-            const newAccount: Account = {
-                id: uuidv4(),
-                username,
-                privileges,
-                preferences: accountPreferences,
-                password: await hashPassword(password),
-                maltaaToken: [],
-                mattersIds: [],
-                mattersTokens: {},
-                publicKeys: [],
-            };
-            await db.account.upsert(newAccount);
-            return {
-                type: "ProvideEntities",
-                data: {
-
-                }
-            }
+            return register(request);
         }
         case "Search": {
             const {keyword} = request;

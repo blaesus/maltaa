@@ -90,6 +90,7 @@ export interface Register extends BaseAction {
     type: "Register",
     username: string,
     password: string,
+    externalPlatform?: "matters"
     preferences?: Preferences,
 }
 

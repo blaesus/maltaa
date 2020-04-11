@@ -980,7 +980,7 @@ export async function getMyId(token: string): Promise<string | null>  {
             uri: "https://server.matters.news/graphql",
             fetch,
             headers: {
-                'x-access-token': token,
+                "x-access-token": token,
             }
         });
         const response = await authedClient.query<MyIdResponse>({

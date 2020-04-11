@@ -25,15 +25,23 @@ export function Dialogs(props: {
             {
                 dialogState === "auth" &&
                 <AuthenticateDialog
-                    onRegisterWithMatters={async (username, password) => {
-                        const data = await maltaaApi.registerWithMatters(username, password);
+                    onRegister={((username, password) =>
+                        dispatch({
+                            type: "Register",
+                            username,
+                            password,
+                            preferences: state.preferences,
+                        }))
+                    }
+                    onRegisterWithMatters={(username, password) => {
+                        dispatch({
+                            type: "Register",
+                            username,
+                            password,
+                            preferences: state.preferences,
+                            externalPlatform: "matters",
+                        })
                     }}
-                    onRegister={((username, password) => dispatch({
-                        type: "Register",
-                        username,
-                        password,
-                        preferences: state.preferences,
-                    }))}
                 />
             }
             {

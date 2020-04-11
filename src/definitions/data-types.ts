@@ -1,4 +1,5 @@
 import {ArticleSort, CommentSort} from "../sorts";
+import {AuthToken} from "./authToken";
 
 export type UserId = string;
 export type CommentId = string
@@ -178,15 +179,6 @@ interface Room {
     adultOnly: boolean,
 }
 
-interface AnthologyItemMatters {
-    source: "matters",
-    id: ArticleId,
-    addedBy: UserId,
-    addedAt: number,
-}
-
-type AnthologyItem = AnthologyItemMatters;
-
 interface TokenRecord {
     content: string,
     expiration: number,
@@ -215,30 +207,24 @@ export interface ScryptRecord {
 
 export type PasswordRecord = ScryptRecord;
 
+export type AccountId = string;
 
 export interface Account {
-    id: string,
+    id: AccountId,
     username: string,
     privileges: Privileges[],
     preferences: Preferences,
 
     password: PasswordRecord,
-    maltaaToken: TokenRecord[],
     mattersIds: UserId[],
     mattersTokens: {[key in UserId]: TokenRecord}
     publicKeys: PublicKeyRecord[],
 }
 
-export type AccountSelf = Pick<Account, "id" | "username" | "privileges" | "mattersIds">;
+export type AccountSelf = Pick<Account,
+    "id" | "username" | "privileges" | "mattersIds" | "preferences"
+>;
 
-interface Anthology {
-    id: string,
-    mattersArticleBaseId: ArticleId,
-    owner: UserId,
-    editors: UserId[],
-    title: string,
-    articles: AnthologyItem[]
-}
 
 interface Roll {
     id: string,

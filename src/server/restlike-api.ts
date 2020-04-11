@@ -2,20 +2,13 @@ import * as Koa from "koa";
 import * as KoaRouter from "koa-router";
 import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
-import * as URL from "url";
 import { db } from "./db";
-import { fetchArticle, fetchTag, fetchUser, getMyId, loginToMatters } from "./matters-graphq-api";
+import { fetchArticle, fetchTag, fetchUser } from "./matters-graphq-api";
 import { Article, ArticleId, UserId, Comment, Account } from "../definitions/data-types";
-import { dedupe, last } from "../utils";
 import {randomBytes} from "crypto"
 import { API_PORT } from "./server-configs";
 import { MaltaaAction } from "../definitions/actions";
 import { respond } from "./action-api";
-import { spiderCommander } from "./spider-commander";
-
-function randomString(bytes: number): string  {
-    return randomBytes(bytes).toString("hex")
-}
 
 function getEntityRequestHandler<T>(
     idFieldName: string,

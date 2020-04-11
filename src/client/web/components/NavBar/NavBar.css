@@ -55,7 +55,6 @@
 
 .NavBar .MainMenu {
     position: absolute;
-    width: 300px;
     max-height: 0;
     right: 0;
     background: black;
@@ -66,11 +65,12 @@
     max-height: 300px;
 }
 
-.NavBar .MenuItem {
+.NavBar .AnchorButton {
     display: inline-block;
     color: white;
-    padding: 0.5em 0.2em;
     width: 100%;
+    margin: 0.5em;
+    white-space: nowrap;
 }
 
 

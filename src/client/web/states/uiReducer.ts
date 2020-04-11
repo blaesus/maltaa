@@ -131,6 +131,17 @@ function handleProvideEntities(
             }
             return nextUi;
         }
+        case "Register": {
+            if (ui.dialog === "auth") {
+                return {
+                    ...ui,
+                    dialog: null,
+                }
+            }
+            else {
+                return ui;
+            }
+        }
         default: {
             return ui;
         }

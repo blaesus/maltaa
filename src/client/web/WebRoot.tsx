@@ -5,7 +5,7 @@ import * as ReactDom from "react-dom";
 import { StateInspector, useReducer as useReducerInspected } from "reinspect"
 
 import { ArticlePage } from "./components/ArticlePage";
-import { NavBar } from "./components/NavBar";
+import { NavBar } from "./components/NavBar/NavBar";
 import { UserPage } from "./components/UserPage/UserPage";
 import {loadStoredPreference, MaltaaDispatch, OptionList, serializeToPathName, storePreference} from "./uiUtils";
 import { Podium } from "./components/Podium";
@@ -161,7 +161,10 @@ function WebRoot(props: {
 
     return (
         <div id="REACT-ROOT">
-            <NavBar dispatch={dispatch} />
+            <NavBar
+                state={state}
+                dispatch={dispatch}
+            />
             <div>
                 <Chooser
                     options={pageOptions}

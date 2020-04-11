@@ -1,22 +1,22 @@
 import * as React from "react";
 import "./NavBar.css";
-import { MaltaaDispatch } from "../uiUtils";
+import { MaltaaDispatch } from "../../uiUtils";
+import {ClientState} from "../../states/reducer";
+import {AnchorButton} from "../AnchorButton/AnchorButton";
 
 function MenuItem(props: {
     title: string,
     onClick(): void,
 }) {
     return (
-        <a
-            className="MenuItem"
-            onClick={props.onClick}
-        >
+        <AnchorButton onClick={props.onClick}>
             {props.title}
-        </a>
+        </AnchorButton>
     )
 }
 
 export function NavBar(props: {
+    state: ClientState,
     dispatch: MaltaaDispatch,
 }) {
     const {dispatch} = props;

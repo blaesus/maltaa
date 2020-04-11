@@ -8,9 +8,10 @@ import {
     Comment,
     UserPublic,
     UserId, Tag, TagId, ArticleId, CommentId,
-    Account, SiteConfig, SpiderRecordEntity,
+    Account, SiteConfig, SpiderRecordEntity, AccountId,
 } from "../definitions/data-types";
 import {AuthToken, AuthTokenId} from "../definitions/authToken";
+import {Assortment, AssortmentId} from "../definitions/assortment";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -147,8 +148,9 @@ const mongodb = {
         {
             await mdb.createIndex("tokens", {id: 1}, {unique: true});
         }
-
-
+        {
+            await mdb.createIndex("assortments", {id: 1}, {unique: true});
+        }
     },
     article: {
         async upsert(article: Article) {
@@ -528,6 +530,11 @@ const mongodb = {
                 username,
             });
         },
+        async findById(id: AccountId): Promise<Account | null> {
+            return mdb && mdb.collection("accounts").findOne({
+                id,
+            });
+        },
         async findByMattersId(id: UserId): Promise<Account | null> {
             return mdb && mdb.collection("accounts").findOne({
                 'matters.id': id,
@@ -556,8 +563,22 @@ const mongodb = {
                 id
             });
         },
-
     },
+    assortment: {
+        async upsert(assortment: Assortment) {
+            return mdb && await mdb.collection("assortments").replaceOne(
+                {id: assortment.id},
+                assortment,
+                {upsert: true},
+            );
+        },
+        async findById(id: AssortmentId): Promise<AuthToken | null> {
+            return mdb && mdb.collection("assortment").findOne({
+                id
+            });
+        },
+    },
+
     siteConfig: {
         async get(): Promise<SiteConfig | null> {
             return mdb && mdb.collection("siteConfig").findOne({});

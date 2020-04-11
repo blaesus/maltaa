@@ -2,6 +2,7 @@ import { ArticleSort } from "../sorts";
 import {Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf, AccountId} from "./data-types";
 import {PageName} from "../client/web/states/uiReducer";
 import {AuthToken} from "./authToken";
+import {Assortment, AssortmentId, AssortmentItem, MattersEntityType} from "./assortment";
 
 export interface BaseAction {
     meta?: {
@@ -26,6 +27,7 @@ export interface ProvideEntities extends BaseAction {
         articles?: Article[],
         users?: UserPublic[],
         comments?: Comment[],
+        assortments?: Assortment[],
         me?: AccountSelf,
     }
 }
@@ -113,6 +115,18 @@ export interface GoToPage extends BaseAction {
     page: PageName,
 }
 
+export interface GetMe extends BaseAction {
+    type: "GetMe",
+}
+
+export interface CreateAssortment extends BaseAction {
+    type: "CreateAssortment"
+    title: string,
+    upstreams: AssortmentId[],
+    limitContentType: MattersEntityType | null,
+    articles: AssortmentItem[],
+}
+
 export type MaltaaAction =
     ChangePathname
     | ProvideEntities
@@ -132,6 +146,8 @@ export type MaltaaAction =
     | SearchResultArticleRedirect
     | StartMeDialog
     | GoToPage
+    | GetMe
+    | CreateAssortment
 ;
 
 

@@ -28,6 +28,8 @@ const remoteActions: MaltaaAction["type"][] = [
     "ViewArticle",
     "Register",
     "Search",
+    "GetMe",
+    "CreateAssortment",
 ];
 
 const pageOptions: OptionList<PageName> = [
@@ -73,6 +75,13 @@ function WebRoot(props: {
             })
         }
     }, []);
+
+    useEffect(() => {
+        dispatch({
+            type: "GetMe",
+        })
+    }, []);
+
 
 
     useEffect(() => storePreference(preferences), [preferences]);
@@ -182,7 +191,7 @@ function WebRoot(props: {
                 state={state}
                 dispatch={dispatch}
             />
-            <ExplorePage state={state} />
+            <ExplorePage state={state} dispatch={dispatch} />
             <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state} />
             {
                 page.current === "user" &&

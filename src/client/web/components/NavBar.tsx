@@ -24,10 +24,9 @@ export function NavBar(props: {
     const [extendMain, setExtendMain] = React.useState(false);
 
     const ref = React.useRef<HTMLDivElement>(null);
-    type Event = any;
     React.useEffect(() => {
-        function handleClickOutside(event: Event) {
-            if (ref.current && !ref.current.contains(event.target)) {
+        function handleClickOutside(event: MouseEvent) {
+            if (ref.current && !ref.current.contains(event.target as Node)) {
                 setExtendMain(false);
             }
         }

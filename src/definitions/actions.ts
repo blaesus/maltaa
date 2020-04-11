@@ -1,12 +1,15 @@
 import { ArticleSort } from "../sorts";
 import { Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf } from "./data-types";
 import {PageName} from "../client/web/states/uiReducer";
+import {AuthToken} from "./authToken";
 
 export interface BaseAction {
     meta?: {
         request?: MaltaaAction,
         // Action client ID, for servers to deduplicate.
         acid?: string,
+
+        token?: AuthToken
     },
 }
 

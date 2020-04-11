@@ -84,6 +84,9 @@ async function registerMaltaa(request: Register): Promise<MaltaaAction> {
         type: "ProvideEntities",
         data: {
             me: protectAccountFromSelf(account),
+        },
+        meta: {
+            token,
         }
     }
 }
@@ -123,6 +126,9 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
         type: "ProvideEntities",
         data: {
             me: protectAccountFromSelf(account),
+        },
+        meta: {
+            token,
         }
     }
 }

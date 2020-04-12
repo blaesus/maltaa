@@ -12,6 +12,18 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             reason: "Not authenticated"
         }
     }
+    const existings = await db.assortment.find({
+        owner: account,
+        subpath: request.subpath,
+        contentType: request.contentType,
+    });
+    if (existings.length) {
+        return {
+            type: "GenericError",
+            reason: "Path taken",
+        }
+    }
+
     const newAssortment: Assortment = {
         id: uuidv4(),
         title: request.title,
@@ -20,7 +32,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         owner: account,
         editors: [account],
         upstreams: request.upstreams,
-        limitContentType: request.limitContentType,
+        contentType: request.contentType,
         items: [],
     }
 

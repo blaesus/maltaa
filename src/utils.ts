@@ -1,4 +1,5 @@
 import {Account, AccountSelf, Article, ObjectMap, ObjectWithId, Preferences, UserPublic} from "./definitions/data-types";
+import {MattersEntityType} from "./definitions/assortment";
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -168,3 +169,4 @@ export function protectAccountFromSelf(account: Account): AccountSelf {
 export function newEmptyObject() {
     return Object.create(null);
 }
+

@@ -1,12 +1,37 @@
 import * as React from "react";
 import {useState} from "react";
-import {MaltaaDispatch} from "../../uiUtils";
+import {MaltaaDispatch, OptionList} from "../../uiUtils";
 import {AccountSelf, UserId, UserPublic} from "../../../../definitions/data-types";
 import {ClientState} from "../../states/reducer";
+import {USER_URL_SIGIL} from "../../../../settings";
+import {Chooser} from "../Chooser/Chooser";
+import {AssortmentContentType, MattersEntityType} from "../../../../definitions/assortment";
 
-function assortmentUrl(username: string, subpath: string): string {
-    return `/${username}/${subpath}`;
+
+export const assortmentPrefix: {[key in AssortmentContentType]: string} = {
+    article: "an",
+    user: "rl",
+    mixed: "mx",
+};
+
+function assortmentUrl(username: string, type: AssortmentContentType, subpath: string): string {
+    return `/${USER_URL_SIGIL}${username}/${assortmentPrefix[type]}/${subpath}`;
 }
+
+const entityTypeOptions: OptionList<AssortmentContentType> = [
+    {
+        value: "article",
+        label: "文選"
+    },
+    {
+        value: "user",
+        label: "名冊"
+    },
+    {
+        value: "mixed",
+        label: "雜燴"
+    },
+];
 
 export function AssortmentEditor(props: {
     state: ClientState,
@@ -15,6 +40,7 @@ export function AssortmentEditor(props: {
     const {state, dispatch} = props;
     const me = state.entities.me;
     const [activeMattersId, setActiveMattersId] = useState<UserId | null>(me ? me.mattersIds[0] : null);
+    const [contentType, setContentType] = useState<AssortmentContentType>("article");
     const owner: UserPublic | null = activeMattersId ? state.entities.users[activeMattersId] : null;
     const [title, setTitle] = useState("");
     const [subpath, setSubpath] = useState("");
@@ -29,6 +55,11 @@ export function AssortmentEditor(props: {
     return (
         <div className="AssortmentEditor">
             <div>assortment editor</div>
+            <Chooser
+                options={entityTypeOptions}
+                chosen={contentType}
+                onChoose={setContentType}
+            />
             <div>
                 <input
                     value={title}
@@ -41,17 +72,17 @@ export function AssortmentEditor(props: {
                     placeholder={"路徑"}
                 />
                 <div>
-                    {assortmentUrl(owner.userName, subpath)}
+                    {assortmentUrl(owner.userName, contentType, subpath)}
                 </div>
             </div>
             <button
                 onClick={() => {
-                    props.dispatch({
+                    dispatch({
                         type: "CreateAssortment",
                         subpath,
                         title,
                         upstreams: [],
-                        limitContentType: null,
+                        contentType: contentType,
                         articles: [],
                     })
                 }}

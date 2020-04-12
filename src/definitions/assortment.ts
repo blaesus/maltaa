@@ -15,6 +15,8 @@ export type AssortmentItem = MattersEntity;
 
 export type AssortmentId = string;
 
+export type AssortmentContentType = MattersEntityType | "mixed";
+
 export interface Assortment {
     id: AssortmentId,
     title: string,
@@ -23,6 +25,6 @@ export interface Assortment {
     owner: UserId,
     editors: UserId[],
     upstreams: AssortmentId[],
-    limitContentType: MattersEntityType | null,
+    contentType: AssortmentContentType,
     items: AssortmentItem[],
 }

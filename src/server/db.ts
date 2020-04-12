@@ -11,7 +11,7 @@ import {
     Account, SiteConfig, SpiderRecordEntity, AccountId,
 } from "../definitions/data-types";
 import {AuthToken, AuthTokenId} from "../definitions/authToken";
-import {Assortment, AssortmentId} from "../definitions/assortment";
+import {Assortment, AssortmentContentType, AssortmentId} from "../definitions/assortment";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -153,6 +153,7 @@ const mongodb = {
             await mdb.createIndex("assortments", {
                 subpath: 1,
                 owner: 1,
+                contentType: 1,
             }, {unique: true});
         }
     },
@@ -577,17 +578,19 @@ const mongodb = {
             );
         },
         async findById(id: AssortmentId): Promise<Assortment | null> {
-            return mdb && mdb.collection("assortment").findOne({
+            return mdb && mdb.collection("assortments").findOne({
                 id
             });
         },
-        async findBySubpathUnderOwner(subpath: string, owner: AccountId): Promise<Assortment[]> {
+        async find(params: {subpath: string, owner: UserId, contentType: AssortmentContentType}): Promise<Assortment[]> {
             if (!mdb) {
                 return []
             }
-            return mdb.collection("assortment").find({
+            const {subpath, owner, contentType} = params;
+            return mdb.collection("assortments").find({
                 subpath,
                 owner,
+                contentType,
             }).toArray();
         },
     },

@@ -2,7 +2,7 @@ import { ArticleSort } from "../sorts";
 import {Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf, AccountId} from "./data-types";
 import {PageName} from "../client/web/states/uiReducer";
 import {AuthToken} from "./authToken";
-import {Assortment, AssortmentId, AssortmentItem, MattersEntityType} from "./assortment";
+import {Assortment, AssortmentId, AssortmentItem, AssortmentContentType, MattersEntityType} from "./assortment";
 
 export interface BaseAction {
     meta?: {
@@ -128,7 +128,7 @@ export interface CreateAssortment extends BaseAction {
     title: string,
     subpath: string,
     upstreams: AssortmentId[],
-    limitContentType: MattersEntityType | null,
+    contentType: AssortmentContentType,
     articles: AssortmentItem[],
 }
 

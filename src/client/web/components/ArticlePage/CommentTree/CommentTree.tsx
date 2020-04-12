@@ -8,15 +8,15 @@ import {
     Preferences,
     UserId,
     UserPublic
-} from "../../../../definitions/data-types";
+} from "../../../../../definitions/data-types";
 import "./CommentTree.css";
-import {commentSorts} from "../../../../sorts";
-import {commentIdToSerial} from "../../../../matters-specifics";
-import {Byline} from "../Byline/Byline";
-import {HtmlRender} from "../HtmlRender/HtmlRender";
+import {commentSorts} from "../../../../../sorts";
+import {commentIdToSerial} from "../../../../../matters-specifics";
+import {Byline} from "../../Byline/Byline";
+import {HtmlRender} from "../../HtmlRender/HtmlRender";
 import { heuristicallyShouldIndent } from "./shouldIndent";
-import { AnchorButton } from "../AnchorButton/AnchorButton";
-import {INFINITY_JSON} from "../../../../utils";
+import { AnchorButton } from "../../AnchorButton/AnchorButton";
+import {INFINITY_JSON} from "../../../../../utils";
 
 type DisplayMode = "peek" | "extend-all" | "fold";
 

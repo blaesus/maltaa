@@ -1,5 +1,6 @@
 import {Account, AccountSelf, Article, ObjectMap, ObjectWithId, Preferences, UserPublic} from "./definitions/data-types";
-import {MattersEntityType} from "./definitions/assortment";
+import {Assortment, AssortmentContentType, MattersEntityType} from "./definitions/assortment";
+import {USER_URL_SIGIL} from "./settings";
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -170,3 +171,29 @@ export function newEmptyObject() {
     return Object.create(null);
 }
 
+export const assortmentPrefix: {[key in AssortmentContentType]: string} = {
+    article: "an",
+    user: "rl",
+    mixed: "mx",
+};
+
+function reverseMap<K extends string, V extends string>(data: {[key in K]: V}):  {[key in V]: K} {
+    const result: any = {};
+    for (const entry of Object.entries(data)) {
+        const [key, value] = entry;
+        result[value as any] = key;
+    }
+    return result;
+}
+
+export const assortmentTypes = reverseMap(assortmentPrefix);
+
+export function assortmentUrl(username: string, type: AssortmentContentType, subpath: string): string {
+    return `/${USER_URL_SIGIL}${username}/${assortmentPrefix[type]}/${subpath}`;
+}
+
+export const assortmentNames: {[key in AssortmentContentType]: string} = {
+    article: "文選",
+    user: "名冊",
+    mixed: "什錦",
+}

@@ -1,22 +1,11 @@
 import * as React from "react";
 import {useState} from "react";
 import {MaltaaDispatch, OptionList} from "../../uiUtils";
-import {AccountSelf, UserId, UserPublic} from "../../../../definitions/data-types";
+import {UserId, UserPublic} from "../../../../definitions/data-types";
 import {ClientState} from "../../states/reducer";
-import {USER_URL_SIGIL} from "../../../../settings";
 import {Chooser} from "../Chooser/Chooser";
-import {Assortment, AssortmentContentType, MattersEntityType} from "../../../../definitions/assortment";
-
-
-export const assortmentPrefix: {[key in AssortmentContentType]: string} = {
-    article: "an",
-    user: "rl",
-    mixed: "mx",
-};
-
-function assortmentUrl(username: string, type: AssortmentContentType, subpath: string): string {
-    return `/${USER_URL_SIGIL}${username}/${assortmentPrefix[type]}/${subpath}`;
-}
+import {AssortmentContentType} from "../../../../definitions/assortment";
+import {assortmentUrl} from "../../../../utils";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {
@@ -54,27 +43,11 @@ export function AssortmentEditor(props: {
     }
     return (
         <div className="AssortmentEditor">
-            <div>assortment editor</div>
             <Chooser
                 options={entityTypeOptions}
                 chosen={contentType}
                 onChoose={setContentType}
             />
-            <div>
-                {
-                    Object.values(state.entities.assortments)
-                        .map(assortment => {
-                            const owner = state.entities.users[assortment.owner];
-                            return (
-                                <div key={assortment.id}>
-                                    {assortment.id}
-                                    {assortmentUrl(owner.userName, assortment.contentType, assortment.subpath)}
-
-                                </div>
-                            )
-                        })
-                }
-            </div>
             <div>
                 <div>
                     {assortmentUrl(owner.userName, contentType, "")}

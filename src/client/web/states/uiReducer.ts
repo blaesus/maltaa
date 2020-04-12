@@ -3,6 +3,8 @@ import { THREAD_PREFIX, USER_URL_SIGIL } from "../../../settings";
 import { articleSerialToId } from "../../../matters-specifics";
 import {ArticleSort} from "../../../sorts";
 import {ArticleId, Preferences} from "../../../definitions/data-types";
+import {assortmentPrefix, assortmentTypes} from "../../../utils";
+import {AssortmentContentType} from "../../../definitions/assortment";
 
 export interface PaginationStatus {
     nextPage: number,
@@ -40,8 +42,13 @@ export type PageName =
     | "explore"
     | "article"
     | "user"
+    | "assortment"
 
 export interface ExplorePageState {
+
+}
+
+export interface AssortmentPageState {
 
 }
 
@@ -51,6 +58,7 @@ export type PagesState = {
     article: ArticlePageState,
     user: UserPageState,
     explore: ExplorePageState,
+    assortment: AssortmentPageState,
 }
 
 export interface ClientUIState {
@@ -77,26 +85,48 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             explore: {
 
             },
+            assortment: {
+
+            },
         },
         dialog: null,
     };
 }
 
 interface PathState {
-    username?: string
-    articleId?: string
+    username?: string,
+    articleId?: string,
+    assortment?: {
+        type: AssortmentContentType,
+        subpath: string,
+    },
 }
 
 function parsePathName(pathName: string): PathState {
-    const queryString = pathName.slice(1);
-    if (queryString.startsWith(USER_URL_SIGIL)) {
-        const username = queryString.replace(USER_URL_SIGIL, "");
-        return {
-            username,
+    const segments = pathName.split("/");
+    const firstSegment = segments[1];
+    if (firstSegment.startsWith(USER_URL_SIGIL)) {
+        const username = firstSegment.replace(USER_URL_SIGIL, "");
+        const secondSegment = segments[2];
+        if (secondSegment) {
+            const contentType = assortmentTypes[secondSegment];
+            if (contentType) {
+                const thirdSegment = segments[3];
+                if (thirdSegment) {
+                    return {
+                        username,
+                        assortment: {
+                            type: contentType,
+                            subpath: thirdSegment,
+                        }
+                    }
+                }
+            }
         }
+        return {username};
     }
-    else if (queryString.startsWith(THREAD_PREFIX)) {
-        const targetArticleSerial = Number(queryString.replace(THREAD_PREFIX, "")) || 0;
+    else if (firstSegment.startsWith(THREAD_PREFIX)) {
+        const targetArticleSerial = Number(firstSegment.replace(THREAD_PREFIX, "")) || 0;
         const id = articleSerialToId(targetArticleSerial, btoa);
         return {
             articleId: id,
@@ -164,6 +194,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
         }
         case "ChangePathname": {
             const pathState = parsePathName(action.pathname);
+            console.info(pathState);
             if (pathState.articleId) {
                 return {
                     ...ui,

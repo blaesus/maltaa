@@ -116,28 +116,30 @@ export function ArticlePage(props: {
                     ))
                 }
                 {
-                    myAssortments.map(item => (
-                        <div key={item.assortment.id}>
-                            <AnchorButton onClick={() => {
-                                dispatch({
-                                    type: "UpdateAssortment",
-                                    operation: "AddItem",
-                                    target: item.assortment.id,
-                                    item: {
-                                        source: "matters",
-                                        entityType: "article",
-                                        id: article.id,
-                                        note: "",
-                                    },
-                                    meta: {
-                                        asUser: item.myEditors[0],
-                                    }
-                                });
-                            }}>
-                                加入{item.assortment.title}
-                            </AnchorButton>
-                        </div>
-                    ))
+                    myAssortments.map(item => {
+                        return (
+                            <div key={item.assortment.id}>
+                                <AnchorButton onClick={() => {
+                                    dispatch({
+                                        type: "UpdateAssortment",
+                                        operation: "AddItem",
+                                        target: item.assortment.id,
+                                        item: {
+                                            source: "matters",
+                                            entityType: "article",
+                                            id: article.id,
+                                            note: "",
+                                        },
+                                        meta: {
+                                            asUser: item.myEditors[0],
+                                        }
+                                    });
+                                }}>
+                                    加入{item.assortment.title}
+                                </AnchorButton>
+                            </div>
+                        )
+                    })
                 }
 
             </div>

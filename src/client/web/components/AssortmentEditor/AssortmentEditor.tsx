@@ -39,12 +39,20 @@ export function AssortmentEditor(props: {
     if (!owner) {
         return (
             <div className="AssortmentEditor">
-                缺少用戶數據
+                缺少用戶數據 {activeMattersId}
             </div>
         )
     }
     return (
         <div className="AssortmentEditor">
+            {
+                me &&
+                <Chooser
+                    options={me.mattersIds.map(id => ({value: id, label: id}))}
+                    chosen={activeMattersId}
+                    onChoose={setActiveMattersId}
+                />
+            }
             <Chooser
                 options={entityTypeOptions}
                 chosen={contentType}

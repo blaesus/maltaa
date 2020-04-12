@@ -157,9 +157,10 @@ const mongodb = {
             }, {unique: true});
             await mdb.createIndex("assortments", {
                 editors: 1,
+            });
+            await mdb.createIndex("assortments", {
                 "items.id": 1,
             });
-
         }
     },
     article: {

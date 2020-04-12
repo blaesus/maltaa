@@ -38,7 +38,16 @@ export function MeDialog(props: {
                 </AnchorButton>
                 {
                     connecting &&
-                    <AuthForm />
+                    <AuthForm
+                        onRegisterWithMatters={(username, password) => {
+                            dispatch({
+                                type: "Register",
+                                username,
+                                password,
+                                externalPlatform: "matters",
+                            })
+                        }}
+                    />
                 }
             </div>
             <div>

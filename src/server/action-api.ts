@@ -13,6 +13,7 @@ import {register} from "./mappers/register";
 import {createAssortment} from "./mappers/createAssortment";
 import {signout} from "./mappers/signout";
 import { viewArticle } from "./mappers/viewArticle";
+import { updateAssortment } from "./mappers/updateAssortment";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -135,6 +136,9 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
         }
         case "CreateAssortment": {
             return createAssortment(request);
+        }
+        case "UpdateAssortment": {
+            return updateAssortment(request);
         }
         case "Signout": {
             return signout(request);

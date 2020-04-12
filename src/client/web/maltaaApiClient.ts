@@ -75,6 +75,7 @@ export const maltaaApi = {
         const request: MaltaaAction = {
             ...action,
             meta: {
+                ...action.meta,
                 acid: Math.random().toString(36).slice(2),
             }
         };

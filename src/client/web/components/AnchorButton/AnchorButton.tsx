@@ -2,9 +2,9 @@ import * as React from "react";
 import "./AnchorButton.css";
 
 export function AnchorButton(props: {
-    children: React.ReactNode,
+    children?: React.ReactNode,
     className?: string,
-    onClick(): void
+    onClick?(): void
 }) {
     return (
         <a

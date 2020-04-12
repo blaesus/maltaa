@@ -31,6 +31,7 @@ const remoteActions: MaltaaAction["type"][] = [
     "Search",
     "GetMyData",
     "CreateAssortment",
+    "UpdateAssortment",
 ];
 
 const pageOptions: OptionList<PageName> = [

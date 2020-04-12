@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useEffect} from "react";
-import { ArticleId } from "../../../definitions/data-types";
+import { ArticleId, UserId } from "../../../definitions/data-types";
 import { MaltaaAction } from "../../../definitions/actions";
 
 import {CommentTree} from "./CommentTree/CommentTree";
@@ -13,6 +13,8 @@ import { ArticleSort, articleSorts } from "../../../sorts";
 import "./ArticlePage.css"
 import {ClientState} from "../states/reducer";
 import {StreamList} from "./StreamList/StreamList";
+import { AnchorButton } from "./AnchorButton/AnchorButton";
+import { Assortment, AssortmentId, MattersEntityType } from "../../../definitions/assortment";
 
 export function ArticlePage(props: {
     articleId: ArticleId | null,
@@ -51,6 +53,16 @@ export function ArticlePage(props: {
     const author = users[article.author];
     const upstreams = article.upstreams.map(id => articles[id]).filter(Boolean);
     const downstreams = Object.values(articles).filter(a => a.upstreams.includes(article.id));
+    const includedAssortments =
+        Object.values(state.entities.assortments)
+              .filter(a => a.items.some(item => item.id === article.id));
+    const myAssortments: {assortment: Assortment, myEditors: string[]}[] =
+        Object.values(state.entities.assortments)
+            .filter(a => state.entities.me?.mattersIds?.some(id => a.editors.includes(id)))
+            .map(a => ({
+                assortment: a,
+                myEditors: state.entities.me?.mattersIds.filter(id => a.editors.includes(id)) || [],
+            }))
     return (
         <article className="ArticlePage">
             <section className="root-content">
@@ -87,6 +99,42 @@ export function ArticlePage(props: {
                 hoverPreview={hoverPreview}
                 dispatch={dispatch}
             />
+
+            <div>
+                {includedAssortments.length}個集合收錄本文
+                {
+                    includedAssortments.map(a => (
+                        <div key={a.id}>
+                            {a.title}
+                        </div>
+                    ))
+                }
+                {
+                    myAssortments.map(item => (
+                        <div key={item.assortment.id}>
+                            <AnchorButton onClick={() => {
+                                dispatch({
+                                    type: "UpdateAssortment",
+                                    operation: "AddItem",
+                                    target: item.assortment.id,
+                                    item: {
+                                        source: "matters",
+                                        entityType: "article",
+                                        id: article.id,
+                                        note: "",
+                                    },
+                                    meta: {
+                                        asUser: item.myEditors[0],
+                                    }
+                                });
+                            }}>
+                                加入{item.assortment.title}
+                            </AnchorButton>
+                        </div>
+                    ))
+                }
+
+            </div>
 
             <footer className="Internals">
                 {

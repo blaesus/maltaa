@@ -68,10 +68,12 @@ export function AssortmentEditor(props: {
                         type: "CreateAssortment",
                         subpath,
                         title,
-                        owner: owner.id,
                         upstreams: [],
                         contentType: contentType,
-                        articles: [],
+                        items: [],
+                        meta: {
+                            asUser: owner.id,
+                        }
                     })
                 }}
             >

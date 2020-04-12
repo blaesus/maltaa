@@ -4,16 +4,18 @@ import {PageName} from "../client/web/states/uiReducer";
 import {AuthToken} from "./authToken";
 import {Assortment, AssortmentId, AssortmentItem, AssortmentContentType, MattersEntityType} from "./assortment";
 
-export interface BaseAction {
-    meta?: {
-        request?: MaltaaAction,
-        // Action client ID, for servers to deduplicate.
-        acid?: string,
+export interface BaseMeta {
+    request?: MaltaaAction,
+    // Action client ID, for servers to deduplicate.
+    acid?: string,
 
-        token?: AuthToken | null
+    token?: AuthToken | null
 
-        account?: AccountId,
-    },
+    account?: AccountId,
+}
+
+export interface BaseAction<ExtraMeta = {}> {
+    meta?: BaseMeta & ExtraMeta,
 }
 
 export interface ChangePathname extends BaseAction {
@@ -123,15 +125,28 @@ export interface GetMyData extends BaseAction {
     type: "GetMyData",
 }
 
-export interface CreateAssortment extends BaseAction {
+export interface CreateAssortment extends BaseAction<{asUser?: UserId}> {
     type: "CreateAssortment"
     title: string,
     subpath: string,
-    owner: UserId,
     upstreams: AssortmentId[],
     contentType: AssortmentContentType,
-    articles: AssortmentItem[],
+    items: AssortmentItem[],
 }
+
+export interface UpdateAssortmentAddItem extends BaseAction<{asUser?: UserId}> {
+    type: "UpdateAssortment",
+    operation: "AddItem",
+    target: AssortmentId,
+    item: {
+        source: "matters",
+        entityType: MattersEntityType,
+        id: ArticleId | UserId,
+        note: string,
+    }
+}
+
+export type UpdateAssortment = UpdateAssortmentAddItem;
 
 export interface Signout extends BaseAction {
     type: "Signout",
@@ -160,6 +175,7 @@ export type MaltaaAction =
     | CreateAssortment
     | Signout
     | GenericOk
+    | UpdateAssortment
 ;
 
 

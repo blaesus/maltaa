@@ -19,14 +19,21 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             reason: "Don't know you"
         }
     }
-    if (!account.mattersIds.includes(request.owner)) {
+    const owner = request.meta?.asUser;
+    if (!owner) {
+        return {
+            type: "GenericError",
+            reason: "No user claimed"
+        }
+    }
+    if (!account.mattersIds.includes(owner)) {
         return {
             type: "GenericError",
             reason: "Doesn't control owner user"
         }
     }
     const existings = await db.assortment.findByIdentifier({
-        owner: request.owner,
+        owner,
         subpath: request.subpath,
         contentType: request.contentType,
     });
@@ -42,8 +49,8 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         title: request.title,
         subpath: request.subpath,
         mattersArticleBaseId: null,
-        owner: request.owner,
-        editors: [request.owner],
+        owner,
+        editors: [owner],
         upstreams: request.upstreams,
         contentType: request.contentType,
         items: [],

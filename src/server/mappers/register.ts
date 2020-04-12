@@ -120,20 +120,40 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
         }
     }
     !!spiderCommander.addUser(myMattersId);
-    const username = uuidv4();
-    const password = request.password;
-    const preferences = request.preferences;
-    const {account, token} = await makeAccount({username, password, preferences});
-    account.mattersIds.push(myMattersId);
-    await db.account.upsert(account);
-    await db.token.upsert(token);
-    return {
-        type: "ProvideEntities",
-        data: {
-            me: protectAccountFromSelf(account),
-        },
-        meta: {
-            token,
+    const existingAccount = request?.meta?.account;
+    if (existingAccount) {
+        const account = await db.account.findById(existingAccount);
+        if (!account) {
+            return {
+                type: "GenericError",
+                reason: "Don't know you"
+            }
+        }
+        account.mattersIds.push(myMattersId);
+        await db.account.upsert(account);
+        return {
+            type: "ProvideEntities",
+            data: {
+                me: protectAccountFromSelf(account),
+            },
+        }
+    }
+    else {
+        const username = uuidv4();
+        const password = request.password;
+        const preferences = request.preferences;
+        const {account, token} = await makeAccount({username, password, preferences});
+        account.mattersIds.push(myMattersId);
+        await db.account.upsert(account);
+        await db.token.upsert(token);
+        return {
+            type: "ProvideEntities",
+            data: {
+                me: protectAccountFromSelf(account),
+            },
+            meta: {
+                token,
+            }
         }
     }
 }

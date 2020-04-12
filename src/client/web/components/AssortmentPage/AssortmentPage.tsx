@@ -41,6 +41,7 @@ export function AssortmentPage(props: {
                                 const user = state.entities.users[article.author];
                                 return (
                                     <ArticleSummary
+                                        key={item.id}
                                         article={article}
                                         author={user}
                                         hoverPreview={true}

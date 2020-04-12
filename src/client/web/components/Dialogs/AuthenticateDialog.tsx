@@ -1,67 +1,18 @@
 import * as React from "react";
 import "./AuthenticateDialog.css";
 import { Chooser } from "../Chooser/Chooser";
+import { AuthForm } from "./AuthForm";
 
 export function AuthenticateDialog(props: {
     onRegister(username: string, password: string): void
     onRegisterWithMatters(username: string, password: string): void,
 }) {
-    const [username, setUsername] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [platform, setPlatform] = React.useState("maltaa");
     return (
-        <form className="AuthenticateDialog">
-            <h1>
-                注册
-            </h1>
-            <input
-                value={username}
-                type="email"
-                onChange={event => setUsername(event.target.value)}
-                required={true}
+        <div className="AuthenticateDialog">
+            <AuthForm
+                onRegister={props.onRegister}
+                onRegisterWithMatters={props.onRegisterWithMatters}
             />
-            <input
-                value={password}
-                type="password"
-                onChange={event => setPassword(event.target.value)}
-                required={true}
-            />
-            <button
-                onClick={event => {
-                    event.preventDefault();
-                    switch (platform) {
-                        case "matters": {
-                            props.onRegisterWithMatters(username, password);
-                            break;
-                        }
-                        case "maltaa": {
-                            props.onRegister(username, password);
-                            break;
-                        }
-                    }
-                }}
-            >
-                连接
-            </button>
-            {
-                platform === "matters" &&
-                <div>Maltaa不会记录你的Matters账户名与密码</div>
-            }
-            <div>
-                <a
-                    onClick={() => setPlatform(platform =>  {
-                        if (platform === "maltaa") {
-                            return "matters"
-                        }
-                        else {
-                            return "maltaa"
-                        }
-                    })}
-                >
-                    {platform === "maltaa" && "连接已有Matters账户"}
-                    {platform === "matters" && "单独注册Maltaa账户"}
-                </a>
-            </div>
-        </form>
+        </div>
     )
 }

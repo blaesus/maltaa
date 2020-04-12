@@ -38,20 +38,30 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             reason: "Can't find it"
         }
     }
-    const newItem: MattersEntity = {
-        source: "matters",
-        entityType: request.item.entityType,
-        id: request.item.id,
-        note: request.operation,
-        addedBy: user,
-        addedAt: Date.now(),
-    }
-    target.items.push(newItem);
-    await db.assortment.upsert(target);
-    return {
-        type: "ProvideEntities",
-        data: {
-            assortments: [target],
+    switch (request.operation) {
+        case "AddItem": {
+            if (target.items.some(item => item.id === request.item.id)) {
+                return {
+                    type: "GenericError",
+                    reason: "Cannot add duplicated item"
+                }
+            }
+            const newItem: MattersEntity = {
+                source: "matters",
+                entityType: request.item.entityType,
+                id: request.item.id,
+                note: request.operation,
+                addedBy: user,
+                addedAt: Date.now(),
+            }
+            target.items.push(newItem);
+            await db.assortment.upsert(target);
+            return {
+                type: "ProvideEntities",
+                data: {
+                    assortments: [target],
+                }
+            }
         }
     }
 }

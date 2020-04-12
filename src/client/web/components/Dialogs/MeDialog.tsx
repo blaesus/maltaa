@@ -2,6 +2,9 @@ import * as React from "react";
 import {AccountSelf, ObjectMap, UserPublic} from "../../../../definitions/data-types";
 import {AnchorButton} from "../AnchorButton/AnchorButton";
 import {MaltaaDispatch} from "../../uiUtils";
+import { useState } from "react";
+import { AuthenticateDialog } from "./AuthenticateDialog";
+import { AuthForm } from "./AuthForm";
 
 export function MeDialog(props: {
     me: AccountSelf | null,
@@ -9,6 +12,7 @@ export function MeDialog(props: {
     dispatch: MaltaaDispatch,
 }) {
     const {me, users, dispatch} = props;
+    const [connecting, setConnecting] = useState(false);
     if (!me) {
         return (
             <div className="MeDialog">
@@ -26,6 +30,15 @@ export function MeDialog(props: {
                             {id}
                         </div>
                     ))
+                }
+                <AnchorButton
+                    onClick={() => setConnecting(true)}
+                >
+                    新連接賬戶
+                </AnchorButton>
+                {
+                    connecting &&
+                    <AuthForm />
                 }
             </div>
             <div>

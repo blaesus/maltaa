@@ -582,7 +582,7 @@ const mongodb = {
                 id
             });
         },
-        async find(params: {subpath: string, owner: UserId, contentType: AssortmentContentType}): Promise<Assortment[]> {
+        async findByPath(params: {subpath: string, owner: UserId, contentType: AssortmentContentType}): Promise<Assortment[]> {
             if (!mdb) {
                 return []
             }
@@ -591,6 +591,14 @@ const mongodb = {
                 subpath,
                 owner,
                 contentType,
+            }).toArray();
+        },
+        async findByOwners(owners: UserId[]): Promise<Assortment[]> {
+            if (!mdb) {
+                return []
+            }
+            return mdb.collection("assortments").find({
+                owner: {$in: owners},
             }).toArray();
         },
     },

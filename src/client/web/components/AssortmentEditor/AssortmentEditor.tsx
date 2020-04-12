@@ -5,7 +5,7 @@ import {AccountSelf, UserId, UserPublic} from "../../../../definitions/data-type
 import {ClientState} from "../../states/reducer";
 import {USER_URL_SIGIL} from "../../../../settings";
 import {Chooser} from "../Chooser/Chooser";
-import {AssortmentContentType, MattersEntityType} from "../../../../definitions/assortment";
+import {Assortment, AssortmentContentType, MattersEntityType} from "../../../../definitions/assortment";
 
 
 export const assortmentPrefix: {[key in AssortmentContentType]: string} = {
@@ -61,19 +61,34 @@ export function AssortmentEditor(props: {
                 onChoose={setContentType}
             />
             <div>
+                {
+                    Object.values(state.entities.assortments)
+                        .map(assortment => {
+                            const owner = state.entities.users[assortment.owner];
+                            return (
+                                <div key={assortment.id}>
+                                    {assortment.id}
+                                    {assortmentUrl(owner.userName, assortment.contentType, assortment.subpath)}
+
+                                </div>
+                            )
+                        })
+                }
+            </div>
+            <div>
+                <div>
+                    {assortmentUrl(owner.userName, contentType, "")}
+                    <input
+                        value={subpath}
+                        onChange={event => setSubpath(event.target.value)}
+                        placeholder={"路徑"}
+                    />
+                </div>
                 <input
                     value={title}
                     onChange={event => setTitle(event.target.value)}
                     placeholder={"標題"}
                 />
-                <input
-                    value={subpath}
-                    onChange={event => setSubpath(event.target.value)}
-                    placeholder={"路徑"}
-                />
-                <div>
-                    {assortmentUrl(owner.userName, contentType, subpath)}
-                </div>
             </div>
             <button
                 onClick={() => {
@@ -81,6 +96,7 @@ export function AssortmentEditor(props: {
                         type: "CreateAssortment",
                         subpath,
                         title,
+                        owner: owner.id,
                         upstreams: [],
                         contentType: contentType,
                         articles: [],

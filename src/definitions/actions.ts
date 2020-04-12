@@ -127,6 +127,7 @@ export interface CreateAssortment extends BaseAction {
     type: "CreateAssortment"
     title: string,
     subpath: string,
+    owner: UserId,
     upstreams: AssortmentId[],
     contentType: AssortmentContentType,
     articles: AssortmentItem[],

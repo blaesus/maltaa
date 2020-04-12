@@ -5,15 +5,28 @@ import { CreateAssortment, MaltaaAction } from "../../definitions/actions";
 import { Assortment } from "../../definitions/assortment";
 
 export async function createAssortment(request: CreateAssortment): Promise<MaltaaAction> {
-    const account = request?.meta?.account;
-    if (!account) {
+    const accountId = request?.meta?.account;
+    if (!accountId) {
         return {
             type: "GenericError",
             reason: "Not authenticated"
         }
     }
-    const existings = await db.assortment.find({
-        owner: account,
+    const account = await db.account.findById(accountId);
+    if (!account) {
+        return {
+            type: "GenericError",
+            reason: "Don't know you"
+        }
+    }
+    if (!account.mattersIds.includes(request.owner)) {
+        return {
+            type: "GenericError",
+            reason: "Doesn't control owner user"
+        }
+    }
+    const existings = await db.assortment.findByPath({
+        owner: request.owner,
         subpath: request.subpath,
         contentType: request.contentType,
     });
@@ -29,8 +42,8 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         title: request.title,
         subpath: request.subpath,
         mattersArticleBaseId: null,
-        owner: account,
-        editors: [account],
+        owner: request.owner,
+        editors: [request.owner],
         upstreams: request.upstreams,
         contentType: request.contentType,
         items: [],

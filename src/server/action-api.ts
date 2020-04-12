@@ -151,11 +151,13 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
                 }
             }
             const myUsers = await db.user.findByIds(me.mattersIds);
+            const myAssortments = await db.assortment.findByOwners(me.mattersIds);
             return {
                 type: "ProvideEntities",
                 data: {
                     me,
                     users: myUsers,
+                    assortments: myAssortments,
                 }
             }
         }

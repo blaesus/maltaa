@@ -6,7 +6,7 @@ import "./ArticleSummary.css"
 import { Article, UserPublic } from "../../../../definitions/data-types";
 
 import { TimeTag } from "../TimeTag/TimeTag";
-import { AuthorTag } from "../AuthorTag";
+import { AuthorTag } from "../AuthorTag/AuthorTag";
 import { ArticlePreview } from "./ArticlePreview/ArticlePreview";
 
 import { articleUrl, getAnchorClickHandler } from "../../uiUtils";

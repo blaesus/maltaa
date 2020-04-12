@@ -8,7 +8,7 @@ import { ArticlePage } from "./components/ArticlePage/ArticlePage";
 import { NavBar } from "./components/NavBar/NavBar";
 import { UserPage } from "./components/UserPage/UserPage";
 import {loadStoredPreference, MaltaaDispatch, OptionList, serializeToPathName, storePreference} from "./uiUtils";
-import { Podium } from "./components/Podium";
+import { Podium } from "./components/Podium/Podium";
 
 import { MaltaaAction } from "../../definitions/actions";
 import { ClientState, getInitialClientState, reducer } from "./states/reducer";

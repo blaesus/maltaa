@@ -1,5 +1,5 @@
 import * as React from "react"
-import {AuthorTag} from "../AuthorTag";
+import {AuthorTag} from "../AuthorTag/AuthorTag";
 import {UserPublic} from "../../../../definitions/data-types";
 import {TimeTag} from "../TimeTag/TimeTag";
 

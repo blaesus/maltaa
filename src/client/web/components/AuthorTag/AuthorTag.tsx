@@ -1,8 +1,8 @@
 import * as React from "react";
-import { UserId, UserPublic } from "../../../definitions/data-types";
 import "./AuthorTag.css"
-import { USER_URL_SIGIL } from "../../../settings";
-import { getAnchorClickHandler } from "../uiUtils";
+import { UserPublic } from "../../../../definitions/data-types";
+import { USER_URL_SIGIL } from "../../../../settings";
+import { getAnchorClickHandler } from "../../uiUtils";
 
 export function AuthorTag(props: {
     author?: UserPublic | null,
@@ -18,8 +18,7 @@ export function AuthorTag(props: {
         return (
             <span className="AuthorTag" onClick={getAnchorClickHandler(props.onClick)}>{content}</span>
         )
-    }
-    else {
+    } else {
         return (
             <a
                 className="AuthorTag"

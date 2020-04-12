@@ -16,12 +16,15 @@ export function AssortmentEditor(props: {
     const me = state.entities.me;
     const [activeMattersId, setActiveMattersId] = useState<UserId | null>(me ? me.mattersIds[0] : null);
     const owner: UserPublic | null = activeMattersId ? state.entities.users[activeMattersId] : null;
-    console.info(activeMattersId, owner);
     const [title, setTitle] = useState("");
     const [subpath, setSubpath] = useState("");
 
     if (!owner) {
-        return null;
+        return (
+            <div className="AssortmentEditor">
+                缺少用戶數據
+            </div>
+        )
     }
     return (
         <div className="AssortmentEditor">

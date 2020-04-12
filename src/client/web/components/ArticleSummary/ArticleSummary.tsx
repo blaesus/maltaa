@@ -7,7 +7,7 @@ import { Article, UserPublic } from "../../../../definitions/data-types";
 
 import { TimeTag } from "../TimeTag/TimeTag";
 import { AuthorTag } from "../AuthorTag";
-import { ArticlePreview } from "../ArticlePreview";
+import { ArticlePreview } from "./ArticlePreview/ArticlePreview";
 
 import { articleUrl, getAnchorClickHandler } from "../../uiUtils";
 

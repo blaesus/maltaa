@@ -1,10 +1,13 @@
 import * as React from "react";
-import {useState} from "react";
-import {assortmentUrl, MaltaaDispatch, OptionList} from "../../uiUtils";
-import {UserId, UserPublic} from "../../../../definitions/data-types";
-import {ClientState} from "../../states/reducer";
-import {Chooser} from "../Chooser/Chooser";
-import {AssortmentContentType} from "../../../../definitions/assortment";
+import { useState } from "react";
+
+import { UserId, UserPublic } from "../../../../definitions/data-types";
+import { ClientState } from "../../states/reducer";
+import { AssortmentContentType } from "../../../../definitions/assortment";
+
+import { Chooser } from "../Chooser/Chooser";
+
+import { assortmentUrl, MaltaaDispatch, OptionList } from "../../uiUtils";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {

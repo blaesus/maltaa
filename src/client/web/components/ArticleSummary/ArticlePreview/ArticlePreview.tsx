@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useRef, useState } from "react";
 
-import { HtmlRender } from "../../HtmlRender/HtmlRender";
+import "./ArticlePreview.css";
+
 import { Article } from "../../../../../definitions/data-types";
 
-import "./ArticlePreview.css";
+import { HtmlRender } from "../../HtmlRender/HtmlRender";
 
 export function ArticlePreview(props: {
     article: Article,
@@ -24,7 +25,7 @@ export function ArticlePreview(props: {
     return (
         <div className={`ArticlePreview ${upwards ? "upwards" : ""}`}>
             <div className="Content" ref={self}>
-                <HtmlRender html={props.article.content} hideInserts={true} />
+                <HtmlRender html={props.article.content} hideInserts={true}/>
             </div>
         </div>
     )

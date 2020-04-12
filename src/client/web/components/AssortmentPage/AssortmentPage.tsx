@@ -47,6 +47,13 @@ export function AssortmentPage(props: {
                                     />
                                 )
                             }
+                            default: {
+                                return (
+                                    <div key={item.id}>
+                                        未實現：{item.id}
+                                    </div>
+                                );
+                            }
                         }
                     })
                 }

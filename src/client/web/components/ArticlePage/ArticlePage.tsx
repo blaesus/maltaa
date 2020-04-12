@@ -17,6 +17,7 @@ import { StreamList } from "./StreamList/StreamList";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 import { mattersArticleUrl } from "../../../../matters-specifics";
+import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 
 
 export function ArticlePage(props: {
@@ -106,10 +107,12 @@ export function ArticlePage(props: {
             <div>
                 {includedAssortments.length}個集合收錄本文
                 {
-                    includedAssortments.map(a => (
-                        <div key={a.id}>
-                            {a.title}
-                        </div>
+                    includedAssortments.map(assortment => (
+                        <AssortmentSummary
+                            key={assortment.id}
+                            assortment={assortment}
+                            users={state.entities.users}
+                        />
                     ))
                 }
                 {

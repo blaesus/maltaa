@@ -1,7 +1,8 @@
 import * as React from "react";
-import { MaltaaDispatch } from "../../uiUtils";
+import { articleUrl, MaltaaDispatch } from "../../uiUtils";
 import { ClientState } from "../../states/reducer";
 import { assortmentNames } from "../../../../utils";
+import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 
 export function AssortmentPage(props: {
     state: ClientState,
@@ -31,13 +32,22 @@ export function AssortmentPage(props: {
             <div>
                 {
                     assortment.items.map(item => {
-                        return (
-                            <div
-                                key={item.id}
-                            >
-                                {item.id}
-                            </div>
-                        )
+                        switch (item.entityType) {
+                            case "article": {
+                                const article = state.entities.articles[item.id];
+                                if (!article) {
+                                    return `Missing article data ${item}`
+                                }
+                                const user = state.entities.users[article.author];
+                                return (
+                                    <ArticleSummary
+                                        article={article}
+                                        author={user}
+                                        hoverPreview={true}
+                                    />
+                                )
+                            }
+                        }
                     })
                 }
             </div>

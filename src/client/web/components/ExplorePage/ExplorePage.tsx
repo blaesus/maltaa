@@ -5,6 +5,7 @@ import { assortmentUrl, MaltaaDispatch } from "../../uiUtils";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { AssortmentEditor } from "../AssortmentEditor/AssortmentEditor";
 import {assortmentNames} from "../../../../utils";
+import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 export function ExplorePage(props: {
     state: ClientState,
     dispatch: MaltaaDispatch
@@ -25,21 +26,13 @@ export function ExplorePage(props: {
             <div>
                 {
                     Object.values(state.entities.assortments)
-                        .map(assortment => {
-                            const owner = state.entities.users[assortment.owner];
-                            const url = assortmentUrl({
-                                ownerUsername: owner.userName,
-                                contentType: assortment.contentType,
-                                subpath: assortment.subpath,
-                            });
-                            return (
-                                <div key={assortment.id}>
-                                    {assortmentNames[assortment.contentType]}
-                                    {assortment.title}
-                                    <a href={url}>{url}</a>
-                                </div>
-                            )
-                        })
+                        .map(assortment =>
+                            <AssortmentSummary
+                                key={assortment.id}
+                                assortment={assortment}
+                                users={state.entities.users}
+                            />
+                        )
                 }
             </div>
 

@@ -155,6 +155,11 @@ const mongodb = {
                 owner: 1,
                 contentType: 1,
             }, {unique: true});
+            await mdb.createIndex("assortments", {
+                editors: 1,
+                "items.id": 1,
+            });
+
         }
     },
     article: {
@@ -601,6 +606,17 @@ const mongodb = {
                 owner: {$in: owners},
             }).toArray();
         },
+        async findByItemIds(ids: string[]): Promise<Assortment[]> {
+            if (mdb) {
+                return mdb.collection("assortments").find({
+                    "items.id": {$in: ids},
+                }).toArray();
+            }
+            else {
+                return [];
+            }
+        },
+
     },
 
     siteConfig: {

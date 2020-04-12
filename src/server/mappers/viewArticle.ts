@@ -21,12 +21,14 @@ export async function viewArticle(request: ViewArticle): Promise<MaltaaAction> {
             ...articles.map(article => article.author),
         ].filter(dedupe);
         const users = await db.user.findByIds(relatedUsers);
+        const assortments = await db.assortment.findByItemIds(articles.map(a => a.id));
         return {
             type: "ProvideEntities",
             data: {
                 articles,
                 comments,
                 users,
+                assortments,
             },
         }
     }

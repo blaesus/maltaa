@@ -13,7 +13,7 @@ import { CommentTree } from "./CommentTree/CommentTree";
 import { Byline } from "../Byline/Byline";
 import { HtmlRender } from "../HtmlRender/HtmlRender";
 import { Divider } from "./Divider/Divider";
-import { StreamList } from "../StreamList/StreamList";
+import { StreamList } from "./StreamList/StreamList";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 import { mattersArticleUrl } from "../../../../matters-specifics";

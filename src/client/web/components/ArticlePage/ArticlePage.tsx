@@ -116,7 +116,7 @@ export function ArticlePage(props: {
                     ))
                 }
                 {
-                    myAssortments.map(item => {
+                    myAssortments.filter(a => includedAssortments.every(X => X.id !== a.assortment.id)).map(item => {
                         return (
                             <div key={item.assortment.id}>
                                 <AnchorButton onClick={() => {

@@ -1,27 +1,28 @@
 import * as React from "react";
-import { useEffect, useCallback, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import * as ReactDom from "react-dom";
 
 import { StateInspector, useReducer as useReducerInspected } from "reinspect"
 
+import "./normalize.css"
+import "./WebRoot.css"
+
+import { PageName } from "./states/uiReducer";
+import { MaltaaAction } from "../../definitions/actions";
+import { ClientState, getInitialClientState, reducer } from "./states/reducer";
+
 import { ArticlePage } from "./components/ArticlePage/ArticlePage";
 import { NavBar } from "./components/NavBar/NavBar";
 import { UserPage } from "./components/UserPage/UserPage";
-import {loadStoredPreference, MaltaaDispatch, OptionList, serializeToPathName, storePreference} from "./uiUtils";
 import { Podium } from "./components/Podium/Podium";
-
-import { MaltaaAction } from "../../definitions/actions";
-import { ClientState, getInitialClientState, reducer } from "./states/reducer";
-import {maltaaApi} from "./maltaaApiClient";
 import { Dialogs } from "./components/Dialogs/Dialogs";
-import { USER_URL_SIGIL } from "../../settings";
-
-import "./normalize.css"
-import "./WebRoot.css"
-import {Chooser} from "./components/Chooser/Chooser";
-import {PageName} from "./states/uiReducer";
-import {ExplorePage} from "./components/ExplorePage/ExplorePage";
+import { Chooser } from "./components/Chooser/Chooser";
+import { ExplorePage } from "./components/ExplorePage/ExplorePage";
 import { AssortmentPage } from "./components/AssortmentPage/AssortmentPage";
+
+import { maltaaApi } from "./maltaaApiClient";
+import { USER_URL_SIGIL } from "../../settings";
+import { loadStoredPreference, MaltaaDispatch, OptionList, serializeToPathName, storePreference } from "./uiUtils";
 
 const remoteActions: MaltaaAction["type"][] = [
     "LoadPodiumArticles",
@@ -51,7 +52,7 @@ const DEV = location.hostname === "localhost";
 function WebRoot(props: {
     initialState: ClientState,
 }) {
-    const { initialState } = props;
+    const {initialState} = props;
     let [state, localDispatch] = useReducer(reducer, initialState);
     if (DEV) {
         [state, localDispatch] = useReducerInspected(reducer, undefined, () => initialState, "ROOT");
@@ -62,7 +63,7 @@ function WebRoot(props: {
         localDispatch(action);
         if (remoteActions.includes(action.type)) {
             maltaaApi.action(action)
-                     .then(answer => localDispatch(answer));
+                .then(answer => localDispatch(answer));
         }
     }
 
@@ -159,8 +160,7 @@ function WebRoot(props: {
         const existing = document.getElementById(id);
         if (existing) {
             existing.innerHTML = preferences.styles.customCSS;
-        }
-        else {
+        } else {
             const styleDom = document.createElement("style");
             styleDom.id = id;
             styleDom.innerHTML = preferences.styles.customCSS;
@@ -191,9 +191,9 @@ function WebRoot(props: {
                 state={state}
                 dispatch={dispatch}
             />
-            <ExplorePage state={state} dispatch={dispatch} />
-            <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state} />
-            <AssortmentPage state={state} dispatch={dispatch} />
+            <ExplorePage state={state} dispatch={dispatch}/>
+            <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state}/>
+            <AssortmentPage state={state} dispatch={dispatch}/>
             {
                 page.current === "user" &&
                 <UserPage
@@ -201,15 +201,17 @@ function WebRoot(props: {
                     screenedUsers={preferences.data.screenedUsers}
                     onToggleScreen={userId => {
                         const currentlyScreened = state.preferences.data.screenedUsers.includes(userId);
-                        dispatch({type: "SetMyPreferences", preferencesPatch: {
-                            data: {
-                                ...preferences.data,
-                                screenedUsers:
-                                    currentlyScreened
-                                        ? state.preferences.data.screenedUsers.filter(u => u !== userId)
-                                        : [...state.preferences.data.screenedUsers, userId]
+                        dispatch({
+                            type: "SetMyPreferences", preferencesPatch: {
+                                data: {
+                                    ...preferences.data,
+                                    screenedUsers:
+                                        currentlyScreened
+                                            ? state.preferences.data.screenedUsers.filter(u => u !== userId)
+                                            : [...state.preferences.data.screenedUsers, userId]
+                                }
                             }
-                        }})
+                        })
                     }}
                 />
             }
@@ -226,10 +228,10 @@ const INITIAL_CLIENT_STATE = getInitialClientState(loadStoredPreference());
 
 const InspectedRoot = () => (
     <StateInspector initialState={{ROOT: INITIAL_CLIENT_STATE}}>
-        <WebRoot initialState={INITIAL_CLIENT_STATE} />
+        <WebRoot initialState={INITIAL_CLIENT_STATE}/>
     </StateInspector>
 );
 
-const RootElement = DEV ? <InspectedRoot /> : <WebRoot initialState={INITIAL_CLIENT_STATE} />
+const RootElement = DEV ? <InspectedRoot/> : <WebRoot initialState={INITIAL_CLIENT_STATE}/>
 
 ReactDom.render(RootElement, document.getElementById("REACT-ROOT"));

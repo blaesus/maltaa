@@ -4,7 +4,7 @@ import * as ReactDom from "react-dom";
 
 import { StateInspector, useReducer as useReducerInspected } from "reinspect"
 
-import { ArticlePage } from "./components/ArticlePage";
+import { ArticlePage } from "./components/ArticlePage/ArticlePage";
 import { NavBar } from "./components/NavBar/NavBar";
 import { UserPage } from "./components/UserPage/UserPage";
 import {loadStoredPreference, MaltaaDispatch, OptionList, serializeToPathName, storePreference} from "./uiUtils";

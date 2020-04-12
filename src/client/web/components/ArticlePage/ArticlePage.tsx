@@ -1,20 +1,23 @@
 import * as React from "react";
-import {useEffect} from "react";
-import { ArticleId, UserId } from "../../../definitions/data-types";
-import { MaltaaAction } from "../../../definitions/actions";
-
-import {CommentTree} from "./CommentTree/CommentTree";
-import {Byline} from "./Byline/Byline";
-import {HtmlRender} from "./HtmlRender/HtmlRender";
-import { Divider } from "./Divider/Divider";
-import { mattersArticleUrl } from "../../../matters-specifics";
-import { ArticleSort, articleSorts } from "../../../sorts";
+import { useEffect } from "react";
 
 import "./ArticlePage.css"
-import {ClientState} from "../states/reducer";
-import {StreamList} from "./StreamList/StreamList";
-import { AnchorButton } from "./AnchorButton/AnchorButton";
-import { Assortment, AssortmentId, MattersEntityType } from "../../../definitions/assortment";
+
+import { ArticleId } from "../../../../definitions/data-types";
+import { MaltaaAction } from "../../../../definitions/actions";
+import { ArticleSort } from "../../../../sorts";
+import { Assortment } from "../../../../definitions/assortment";
+import { ClientState } from "../../states/reducer";
+
+import { CommentTree } from "../CommentTree/CommentTree";
+import { Byline } from "../Byline/Byline";
+import { HtmlRender } from "../HtmlRender/HtmlRender";
+import { Divider } from "../Divider/Divider";
+import { StreamList } from "../StreamList/StreamList";
+import { AnchorButton } from "../AnchorButton/AnchorButton";
+
+import { mattersArticleUrl } from "../../../../matters-specifics";
+
 
 export function ArticlePage(props: {
     articleId: ArticleId | null,
@@ -55,8 +58,8 @@ export function ArticlePage(props: {
     const downstreams = Object.values(articles).filter(a => a.upstreams.includes(article.id));
     const includedAssortments =
         Object.values(state.entities.assortments)
-              .filter(a => a.items.some(item => item.id === article.id));
-    const myAssortments: {assortment: Assortment, myEditors: string[]}[] =
+            .filter(a => a.items.some(item => item.id === article.id));
+    const myAssortments: { assortment: Assortment, myEditors: string[] }[] =
         Object.values(state.entities.assortments)
             .filter(a => state.entities.me?.mattersIds?.some(id => a.editors.includes(id)))
             .map(a => ({
@@ -67,7 +70,7 @@ export function ArticlePage(props: {
         <article className="ArticlePage">
             <section className="root-content">
                 <h1>{article.title}</h1>
-                <HtmlRender html={article.content} />
+                <HtmlRender html={article.content}/>
                 <Byline
                     author={author}
                     publishTime={article.createdAt}
@@ -75,7 +78,7 @@ export function ArticlePage(props: {
                 />
             </section>
 
-            <Divider text="-30-" />
+            <Divider text="-30-"/>
 
             <StreamList
                 label="引用文章"
@@ -156,7 +159,7 @@ export function ArticlePage(props: {
                 }
             </footer>
 
-            <Divider height={10} />
+            <Divider height={10}/>
 
             <h3>
                 {

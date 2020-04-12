@@ -1,11 +1,10 @@
 import * as React from "react";
 import {useState} from "react";
-import {MaltaaDispatch, OptionList} from "../../uiUtils";
+import {assortmentUrl, MaltaaDispatch, OptionList} from "../../uiUtils";
 import {UserId, UserPublic} from "../../../../definitions/data-types";
 import {ClientState} from "../../states/reducer";
 import {Chooser} from "../Chooser/Chooser";
 import {AssortmentContentType} from "../../../../definitions/assortment";
-import {assortmentUrl} from "../../../../utils";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {
@@ -50,7 +49,7 @@ export function AssortmentEditor(props: {
             />
             <div>
                 <div>
-                    {assortmentUrl(owner.userName, contentType, "")}
+                    {assortmentUrl({ownerUsername: owner.userName, contentType, subpath: ""})}
                     <input
                         value={subpath}
                         onChange={event => setSubpath(event.target.value)}

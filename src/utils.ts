@@ -1,6 +1,7 @@
 import {Account, AccountSelf, Article, ObjectMap, ObjectWithId, Preferences, UserPublic} from "./definitions/data-types";
-import {Assortment, AssortmentContentType, MattersEntityType} from "./definitions/assortment";
-import {USER_URL_SIGIL} from "./settings";
+import {Assortment, AssortmentContentType, AssortmentIdentifier, MattersEntityType} from "./definitions/assortment";
+import {THREAD_PREFIX, USER_URL_SIGIL} from "./settings";
+import {articleSerialToId} from "./matters-specifics";
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -188,12 +189,9 @@ function reverseMap<K extends string, V extends string>(data: {[key in K]: V}): 
 
 export const assortmentTypes = reverseMap(assortmentPrefix);
 
-export function assortmentUrl(username: string, type: AssortmentContentType, subpath: string): string {
-    return `/${USER_URL_SIGIL}${username}/${assortmentPrefix[type]}/${subpath}`;
-}
-
 export const assortmentNames: {[key in AssortmentContentType]: string} = {
     article: "文選",
     user: "名冊",
     mixed: "什錦",
 }
+

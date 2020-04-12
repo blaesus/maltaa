@@ -3,7 +3,7 @@ import { Article, UserPublic } from "../../../definitions/data-types";
 import "./ArticleSummary.css"
 import {TimeTag} from "./TimeTag/TimeTag";
 import { AuthorTag } from "./AuthorTag";
-import { getAnchorClickHandler, serializeToPathName } from "../uiUtils";
+import {articleUrl, getAnchorClickHandler, serializeToPathName} from "../uiUtils";
 import { ArticlePreview } from "./ArticlePreview";
 import { useCallback, useState } from "react";
 
@@ -15,14 +15,7 @@ export function ArticleSummary(props: {
 }) {
     const [extend, setExtend] = useState(false);
     const {article, author, hoverPreview} = props;
-    const url = serializeToPathName({
-        pages: {
-            current: "article",
-            article: {
-                id: article.id
-            }
-        }}
-    );
+    const url = articleUrl(article.id);
     const onMouseEnter = useCallback(() => setExtend(true), []);
     const onMouseLeave = useCallback(() => setExtend(false), []);
     return (

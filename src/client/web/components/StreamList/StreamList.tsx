@@ -1,12 +1,13 @@
 import * as React from "react";
-import {useState} from "react";
+import { useState } from "react";
 
-import {Article, ObjectMap, UserId, UserPublic} from "../../../../definitions/data-types";
-import {ArticleSort, articleSorts} from "../../../../sorts";
-import {MaltaaAction} from "../../../../definitions/actions";
-import {ArticleSummary} from "../ArticleSummary";
 import "./StreamList.css";
-import {AnchorButton} from "../AnchorButton/AnchorButton";
+
+import { Article, ObjectMap, UserId, UserPublic } from "../../../../definitions/data-types";
+import { ArticleSort, articleSorts } from "../../../../sorts";
+import { MaltaaAction } from "../../../../definitions/actions";
+import { ArticleSummary } from "../ArticleSummary";
+import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 export function StreamList(props: {
     label: string,
@@ -40,7 +41,7 @@ export function StreamList(props: {
                     <AnchorButton
                         onClick={() => setFold(fold => !fold)}
                     >
-                        { fold ? `展開` : `摺疊` }
+                        {fold ? `展開` : `摺疊`}
                     </AnchorButton>
                 }
             </h6>

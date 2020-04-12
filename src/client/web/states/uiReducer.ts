@@ -1,10 +1,7 @@
 import { MaltaaAction, ProvideEntities } from "../../../definitions/actions";
-import { THREAD_PREFIX, USER_URL_SIGIL } from "../../../settings";
-import { articleSerialToId } from "../../../matters-specifics";
-import {ArticleSort} from "../../../sorts";
-import {ArticleId, Preferences} from "../../../definitions/data-types";
-import {assortmentPrefix, assortmentTypes} from "../../../utils";
-import {AssortmentContentType} from "../../../definitions/assortment";
+import { ArticleSort } from "../../../sorts";
+import { ArticleId, Preferences } from "../../../definitions/data-types";
+import { AssortmentUIIdentifier, parsePathName } from "../uiUtils";
 
 export interface PaginationStatus {
     nextPage: number,
@@ -49,7 +46,7 @@ export interface ExplorePageState {
 }
 
 export interface AssortmentPageState {
-
+    identifier: AssortmentUIIdentifier | null,
 }
 
 export type PagesState = {
@@ -82,58 +79,15 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             user: {
                 name: "",
             },
-            explore: {
-
-            },
+            explore: {},
             assortment: {
-
+                identifier: null,
             },
         },
         dialog: null,
     };
 }
 
-interface PathState {
-    username?: string,
-    articleId?: string,
-    assortment?: {
-        type: AssortmentContentType,
-        subpath: string,
-    },
-}
-
-function parsePathName(pathName: string): PathState {
-    const segments = pathName.split("/");
-    const firstSegment = segments[1];
-    if (firstSegment.startsWith(USER_URL_SIGIL)) {
-        const username = firstSegment.replace(USER_URL_SIGIL, "");
-        const secondSegment = segments[2];
-        if (secondSegment) {
-            const contentType = assortmentTypes[secondSegment];
-            if (contentType) {
-                const thirdSegment = segments[3];
-                if (thirdSegment) {
-                    return {
-                        username,
-                        assortment: {
-                            type: contentType,
-                            subpath: thirdSegment,
-                        }
-                    }
-                }
-            }
-        }
-        return {username};
-    }
-    else if (firstSegment.startsWith(THREAD_PREFIX)) {
-        const targetArticleSerial = Number(firstSegment.replace(THREAD_PREFIX, "")) || 0;
-        const id = articleSerialToId(targetArticleSerial, btoa);
-        return {
-            articleId: id,
-        };
-    }
-    return {};
-}
 
 function handleProvideEntities(
     ui: ClientUIState,
@@ -167,8 +121,7 @@ function handleProvideEntities(
                     ...ui,
                     dialog: null,
                 }
-            }
-            else {
+            } else {
                 return ui;
             }
         }
@@ -194,7 +147,6 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
         }
         case "ChangePathname": {
             const pathState = parsePathName(action.pathname);
-            console.info(pathState);
             if (pathState.articleId) {
                 return {
                     ...ui,
@@ -206,20 +158,31 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                         }
                     }
                 }
-            }
-            else if (pathState.username) {
-                return {
-                    ...ui,
-                    pages: {
-                        ...ui.pages,
-                        current: "user",
-                        user: {
-                            name: pathState.username
+            } else if (pathState.username) {
+                if (pathState.assortment) {
+                    return {
+                        ...ui,
+                        pages: {
+                            ...ui.pages,
+                            current: "assortment",
+                            assortment: {
+                                identifier: pathState.assortment
+                            },
+                        }
+                    }
+                } else {
+                    return {
+                        ...ui,
+                        pages: {
+                            ...ui.pages,
+                            current: "user",
+                            user: {
+                                name: pathState.username
+                            }
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 return {
                     ...ui,
                     pages: {
@@ -229,7 +192,6 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                 }
             }
         }
-
         case "ViewArticle": {
             return {
                 ...ui,
@@ -327,8 +289,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                         },
                     },
                 };
-            }
-            else {
+            } else {
                 return ui;
             }
         }

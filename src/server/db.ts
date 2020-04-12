@@ -11,7 +11,7 @@ import {
     Account, SiteConfig, SpiderRecordEntity, AccountId,
 } from "../definitions/data-types";
 import {AuthToken, AuthTokenId} from "../definitions/authToken";
-import {Assortment, AssortmentContentType, AssortmentId} from "../definitions/assortment";
+import {Assortment, AssortmentContentType, AssortmentId, AssortmentIdentifier} from "../definitions/assortment";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -582,11 +582,11 @@ const mongodb = {
                 id
             });
         },
-        async findByPath(params: {subpath: string, owner: UserId, contentType: AssortmentContentType}): Promise<Assortment[]> {
+        async findByIdentifier(identifier: AssortmentIdentifier): Promise<Assortment[]> {
             if (!mdb) {
                 return []
             }
-            const {subpath, owner, contentType} = params;
+            const {subpath, owner, contentType} = identifier;
             return mdb.collection("assortments").find({
                 subpath,
                 owner,

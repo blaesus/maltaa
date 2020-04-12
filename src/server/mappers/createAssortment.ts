@@ -25,7 +25,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             reason: "Doesn't control owner user"
         }
     }
-    const existings = await db.assortment.findByPath({
+    const existings = await db.assortment.findByIdentifier({
         owner: request.owner,
         subpath: request.subpath,
         contentType: request.contentType,

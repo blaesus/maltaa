@@ -1,11 +1,10 @@
 import * as React from "react";
 import { ClientState } from "../../states/reducer";
 import { useState } from "react";
-import { MaltaaDispatch } from "../../uiUtils";
+import { assortmentUrl, MaltaaDispatch } from "../../uiUtils";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { AssortmentEditor } from "../AssortmentEditor/AssortmentEditor";
-import {assortmentNames, assortmentUrl} from "../../../../utils";
-
+import {assortmentNames} from "../../../../utils";
 export function ExplorePage(props: {
     state: ClientState,
     dispatch: MaltaaDispatch
@@ -28,7 +27,11 @@ export function ExplorePage(props: {
                     Object.values(state.entities.assortments)
                         .map(assortment => {
                             const owner = state.entities.users[assortment.owner];
-                            const url = assortmentUrl(owner.userName, assortment.contentType, assortment.subpath);
+                            const url = assortmentUrl({
+                                ownerUsername: owner.userName,
+                                contentType: assortment.contentType,
+                                subpath: assortment.subpath,
+                            });
                             return (
                                 <div key={assortment.id}>
                                     {assortmentNames[assortment.contentType]}
@@ -47,3 +50,4 @@ export function ExplorePage(props: {
         </div>
     )
 }
+

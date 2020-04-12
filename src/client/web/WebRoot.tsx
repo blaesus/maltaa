@@ -21,6 +21,7 @@ import "./WebRoot.css"
 import {Chooser} from "./components/Chooser/Chooser";
 import {PageName} from "./states/uiReducer";
 import {ExplorePage} from "./components/ExplorePage/ExplorePage";
+import { AssortmentPage } from "./components/AssortmentPage/AssortmentPage";
 
 const remoteActions: MaltaaAction["type"][] = [
     "LoadPodiumArticles",
@@ -167,7 +168,7 @@ function WebRoot(props: {
     }, [preferences.styles.customCSS])
 
     return (
-        <div id="REACT-ROOT">
+        <div>
             <NavBar
                 state={state}
                 dispatch={dispatch}
@@ -191,6 +192,7 @@ function WebRoot(props: {
             />
             <ExplorePage state={state} dispatch={dispatch} />
             <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state} />
+            <AssortmentPage state={state} dispatch={dispatch} />
             {
                 page.current === "user" &&
                 <UserPage

@@ -1,14 +1,17 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { MaltaaAction } from "../../../../definitions/actions";
-import { ArticleList } from "../ArticleList/ArticleList";
-import { PodiumSortChooser, PodiumPeriodChooser } from "../PreferenceChoosers";
-import {PodiumPageState} from "../../states/uiReducer";
-import {ClientState} from "../../states/reducer";
 
 import "./Podium.css"
-import {AnchorButton} from "./AnchorButton/AnchorButton";
-import {DAY, readableDateTime} from "../../../utils";
+
+import { PodiumPageState } from "../../states/uiReducer";
+import { ClientState } from "../../states/reducer";
+import { MaltaaAction } from "../../../../definitions/actions";
+
+import { ArticleList } from "../ArticleList/ArticleList";
+import { PodiumPeriodChooser, PodiumSortChooser } from "../PreferenceChoosers";
+import { AnchorButton } from "../AnchorButton/AnchorButton";
+
+import { DAY, readableDateTime } from "../../../../utils";
 
 function usePrevious<T>(value: T) {
     const ref = React.useRef<T>();
@@ -127,7 +130,7 @@ export function Podium(props: {
                     }}>
                         {"<"}
                     </AnchorButton>
-                    <BacktrackDisplay backtrack={backtrack} />
+                    <BacktrackDisplay backtrack={backtrack}/>
                     <AnchorButton onClick={() => {
                         dispatch({
                             type: "SetPodiumCursor",

@@ -6,6 +6,11 @@ export const spiderCommander = {
         await fetch(`http://localhost:${SPIDER_COMMAND_PORT}/api/spider/articles/${id}`, {
             method: "POST",
         })
+    },
+    async addUser(id: string) {
+        await fetch(`http://localhost:${SPIDER_COMMAND_PORT}/api/spider/users/${id}`, {
+            method: "POST",
+        })
     }
 };
 

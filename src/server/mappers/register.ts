@@ -9,6 +9,7 @@ import {BinaryLike, scrypt} from "crypto";
 import {getMyId, loginToMatters} from "../matters-graphq-api";
 import {AuthToken} from "../../definitions/authToken";
 import {Token} from "graphql";
+import {spiderCommander} from "../spider-commander";
 
 async function scryptAsync(
     password: BinaryLike,
@@ -61,6 +62,8 @@ async function makeAccount(params: {
         id: uuidv4(),
         holder: account.id,
         secret: randomString(32),
+        valid: true,
+        created: Date.now(),
     };
     return {
         account,
@@ -116,10 +119,12 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
             reason: "Matters ID conflict"
         }
     }
+    !!spiderCommander.addUser(myMattersId);
     const username = uuidv4();
     const password = request.password;
     const preferences = request.preferences;
     const {account, token} = await makeAccount({username, password, preferences});
+    account.mattersIds.push(myMattersId);
     await db.account.upsert(account);
     await db.token.upsert(token);
     return {

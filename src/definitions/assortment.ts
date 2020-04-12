@@ -1,4 +1,4 @@
-import {ArticleId, UserId, Account, AccountId} from "./data-types";
+import { ArticleId, UserId } from "./data-types";
 
 export type MattersEntityType = "article" | "user"
 
@@ -17,11 +17,12 @@ export type AssortmentId = string;
 
 export interface Assortment {
     id: AssortmentId,
+    title: string,
+    subpath: string,
     mattersArticleBaseId: ArticleId | null,
     owner: UserId,
     editors: UserId[],
     upstreams: AssortmentId[],
     limitContentType: MattersEntityType | null,
-    title: string,
     items: AssortmentItem[],
 }

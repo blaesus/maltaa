@@ -10,7 +10,7 @@ export interface BaseAction {
         // Action client ID, for servers to deduplicate.
         acid?: string,
 
-        token?: AuthToken
+        token?: AuthToken | null
 
         account?: AccountId,
     },
@@ -93,6 +93,10 @@ export interface GenericError extends BaseAction {
     reason: string,
 }
 
+export interface GenericOk extends BaseAction {
+    type: "GenericOk"
+}
+
 export interface CancelDialog extends BaseAction {
     type: "CancelDialog"
 }
@@ -115,16 +119,21 @@ export interface GoToPage extends BaseAction {
     page: PageName,
 }
 
-export interface GetMe extends BaseAction {
-    type: "GetMe",
+export interface GetMyData extends BaseAction {
+    type: "GetMyData",
 }
 
 export interface CreateAssortment extends BaseAction {
     type: "CreateAssortment"
     title: string,
+    subpath: string,
     upstreams: AssortmentId[],
     limitContentType: MattersEntityType | null,
     articles: AssortmentItem[],
+}
+
+export interface Signout extends BaseAction {
+    type: "Signout",
 }
 
 export type MaltaaAction =
@@ -146,8 +155,10 @@ export type MaltaaAction =
     | SearchResultArticleRedirect
     | StartMeDialog
     | GoToPage
-    | GetMe
+    | GetMyData
     | CreateAssortment
+    | Signout
+    | GenericOk
 ;
 
 

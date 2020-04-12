@@ -6,4 +6,6 @@ export interface AuthToken {
     id: AuthTokenId,
     holder: AccountId,
     secret: string,
+    valid: boolean,
+    created: number,
 }

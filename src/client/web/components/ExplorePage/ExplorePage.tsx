@@ -1,9 +1,9 @@
 import * as React from "react";
-import {ClientState} from "../../states/reducer";
-import {AnchorButton} from "../AnchorButton/AnchorButton";
-import {useState} from "react";
-import {AssortmentEditor} from "../AssortmentEditor/AssortmentEditor";
-import {MaltaaDispatch} from "../../uiUtils";
+import { ClientState } from "../../states/reducer";
+import { useState } from "react";
+import { MaltaaDispatch } from "../../uiUtils";
+import { AnchorButton } from "../AnchorButton/AnchorButton";
+import { AssortmentEditor } from "../AssortmentEditor/AssortmentEditor";
 
 export function ExplorePage(props: {
     state: ClientState,
@@ -23,10 +23,9 @@ export function ExplorePage(props: {
             </AnchorButton>
 
             <AssortmentEditor
+                state={state}
                 dispatch={dispatch}
             />
-
-
         </div>
     )
 }

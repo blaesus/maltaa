@@ -163,3 +163,8 @@ export function protectAccountFromSelf(account: Account): AccountSelf {
         preferences: account.preferences,
     }
 }
+
+
+export function newEmptyObject() {
+    return Object.create(null);
+}

@@ -316,6 +316,9 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                 dialog: "me",
             }
         }
+        case "Signout": {
+            return getInitialUIState();
+        }
 
         default: {
             return ui;

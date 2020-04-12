@@ -1,6 +1,6 @@
 import {AccountSelf, Article, Comment, ObjectMap, UserPublic} from "../../../definitions/data-types";
 import { MaltaaAction } from "../../../definitions/actions";
-import { mergeArray } from "../../../utils";
+import {mergeArray, newEmptyObject} from "../../../utils";
 import {Assortment} from "../../../definitions/assortment";
 
 export interface EntitiesState {
@@ -9,6 +9,16 @@ export interface EntitiesState {
     assortments: ObjectMap<Assortment>,
     users: ObjectMap<UserPublic>,
     me: AccountSelf | null,
+}
+
+export function getInitialEntitiesState(): EntitiesState {
+    return {
+        articles: newEmptyObject(),
+        comments: newEmptyObject(),
+        users: newEmptyObject(),
+        assortments: newEmptyObject(),
+        me: null,
+    };
 }
 
 export function entitiesReducer(entities: EntitiesState, action: MaltaaAction): EntitiesState {
@@ -22,6 +32,9 @@ export function entitiesReducer(entities: EntitiesState, action: MaltaaAction): 
             nextEntities.me = action.data.me || entities.me;
 
             return nextEntities;
+        }
+        case "Signout": {
+            return getInitialEntitiesState();
         }
         default: {
             return entities;

@@ -14,12 +14,13 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
     }
     const newAssortment: Assortment = {
         id: uuidv4(),
+        title: request.title,
+        subpath: request.subpath,
         mattersArticleBaseId: null,
         owner: account,
-        editors: [],
+        editors: [account],
         upstreams: request.upstreams,
         limitContentType: request.limitContentType,
-        title: request.title,
         items: [],
     }
 

@@ -150,6 +150,10 @@ const mongodb = {
         }
         {
             await mdb.createIndex("assortments", {id: 1}, {unique: true});
+            await mdb.createIndex("assortments", {
+                subpath: 1,
+                owner: 1,
+            }, {unique: true});
         }
     },
     article: {
@@ -572,10 +576,19 @@ const mongodb = {
                 {upsert: true},
             );
         },
-        async findById(id: AssortmentId): Promise<AuthToken | null> {
+        async findById(id: AssortmentId): Promise<Assortment | null> {
             return mdb && mdb.collection("assortment").findOne({
                 id
             });
+        },
+        async findBySubpathUnderOwner(subpath: string, owner: AccountId): Promise<Assortment[]> {
+            if (!mdb) {
+                return []
+            }
+            return mdb.collection("assortment").find({
+                subpath,
+                owner,
+            }).toArray();
         },
     },
 

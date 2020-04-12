@@ -1,23 +1,10 @@
 import { MaltaaAction } from "../../../definitions/actions";
 import {ClientUIState, getInitialUIState, uiReducer} from "./uiReducer";
 import { preferencesReducer } from "./preferencesReducer";
-import { entitiesReducer, EntitiesState } from "./entitiesReducer";
+import {entitiesReducer, EntitiesState, getInitialEntitiesState} from "./entitiesReducer";
 import { crossPostReducer, crossPreReducer } from "./crossReducer";
 import { getFallbackPreferences } from "../../../utils";
 import {Preferences} from "../../../definitions/data-types";
-
-function newEmptyObject() {
-    return Object.create(null);
-}
-
-function getInitialEntitiesState(): EntitiesState {
-    return {
-        articles: newEmptyObject(),
-        comments: newEmptyObject(),
-        users: newEmptyObject(),
-        me: null,
-    };
-}
 
 export interface ClientState {
     entities: EntitiesState,

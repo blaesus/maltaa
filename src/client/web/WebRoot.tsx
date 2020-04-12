@@ -28,7 +28,7 @@ const remoteActions: MaltaaAction["type"][] = [
     "ViewArticle",
     "Register",
     "Search",
-    "GetMe",
+    "GetMyData",
     "CreateAssortment",
 ];
 
@@ -78,11 +78,9 @@ function WebRoot(props: {
 
     useEffect(() => {
         dispatch({
-            type: "GetMe",
+            type: "GetMyData",
         })
     }, []);
-
-
 
     useEffect(() => storePreference(preferences), [preferences]);
 

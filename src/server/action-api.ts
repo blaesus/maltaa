@@ -11,6 +11,7 @@ import * as URL from "url";
 import { isMattersArticleUrl } from "../matters-specifics";
 import {register} from "./mappers/register";
 import {createAssortment} from "./mappers/createAssortment";
+import {signout} from "./mappers/signout";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -134,7 +135,7 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
         case "Register": {
             return register(request);
         }
-        case "GetMe": {
+        case "GetMyData": {
             const account = request?.meta?.account;
             if (!account) {
                 return {
@@ -149,15 +150,20 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
                     reason: "I can't find you",
                 }
             }
+            const myUsers = await db.user.findByIds(me.mattersIds);
             return {
                 type: "ProvideEntities",
                 data: {
                     me,
+                    users: myUsers,
                 }
             }
         }
         case "CreateAssortment": {
-            return createAssortment(request)
+            return createAssortment(request);
+        }
+        case "Signout": {
+            return signout(request);
         }
         case "Search": {
             const {keyword} = request;

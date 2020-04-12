@@ -120,8 +120,8 @@ function verifyActionForm(data: any): MaltaaAction {
     }
 }
 
-const AUTH_TOKEN_ID_KEY = "TOKEN_ID";
-const AUTH_TOKEN_SECRET_KEY = "TOKEN_SECRET";
+const AUTH_TOKEN_ID_KEY = "TOK";
+const AUTH_TOKEN_SECRET_KEY = "SEC";
 
 async function handleAction(context: Koa.Context, next: any) {
     context.response.type = "json";
@@ -159,6 +159,13 @@ async function handleAction(context: Koa.Context, next: any) {
         if (token) {
             context.cookies.set(AUTH_TOKEN_ID_KEY, token.id);
             context.cookies.set(AUTH_TOKEN_SECRET_KEY, token.secret);
+        }
+        else if (token === null) {
+            context.cookies.set(AUTH_TOKEN_ID_KEY, "");
+            context.cookies.set(AUTH_TOKEN_SECRET_KEY, "");
+        }
+        else {
+            // Keep as is
         }
         context.status = 200;
         context.body = response;

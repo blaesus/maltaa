@@ -54,7 +54,11 @@ export function Dialogs(props: {
             }
             {
                 dialogState === "me" &&
-                <MeDialog />
+                <MeDialog
+                    me={state.entities.me}
+                    users={state.entities.users}
+                    dispatch={dispatch}
+                />
             }
 
         </DialogContainer>

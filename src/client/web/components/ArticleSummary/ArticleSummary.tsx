@@ -1,11 +1,15 @@
 import * as React from "react";
-import { Article, UserPublic } from "../../../definitions/data-types";
-import "./ArticleSummary.css"
-import {TimeTag} from "./TimeTag/TimeTag";
-import { AuthorTag } from "./AuthorTag";
-import {articleUrl, getAnchorClickHandler, serializeToPathName} from "../uiUtils";
-import { ArticlePreview } from "./ArticlePreview";
 import { useCallback, useState } from "react";
+
+import "./ArticleSummary.css"
+
+import { Article, UserPublic } from "../../../../definitions/data-types";
+
+import { TimeTag } from "../TimeTag/TimeTag";
+import { AuthorTag } from "../AuthorTag";
+import { ArticlePreview } from "../ArticlePreview";
+
+import { articleUrl, getAnchorClickHandler } from "../../uiUtils";
 
 export function ArticleSummary(props: {
     article: Article,
@@ -31,11 +35,11 @@ export function ArticleSummary(props: {
                 {article.title}
                 <span className="AuthorLine">
                     {"/"}
-                    <AuthorTag author={author} surpressAnchor={true} />
+                    <AuthorTag author={author} surpressAnchor={true}/>
                 </span>
             </h2>
             <span className="Meta">
-                <TimeTag time={article.createdAt} />
+                <TimeTag time={article.createdAt}/>
                 <span className="comments">
                     {article.derived.comments}評
                 </span>
@@ -46,7 +50,7 @@ export function ArticleSummary(props: {
 
             {
                 hoverPreview && extend &&
-                <ArticlePreview article={article} />
+                <ArticlePreview article={article}/>
             }
         </a>
     )

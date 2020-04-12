@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ArticleSummary} from "../ArticleSummary";
+import {ArticleSummary} from "../ArticleSummary/ArticleSummary";
 import "./ArticleList.css";
 import { MaltaaAction } from "../../../../definitions/actions";
 import { daysAgoInEpoch } from "../../../../utils";

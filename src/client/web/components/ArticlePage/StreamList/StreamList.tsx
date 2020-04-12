@@ -6,7 +6,7 @@ import "./StreamList.css";
 import { Article, ObjectMap, UserId, UserPublic } from "../../../../../definitions/data-types";
 import { ArticleSort, articleSorts } from "../../../../../sorts";
 import { MaltaaAction } from "../../../../../definitions/actions";
-import { ArticleSummary } from "../../ArticleSummary";
+import { ArticleSummary } from "../../ArticleSummary/ArticleSummary";
 import { AnchorButton } from "../../AnchorButton/AnchorButton";
 
 export function StreamList(props: {

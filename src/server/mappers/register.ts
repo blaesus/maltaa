@@ -1,4 +1,4 @@
-import {getFallbackPreferences, protectAccountFromSelf} from "../../utils";
+import { dedupe, getFallbackPreferences, protectAccountFromSelf } from "../../utils";
 import {db} from "../db";
 import {Account, PasswordRecord, Preferences, Privileges} from "../../definitions/data-types";
 import { v4 as uuidv4 } from "uuid";
@@ -120,6 +120,7 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
         }
     }
     !!spiderCommander.addUser(myMattersId);
+    const users = await db.user.findByIds([myMattersId]);
     const existingAccount = request?.meta?.account;
     if (existingAccount) {
         const account = await db.account.findById(existingAccount);
@@ -130,11 +131,13 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
             }
         }
         account.mattersIds.push(myMattersId);
+        account.mattersIds = account.mattersIds.filter(dedupe);
         await db.account.upsert(account);
         return {
             type: "ProvideEntities",
             data: {
                 me: protectAccountFromSelf(account),
+                users,
             },
         }
     }
@@ -144,12 +147,14 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
         const preferences = request.preferences;
         const {account, token} = await makeAccount({username, password, preferences});
         account.mattersIds.push(myMattersId);
+        account.mattersIds = account.mattersIds.filter(dedupe);
         await db.account.upsert(account);
         await db.token.upsert(token);
         return {
             type: "ProvideEntities",
             data: {
                 me: protectAccountFromSelf(account),
+                users,
             },
             meta: {
                 token,

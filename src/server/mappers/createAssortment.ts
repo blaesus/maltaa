@@ -32,12 +32,12 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             reason: "Doesn't control owner user"
         }
     }
-    const existings = await db.assortment.findByIdentifier({
+    const existing = await db.assortment.findByIdentifier({
         owner,
         subpath: request.subpath,
         contentType: request.contentType,
     });
-    if (existings.length) {
+    if (existing) {
         return {
             type: "GenericError",
             reason: "Path taken",

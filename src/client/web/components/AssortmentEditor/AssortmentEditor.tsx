@@ -8,6 +8,7 @@ import { AssortmentContentType } from "../../../../definitions/assortment";
 import { Chooser } from "../Chooser/Chooser";
 
 import { assortmentUrl, MaltaaDispatch, OptionList } from "../../uiUtils";
+import { OperatorSelector } from "../OperatorSelector";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {
@@ -30,27 +31,38 @@ export function AssortmentEditor(props: {
 }) {
     const {state, dispatch} = props;
     const me = state.entities.me;
-    const [activeMattersId, setActiveMattersId] = useState<UserId | null>(me ? me.mattersIds[0] : null);
     const [contentType, setContentType] = useState<AssortmentContentType>("article");
-    const owner: UserPublic | null = activeMattersId ? state.entities.users[activeMattersId] : null;
+    const owner: UserPublic | null = state.preferences.identity.operator ? state.entities.users[state.preferences.identity.operator] : null;
     const [title, setTitle] = useState("");
     const [subpath, setSubpath] = useState("");
 
     if (!owner) {
         return (
             <div className="AssortmentEditor">
-                缺少用戶數據 {activeMattersId}
+                缺少用戶數據 {state.preferences.identity.operator}
             </div>
         )
     }
     return (
         <div className="AssortmentEditor">
+            <OperatorSelector
+                state={state}
+                dispatch={dispatch}
+            />
             {
                 me &&
                 <Chooser
                     options={me.mattersIds.map(id => ({value: id, label: id}))}
-                    chosen={activeMattersId}
-                    onChoose={setActiveMattersId}
+                    chosen={state.preferences.identity.operator}
+                    onChoose={operator => dispatch({
+                        type: "SetMyPreferences",
+                        preferencesPatch: {
+                            identity: {
+                                ...state.preferences,
+                                operator,
+                            }
+                        }
+                    })}
                 />
             }
             <Chooser

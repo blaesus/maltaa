@@ -3,14 +3,15 @@ import "./Chooser.css";
 import {OptionList} from "../../uiUtils";
 
 export function Chooser<Value>(props: {
-    options: OptionList<Value>,
+    options?: OptionList<Value>,
     chosen: Value,
     onChoose(value: Value): void
 }) {
+    const options = props.options || [];
     return (
         <span className="Chooser">
             {
-                props.options.map(o =>
+                options.map(o =>
                     <a
                         key={o.label}
                         className={`Option ${o.value === props.chosen ? "chosen" : ""}`}

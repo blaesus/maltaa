@@ -147,7 +147,15 @@ export interface UpdateAssortmentAddItem extends BaseAction<{asUser?: UserId}> {
     }
 }
 
-export type UpdateAssortment = UpdateAssortmentAddItem;
+export interface UpdateAssortmentOrderItems extends BaseAction<{asUser?: UserId}> {
+    type: "UpdateAssortment",
+    operation: "OrderItems",
+    target: AssortmentId,
+    items: string[],
+}
+
+
+export type UpdateAssortment = UpdateAssortmentAddItem | UpdateAssortmentOrderItems;
 
 export interface Signout extends BaseAction {
     type: "Signout",

@@ -4,6 +4,7 @@ import { ClientState } from "../../states/reducer";
 import { assortmentNames, readableDateTime } from "../../../../utils";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 import { useEffect } from "react";
+import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 export function AssortmentPage(props: {
     state: ClientState,
@@ -35,7 +36,7 @@ export function AssortmentPage(props: {
             <div>{assortmentNames[assortment.contentType]}</div>
             <div>
                 {
-                    assortment.items.map(item => {
+                    assortment.items.map((item, index) => {
                         switch (item.entityType) {
                             case "article": {
                                 const article = state.entities.articles[item.id];
@@ -58,6 +59,35 @@ export function AssortmentPage(props: {
                                         </div>
                                         <div>
                                             {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
+                                        </div>
+                                        <div>
+                                            {
+                                                index >= 1 &&
+                                                <AnchorButton
+                                                    onClick={() => {
+                                                        const items = assortment.items.map(item => item.id);
+                                                        const temp = items[index-1];
+                                                        items[index-1] = items[index];
+                                                        items[index] = temp;
+                                                        dispatch({
+                                                            type: "UpdateAssortment",
+                                                            operation: "OrderItems",
+                                                            target: assortment.id,
+                                                            items: items,
+                                                            meta: {
+                                                            }
+                                                        })
+                                                    }}
+                                                >
+                                                    上移
+                                                </AnchorButton>
+                                            }
+                                            {
+                                                index < assortment.items.length - 1 &&
+                                                <AnchorButton>
+                                                    下移
+                                                </AnchorButton>
+                                            }
                                         </div>
                                     </div>
                                 )

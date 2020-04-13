@@ -307,6 +307,10 @@ export interface Preferences {
     comments: {
         firstLevel: LeveledCommentPreferences,
         secondLevel: LeveledCommentPreferences,
+    },
+
+    identity: {
+        operator: UserId | null,
     }
 }
 

@@ -160,6 +160,10 @@ export function getFallbackPreferences(): Preferences {
                 displayThreshold: 2,
             },
         },
+
+        identity: {
+            operator: null,
+        }
     }
 }
 

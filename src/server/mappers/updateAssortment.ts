@@ -63,5 +63,25 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 }
             }
         }
+        case "OrderItems": {
+            target.items = target.items.sort(
+                (itemA, itemB) =>
+                    request.items.indexOf(itemA.id) - request.items.indexOf(itemB.id)
+            );
+            await db.assortment.upsert(target);
+            return {
+                type: "ProvideEntities",
+                data: {
+                    assortments: [target],
+                }
+            }
+
+        }
+        default: {
+            return {
+                type: "GenericError",
+                reason: "Unknown operation",
+            }
+        }
     }
 }

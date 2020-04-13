@@ -1,6 +1,6 @@
 import { MaltaaAction } from "../../../definitions/actions";
-import {ClientState, getInitialClientState} from "./reducer";
-import { AssortmentUIIdentifier, findAssortmentFromState } from "../uiUtils";
+import { ClientState } from "./reducer";
+import { AssortmentUIIdentifier } from "../uiUtils";
 
 // Executed before all branched reducers
 export function crossPreReducer(state: ClientState, action: MaltaaAction): ClientState {
@@ -28,8 +28,7 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                         }
                     }
                 }
-            }
-            else if (typeof action.assortment === "object") {
+            } else if (typeof action.assortment === "object") {
                 identifier = action.assortment;
             }
 
@@ -47,8 +46,7 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 return state;
             }
         }

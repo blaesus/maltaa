@@ -1,7 +1,7 @@
 import * as React from "react";
 import { articleUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
 import { ClientState } from "../../states/reducer";
-import { assortmentNames } from "../../../../utils";
+import { assortmentNames, readableDateTime } from "../../../../utils";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 import { useEffect } from "react";
 
@@ -42,14 +42,24 @@ export function AssortmentPage(props: {
                                 if (!article) {
                                     return `Missing article data ${JSON.stringify(item)}`
                                 }
-                                const user = state.entities.users[article.author];
+                                const author = state.entities.users[article.author];
+                                const collector = state.entities.users[item.addedBy];
                                 return (
-                                    <ArticleSummary
+                                    <div
                                         key={item.id}
-                                        article={article}
-                                        author={user}
-                                        hoverPreview={true}
-                                    />
+                                    >
+                                        <ArticleSummary
+                                            article={article}
+                                            author={author}
+                                            hoverPreview={true}
+                                        />
+                                        <div>
+                                            {item.note}
+                                        </div>
+                                        <div>
+                                            {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
+                                        </div>
+                                    </div>
                                 )
                             }
                             default: {

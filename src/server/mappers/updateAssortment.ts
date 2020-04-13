@@ -50,7 +50,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 source: "matters",
                 entityType: request.item.entityType,
                 id: request.item.id,
-                note: request.operation,
+                note: "",
                 addedBy: user,
                 addedAt: Date.now(),
             }

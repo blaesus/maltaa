@@ -71,6 +71,7 @@ function WebRoot(props: {
                     ...action.meta,
                     acid: Math.random().toString(36).slice(2),
                     operator: state.preferences.identity.operator,
+                    doNotTrack: preferences.privacy.doNotTrack,
                 }
             };
             maltaaApi.action(request).then(answer => localDispatch(answer));

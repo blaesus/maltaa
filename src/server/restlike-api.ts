@@ -4,8 +4,7 @@ import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
 import { db } from "./db";
 import { fetchArticle, fetchTag, fetchUser } from "./matters-graphq-api";
-import { Article, ArticleId, UserId, Comment, Account } from "../definitions/data-types";
-import {randomBytes} from "crypto"
+import { Article, ArticleId, Comment } from "../definitions/data-types";
 import { API_PORT } from "./server-configs";
 import { MaltaaAction } from "../definitions/actions";
 import { respond } from "./action-api";
@@ -13,7 +12,7 @@ import { respond } from "./action-api";
 function getEntityRequestHandler<T>(
     idFieldName: string,
     findByIds: (ids: string[]) => Promise<T[]>,
-    entityFetch?: (id: string) => Promise<{entity: T} | null>,
+    entityFetch?: (id: string) => Promise<{ entity: T } | null>,
 ) {
     return async (context: Koa.Context, next: any) => {
         context.response.type = "json";
@@ -51,10 +50,10 @@ function getEntityRequestHandler<T>(
             context.status = 404;
             context.body = {
                 error: "not found",
-            }
+            };
         }
         return next();
-    }
+    };
 }
 
 export async function findCommentsUnderArticle(id: ArticleId): Promise<Comment[]> {
@@ -88,7 +87,7 @@ async function getArticles(context: Koa.Context, next: any) {
     let articles: Article[] = [];
     switch (query.sort) {
         case "comments": {
-            articles  = await db.article.findActiveByComments(query.page);
+            articles = await db.article.findActiveByComments(query.page);
             break;
         }
         default: {
@@ -133,7 +132,7 @@ async function handleAction(context: Koa.Context, next: any) {
         }
         const token = await db.token.findById(targetTokenId);
         if (!token) {
-            return request
+            return request;
         }
         const claimedSecret = context.cookies.get(AUTH_TOKEN_SECRET_KEY);
         if (!claimedSecret) {
@@ -147,8 +146,8 @@ async function handleAction(context: Koa.Context, next: any) {
             meta: {
                 ...request.meta,
                 account: token.holder,
-            }
-        }
+            },
+        };
     }
 
     try {
@@ -169,8 +168,7 @@ async function handleAction(context: Koa.Context, next: any) {
         }
         context.status = 200;
         context.body = response;
-    }
-    catch (error) {
+    } catch (error) {
         context.status = 500;
         context.body = {
             type: "Error",

@@ -1,8 +1,10 @@
 import { BinaryLike, randomBytes, scrypt } from "crypto";
-import { AccountId, PasswordRecord } from "../definitions/data-types";
-import { SCRYPT_KEYLEN, SCRYPT_SALT_LENGTH } from "../settings";
-import { AuthToken } from "../definitions/authToken";
+
 import { v4 as uuidv4 } from "uuid";
+
+import { AccountId } from "../definitions/data-types";
+import { SCRYPT_KEYLEN } from "../settings";
+import { AuthToken } from "../definitions/authToken";
 
 export const btoa = (s: string) => Buffer.from(s).toString("base64");
 export const atob = (s: string) => Buffer.from(s, "base64").toString();

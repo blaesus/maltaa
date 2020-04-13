@@ -1,7 +1,5 @@
-import {Account, AccountSelf, Article, ObjectMap, ObjectWithId, Preferences, UserPublic} from "./definitions/data-types";
-import {Assortment, AssortmentContentType, AssortmentIdentifier, MattersEntityType} from "./definitions/assortment";
-import {THREAD_PREFIX, USER_URL_SIGIL} from "./settings";
-import {articleSerialToId} from "./matters-specifics";
+import { Account, AccountSelf, ObjectMap, ObjectWithId, Preferences } from "./definitions/data-types";
+import { AssortmentContentType } from "./definitions/assortment";
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -10,7 +8,7 @@ export const DAY = 24 * HOUR;
 
 export const INFINITY_JSON = 1e8;
 
-export function range(input: {min: number, max: number}): number[] {
+export function range(input: { min: number, max: number }): number[] {
     const {min, max} = input;
     return Array.from(Array(max - min)).map((_, i) => i + min)
 }
@@ -32,6 +30,17 @@ export function sleep(timeMs: number): Promise<void> {
 export function dedupe<T>(value: T, index: number, array: T[]) {
     return array.indexOf(value) === index;
 }
+
+export function dedupeById<T extends ObjectWithId>(list: T[]): T[] {
+    const result: T[] = [];
+    for (const item of list) {
+        if (result.every(x => x.id !== item.id)) {
+            result.push(item);
+        }
+    }
+    return result;
+}
+
 
 export function promiseWithTimeout<T>(timeoutInMs: number, promise: Promise<T>): Promise<T> {
 
@@ -72,19 +81,16 @@ export function readableDateTime(dateEpoch: number, hideTime = false): string {
     if (+now - +then < 48 * HOUR) {
         if (diff === 0) {
             return `今日${time}`;
-        }
-        else if (diff === 1) {
+        } else if (diff === 1) {
             return `昨日${time}`;
         }
     }
-    const monthDay = `${then.getMonth()+1}月${then.getDate()}日`;
+    const monthDay = `${then.getMonth() + 1}月${then.getDate()}日`;
     if (then.getFullYear() === now.getFullYear()) {
         return monthDay;
-    }
-    else if (then.getFullYear() + 1 === now.getFullYear()) {
+    } else if (then.getFullYear() + 1 === now.getFullYear()) {
         return `去年` + monthDay;
-    }
-    else {
+    } else {
         const year = `${then.getFullYear()}年`;
         return year + monthDay;
     }
@@ -172,13 +178,13 @@ export function newEmptyObject() {
     return Object.create(null);
 }
 
-export const assortmentPrefix: {[key in AssortmentContentType]: string} = {
+export const assortmentPrefix: { [key in AssortmentContentType]: string } = {
     article: "an",
     user: "rl",
     mixed: "mx",
 };
 
-function reverseMap<K extends string, V extends string>(data: {[key in K]: V}):  {[key in V]: K} {
+function reverseMap<K extends string, V extends string>(data: { [key in K]: V }): { [key in V]: K } {
     const result: any = {};
     for (const entry of Object.entries(data)) {
         const [key, value] = entry;
@@ -189,7 +195,7 @@ function reverseMap<K extends string, V extends string>(data: {[key in K]: V}): 
 
 export const assortmentTypes = reverseMap(assortmentPrefix);
 
-export const assortmentNames: {[key in AssortmentContentType]: string} = {
+export const assortmentNames: { [key in AssortmentContentType]: string } = {
     article: "文選",
     user: "名冊",
     mixed: "什錦",

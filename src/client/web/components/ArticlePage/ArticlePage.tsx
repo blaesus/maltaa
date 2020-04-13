@@ -104,7 +104,7 @@ export function ArticlePage(props: {
                 dispatch={dispatch}
             />
 
-            <div>
+            <div className="AssortmentList">
                 {includedAssortments.length}個集合收錄本文
                 {
                     includedAssortments.map(assortment => (
@@ -112,6 +112,12 @@ export function ArticlePage(props: {
                             key={assortment.id}
                             assortment={assortment}
                             users={state.entities.users}
+                            onClick={() => {
+                                dispatch({
+                                    type: "ViewAssortment",
+                                    assortment: assortment.id,
+                                })
+                            }}
                         />
                     ))
                 }

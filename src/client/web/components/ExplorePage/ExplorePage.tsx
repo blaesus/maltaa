@@ -1,11 +1,13 @@
 import * as React from "react";
-import { ClientState } from "../../states/reducer";
 import { useState } from "react";
-import { assortmentUrl, MaltaaDispatch } from "../../uiUtils";
+
+import { ClientState } from "../../states/reducer";
+import { MaltaaDispatch } from "../../uiUtils";
+
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { AssortmentEditor } from "../AssortmentEditor/AssortmentEditor";
-import {assortmentNames} from "../../../../utils";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
+
 export function ExplorePage(props: {
     state: ClientState,
     dispatch: MaltaaDispatch
@@ -31,6 +33,12 @@ export function ExplorePage(props: {
                                 key={assortment.id}
                                 assortment={assortment}
                                 users={state.entities.users}
+                                onClick={() => {
+                                    dispatch({
+                                        type: "ViewAssortment",
+                                        assortment: assortment.id,
+                                    })
+                                }}
                             />
                         )
                 }

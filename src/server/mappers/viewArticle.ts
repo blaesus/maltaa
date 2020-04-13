@@ -15,13 +15,14 @@ export async function viewArticle(request: ViewArticle): Promise<MaltaaAction> {
             article, ...upstreams, ...downstreams,
         ];
         const comments = await findCommentsUnderArticle(article.id);
+        const assortments = await db.assortment.findByItemIds(articles.map(a => a.id));
         const relatedUsers: UserId[] = [
             article.author,
             ...comments.map(comment => comment.author),
             ...articles.map(article => article.author),
+            ...assortments.map(assortment => assortment.owner),
         ].filter(dedupe);
         const users = await db.user.findByIds(relatedUsers);
-        const assortments = await db.assortment.findByItemIds(articles.map(a => a.id));
         return {
             type: "ProvideEntities",
             data: {

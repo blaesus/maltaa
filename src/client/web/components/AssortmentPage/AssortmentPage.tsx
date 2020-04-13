@@ -1,27 +1,31 @@
 import * as React from "react";
-import { articleUrl, MaltaaDispatch } from "../../uiUtils";
+import { articleUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
 import { ClientState } from "../../states/reducer";
 import { assortmentNames } from "../../../../utils";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
+import { useEffect } from "react";
 
 export function AssortmentPage(props: {
     state: ClientState,
     dispatch: MaltaaDispatch,
 }) {
-    const {state} = props;
+    const {state, dispatch} = props;
     const identifier = state.ui.pages.assortment.identifier;
+    useEffect(() => {
+        if (state.ui.pages.current === "assortment") {
+            window.scroll(0, 0);
+        }
+        if (identifier) {
+            dispatch({
+                type: "ViewAssortment",
+                assortment: identifier,
+            })
+        }
+    }, [identifier]);
     if (state.ui.pages.current !== "assortment" || !identifier) {
         return null;
     }
-    const owner = Object.values(state.entities.users).find(u => u.userName === identifier.ownerUsername);
-    if (!owner) {
-        return null;
-    }
-    const assortment = Object.values(state.entities.assortments).find(
-        a => a.owner === owner.id
-            && a.subpath === identifier.subpath
-            && a.contentType === identifier.contentType
-    )
+    const assortment = findAssortmentFromState(state, identifier);
     if (!assortment) {
         return null;
     }
@@ -36,7 +40,7 @@ export function AssortmentPage(props: {
                             case "article": {
                                 const article = state.entities.articles[item.id];
                                 if (!article) {
-                                    return `Missing article data ${item}`
+                                    return `Missing article data ${JSON.stringify(item)}`
                                 }
                                 const user = state.entities.users[article.author];
                                 return (

@@ -588,16 +588,13 @@ const mongodb = {
                 id
             });
         },
-        async findByIdentifier(identifier: AssortmentIdentifier): Promise<Assortment[]> {
-            if (!mdb) {
-                return []
-            }
+        async findByIdentifier(identifier: AssortmentIdentifier): Promise<Assortment | null> {
             const {subpath, owner, contentType} = identifier;
-            return mdb.collection("assortments").find({
+            return mdb && mdb.collection("assortments").findOne({
                 subpath,
                 owner,
                 contentType,
-            }).toArray();
+            });
         },
         async findByOwners(owners: UserId[]): Promise<Assortment[]> {
             if (!mdb) {

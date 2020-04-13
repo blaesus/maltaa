@@ -3,6 +3,7 @@ import {Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSel
 import {PageName} from "../client/web/states/uiReducer";
 import {AuthToken} from "./authToken";
 import {Assortment, AssortmentId, AssortmentItem, AssortmentContentType, MattersEntityType} from "./assortment";
+import { AssortmentUIIdentifier } from "../client/web/uiUtils";
 
 export interface BaseMeta {
     request?: MaltaaAction,
@@ -152,6 +153,11 @@ export interface Signout extends BaseAction {
     type: "Signout",
 }
 
+export interface ViewAssortment extends BaseAction {
+    type: "ViewAssortment",
+    assortment: AssortmentUIIdentifier | AssortmentId,
+}
+
 export type MaltaaAction =
     ChangePathname
     | ProvideEntities
@@ -176,6 +182,7 @@ export type MaltaaAction =
     | Signout
     | GenericOk
     | UpdateAssortment
+    | ViewAssortment
 ;
 
 

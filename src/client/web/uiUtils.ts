@@ -5,7 +5,8 @@ import { ArticleId, Preferences, UserId } from "../../definitions/data-types";
 import {assortmentPrefix, assortmentTypes} from "../../utils";
 import { MaltaaAction } from "../../definitions/actions";
 import {ClientUIState} from "./states/uiReducer";
-import {AssortmentContentType, AssortmentIdentifier} from "../../definitions/assortment";
+import { Assortment, AssortmentContentType, AssortmentIdentifier } from "../../definitions/assortment";
+import { ClientState } from "./states/reducer";
 
 export interface AssortmentUIIdentifier extends Omit<AssortmentIdentifier, "owner"> {
     ownerUsername: UserId,
@@ -45,7 +46,7 @@ export function parsePathName(pathName: string): PathState {
                         assortment: {
                             ownerUsername: username,
                             contentType: contentType,
-                            subpath: thirdSegment,
+                            subpath: decodeURIComponent(thirdSegment),
                         }
                     }
                 }
@@ -115,3 +116,19 @@ export function getViewportWidth() {
 export type MaltaaDispatch = (action: MaltaaAction) => void;
 
 export type OptionList<Value = string> = {value: Value, label: string}[]
+
+export function findAssortmentFromState(state: ClientState, identifier: AssortmentUIIdentifier): Assortment | null {
+    const owner = Object.values(state.entities.users).find(u => u.userName === identifier.ownerUsername);
+    if (!owner) {
+        return null;
+    }
+    const assortment = Object.values(state.entities.assortments).find(
+        a => a.owner === owner.id
+            && a.subpath === identifier.subpath
+            && a.contentType === identifier.contentType
+    )
+    if (!assortment) {
+        return null;
+    }
+    return assortment;
+}

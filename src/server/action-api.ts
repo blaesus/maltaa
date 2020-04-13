@@ -14,6 +14,7 @@ import {createAssortment} from "./mappers/createAssortment";
 import {signout} from "./mappers/signout";
 import { viewArticle } from "./mappers/viewArticle";
 import { updateAssortment } from "./mappers/updateAssortment";
+import { viewAssortment } from "./mappers/viewAssortment";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -142,6 +143,9 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
         }
         case "Signout": {
             return signout(request);
+        }
+        case "ViewAssortment": {
+            return viewAssortment(request);
         }
         case "Search": {
             const {keyword} = request;

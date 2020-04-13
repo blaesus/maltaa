@@ -85,7 +85,22 @@ export function AssortmentPage(props: {
                                             }
                                             {
                                                 index < assortment.items.length - 1 &&
-                                                <AnchorButton>
+                                                <AnchorButton
+                                                    onClick={() => {
+                                                        const items = assortment.items.map(item => item.id);
+                                                        const temp = items[index+1];
+                                                        items[index+1] = items[index];
+                                                        items[index] = temp;
+                                                        dispatch({
+                                                            type: "UpdateAssortment",
+                                                            operation: "OrderItems",
+                                                            target: assortment.id,
+                                                            items: items,
+                                                            meta: {
+                                                            }
+                                                        })
+                                                    }}
+                                                >
                                                     下移
                                                 </AnchorButton>
                                             }

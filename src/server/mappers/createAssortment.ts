@@ -19,7 +19,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             reason: "Don't know you"
         }
     }
-    const owner = request.meta?.asUser;
+    const owner = request.meta?.operator;
     if (!owner) {
         return {
             type: "GenericError",

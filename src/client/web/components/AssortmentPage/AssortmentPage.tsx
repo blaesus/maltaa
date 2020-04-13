@@ -53,6 +53,7 @@ export function AssortmentPage(props: {
                                             article={article}
                                             author={author}
                                             hoverPreview={true}
+                                            onClick={() => dispatch({type: "ViewArticle", article: article.id})}
                                         />
                                         <div>
                                             {item.note}

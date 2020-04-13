@@ -91,9 +91,6 @@ export function AssortmentEditor(props: {
                         upstreams: [],
                         contentType: contentType,
                         items: [],
-                        meta: {
-                            asUser: owner.id,
-                        }
                     })
                 }}
             >

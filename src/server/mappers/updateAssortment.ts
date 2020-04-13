@@ -18,7 +18,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             reason: "Don't know you"
         }
     }
-    const user = request.meta?.asUser;
+    const user = request.meta?.operator;
     if (!user) {
         return {
             type: "GenericError",

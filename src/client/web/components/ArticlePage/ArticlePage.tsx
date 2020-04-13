@@ -136,9 +136,6 @@ export function ArticlePage(props: {
                                             id: article.id,
                                             note: "",
                                         },
-                                        meta: {
-                                            asUser: item.myEditors[0],
-                                        }
                                     });
                                 }}>
                                     加入{item.assortment.title}

@@ -1,8 +1,8 @@
 import { ArticleSort } from "../sorts";
-import {Article, ArticleId, UserId, UserPublic, Comment, Preferences, AccountSelf, AccountId} from "./data-types";
-import {PageName} from "../client/web/states/uiReducer";
-import {AuthToken} from "./authToken";
-import {Assortment, AssortmentId, AssortmentItem, AssortmentContentType, MattersEntityType} from "./assortment";
+import { AccountId, AccountSelf, Article, ArticleId, Comment, Preferences, UserId, UserPublic } from "./data-types";
+import { PageName } from "../client/web/states/uiReducer";
+import { AuthToken } from "./authToken";
+import { Assortment, AssortmentContentType, AssortmentId, AssortmentItem, MattersEntityType } from "./assortment";
 import { AssortmentUIIdentifier } from "../client/web/uiUtils";
 
 export interface BaseMeta {
@@ -13,6 +13,8 @@ export interface BaseMeta {
     token?: AuthToken | null
 
     account?: AccountId,
+
+    operator?: UserId | null,
 }
 
 export interface BaseAction<ExtraMeta = {}> {
@@ -132,7 +134,7 @@ export interface GetMyData extends BaseAction {
     type: "GetMyData",
 }
 
-export interface CreateAssortment extends BaseAction<{asUser?: UserId}> {
+export interface CreateAssortment extends BaseAction {
     type: "CreateAssortment"
     title: string,
     subpath: string,
@@ -141,7 +143,7 @@ export interface CreateAssortment extends BaseAction<{asUser?: UserId}> {
     items: AssortmentItem[],
 }
 
-export interface UpdateAssortmentAddItem extends BaseAction<{asUser?: UserId}> {
+export interface UpdateAssortmentAddItem extends BaseAction {
     type: "UpdateAssortment",
     operation: "AddItem",
     target: AssortmentId,
@@ -153,7 +155,7 @@ export interface UpdateAssortmentAddItem extends BaseAction<{asUser?: UserId}> {
     }
 }
 
-export interface UpdateAssortmentOrderItems extends BaseAction<{asUser?: UserId}> {
+export interface UpdateAssortmentOrderItems extends BaseAction {
     type: "UpdateAssortment",
     operation: "OrderItems",
     target: AssortmentId,
@@ -198,6 +200,6 @@ export type MaltaaAction =
     | UpdateAssortment
     | Signin
     | ViewAssortment
-;
+    ;
 
 

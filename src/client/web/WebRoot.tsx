@@ -65,8 +65,15 @@ function WebRoot(props: {
     function dispatchWithRemote(action: MaltaaAction) {
         localDispatch(action);
         if (remoteActions.includes(action.type)) {
-            maltaaApi.action(action)
-                .then(answer => localDispatch(answer));
+            const request: MaltaaAction = {
+                ...action,
+                meta: {
+                    ...action.meta,
+                    acid: Math.random().toString(36).slice(2),
+                    operator: state.preferences.identity.operator,
+                }
+            };
+            maltaaApi.action(request).then(answer => localDispatch(answer));
         }
     }
 

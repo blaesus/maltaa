@@ -47,7 +47,6 @@ export function ArticleSummary(props: {
                     {article.derived.appreciationAmount}讚
                 </span>
             </span>
-
             {
                 hoverPreview && extend &&
                 <ArticlePreview article={article}/>

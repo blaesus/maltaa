@@ -72,16 +72,9 @@ export const maltaaApi = {
         }
     },
     async action(action: MaltaaAction): Promise<MaltaaAction> {
-        const request: MaltaaAction = {
-            ...action,
-            meta: {
-                ...action.meta,
-                acid: Math.random().toString(36).slice(2),
-            }
-        };
         const response = await fetch(`/api/action?type=${action.type}`, {
             method: "POST",
-            body: JSON.stringify(request),
+            body: JSON.stringify(action),
         });
         return response.json();
     }

@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import "./AssortmentSummary.css"
+
 import { Assortment } from "../../../../definitions/assortment";
 import { assortmentUrl, getAnchorClickHandler } from "../../uiUtils";
 import { assortmentNames } from "../../../../utils";
@@ -21,11 +23,13 @@ export function AssortmentSummary(props: {
     return (
         <AnchorButton
             key={assortment.id}
+            className="AssortmentSummary"
             href={url}
             onClick={getAnchorClickHandler(onClick)}
         >
-            {assortmentNames[assortment.contentType]}
+            {owner?.displayName}/
             {assortment.title}
+            【{assortmentNames[assortment.contentType]}】
         </AnchorButton>
     )
 }

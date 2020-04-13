@@ -35,6 +35,7 @@ const remoteActions: MaltaaAction["type"][] = [
     "UpdateAssortment",
     "ViewAssortment",
     "Signin",
+    "SetMyPreferences",
 ];
 
 const pageOptions: OptionList<PageName> = [

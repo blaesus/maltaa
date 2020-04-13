@@ -16,6 +16,7 @@ import { signin } from "./mappers/signin";
 
 import { isMattersArticleUrl } from "../matters-specifics";
 import { daysAgoInEpoch, daysToMs, dedupe, last } from "../utils";
+import { setMyPreferences } from "./mappers/setMyPreferences";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -195,6 +196,9 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
         }
         case "Signin": {
             return signin(request);
+        }
+        case "SetMyPreferences": {
+            return setMyPreferences(request);
         }
         default: {
             return {

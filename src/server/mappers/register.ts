@@ -104,6 +104,9 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
         }
         account.mattersIds.push(myMattersId);
         account.mattersIds = account.mattersIds.filter(dedupe);
+        if (!account.preferences.identity.operator) {
+            account.preferences.identity.operator = myMattersId;
+        }
         await db.account.upsert(account);
         return {
             type: "ProvideEntities",
@@ -120,6 +123,7 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
         const {account, token} = await makeAccount({username, password, preferences});
         account.mattersIds.push(myMattersId);
         account.mattersIds = account.mattersIds.filter(dedupe);
+        account.preferences.identity.operator = myMattersId;
         await db.account.upsert(account);
         await db.token.upsert(token);
         return {

@@ -38,17 +38,14 @@ export function AssortmentEditor(props: {
 
     if (!owner) {
         return (
-            <div className="AssortmentEditor">
-                缺少用戶數據 {state.preferences.identity.operator}
-            </div>
-        )
-    }
-    return (
-        <div className="AssortmentEditor">
             <OperatorSelector
                 state={state}
                 dispatch={dispatch}
             />
+        )
+    }
+    return (
+        <div className="AssortmentEditor">
             {
                 me &&
                 <Chooser

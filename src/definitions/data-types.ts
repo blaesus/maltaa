@@ -314,7 +314,7 @@ export interface Preferences {
     },
 
     privacy: {
-        doNotTrack: boolean,
+        doNotTrack: 0 | 1 | null,
     },
 }
 

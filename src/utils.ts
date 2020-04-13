@@ -166,7 +166,7 @@ export function getFallbackPreferences(): Preferences {
         },
 
         privacy: {
-            doNotTrack: false,
+            doNotTrack: null,
         },
     }
 }

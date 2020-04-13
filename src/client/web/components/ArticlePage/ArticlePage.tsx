@@ -159,11 +159,7 @@ export function ArticlePage(props: {
                 }
                 {
                     state.preferences.articles.showArticleDevInfo &&
-                    <>
-                        <div>id {article.id}</div>
-                        <div>mediaHash {article.mediaHash}</div>
-                        <div>dataHash {article.dataHash}</div>
-                    </>
+                    <code><pre>{JSON.stringify(article)}</pre></code>
                 }
             </footer>
 

@@ -112,6 +112,12 @@ export interface Register extends BaseAction {
     preferences?: Preferences,
 }
 
+export interface Signin extends BaseAction {
+    type: "Signin",
+    username: string,
+    password: string,
+}
+
 export interface SearchResultArticleRedirect extends BaseAction {
     type: "SearchResultArticleRedirect",
     id: ArticleId,
@@ -190,6 +196,7 @@ export type MaltaaAction =
     | Signout
     | GenericOk
     | UpdateAssortment
+    | Signin
     | ViewAssortment
 ;
 

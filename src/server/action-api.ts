@@ -1,20 +1,21 @@
-import { v4 as uuidv4 } from "uuid";
+import * as URL from "url";
 
-import { Account, Article, Privileges, UserId } from "../definitions/data-types";
 import { db } from "./db";
-import {daysAgoInEpoch, daysToMs, dedupe, getFallbackPreferences, last} from "../utils";
+
+import { Article } from "../definitions/data-types";
 import { MaltaaAction } from "../definitions/actions";
 import { ArticleSort } from "../sorts";
-import { findCommentsUnderArticle } from "./restlike-api";
-import { spiderCommander } from "./spider-commander";
-import * as URL from "url";
-import { isMattersArticleUrl } from "../matters-specifics";
-import {register} from "./mappers/register";
-import {createAssortment} from "./mappers/createAssortment";
-import {signout} from "./mappers/signout";
+
+import { register } from "./mappers/register";
+import { createAssortment } from "./mappers/createAssortment";
+import { signout } from "./mappers/signout";
 import { viewArticle } from "./mappers/viewArticle";
 import { updateAssortment } from "./mappers/updateAssortment";
 import { viewAssortment } from "./mappers/viewAssortment";
+import { signin } from "./mappers/signin";
+
+import { isMattersArticleUrl } from "../matters-specifics";
+import { daysAgoInEpoch, daysToMs, dedupe, last } from "../utils";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -70,7 +71,7 @@ async function getPodiumData(params: {
     return {
         articles,
         users,
-    }
+    };
 }
 
 export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> {
@@ -94,13 +95,13 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
                     data: {
                         users: [user],
                     },
-                }
+                };
             }
             else {
                 return {
                     type: "GenericError",
                     reason: "user not found",
-                }
+                };
             }
         }
         case "ViewArticle": {
@@ -115,14 +116,14 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
                 return {
                     type: "GenericError",
                     reason: "I don't know you",
-                }
+                };
             }
             const me = await db.account.findById(account);
             if (!me) {
                 return {
                     type: "GenericError",
                     reason: "I can't find you",
-                }
+                };
             }
             const myUsers = await db.user.findByIds(me.mattersIds);
             const myAssortments = await db.assortment.findByOwners(me.mattersIds);
@@ -132,8 +133,8 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
                     me,
                     users: myUsers,
                     assortments: myAssortments,
-                }
-            }
+                },
+            };
         }
         case "CreateAssortment": {
             return createAssortment(request);
@@ -156,32 +157,32 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
                 if (!pathname) {
                     return {
                         type: "GenericError",
-                        reason: "No subpath"
-                    }
+                        reason: "No subpath",
+                    };
                 }
                 else {
                     const segments = pathname.split("/");
                     const [_, userSegment, articleSegment] = segments;
-                    const mediaHash = last(articleSegment.split('-'));
+                    const mediaHash = last(articleSegment.split("-"));
                     if (!mediaHash) {
                         return {
                             type: "GenericError",
-                            reason: "Can't find media hash"
-                        }
+                            reason: "Can't find media hash",
+                        };
                     }
                     else {
                         const article = (await db.article.findActiveByMHs([mediaHash]))[0];
                         if (!article) {
                             return {
                                 type: "GenericError",
-                                reason: "Can't find article"
-                            }
+                                reason: "Can't find article",
+                            };
                         }
                         else {
                             return {
                                 type: "SearchResultArticleRedirect",
                                 id: article.id,
-                            }
+                            };
                         }
                     }
                 }
@@ -189,14 +190,17 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
 
             return {
                 type: "GenericError",
-                reason: "unknown type"
-            }
+                reason: "unknown type",
+            };
+        }
+        case "Signin": {
+            return signin(request);
         }
         default: {
             return {
                 type: "GenericError",
-                reason: "unknown type"
-            }
+                reason: "unknown type",
+            };
         }
     }
 }

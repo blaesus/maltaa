@@ -42,6 +42,13 @@ export function Dialogs(props: {
                             externalPlatform: "matters",
                         })
                     }}
+                    onSignin={(username, password) => {
+                        dispatch({
+                            type: "Signin",
+                            username,
+                            password,
+                        })
+                    }}
                 />
             }
             {

@@ -1,44 +1,14 @@
 import { dedupe, getFallbackPreferences, protectAccountFromSelf } from "../../utils";
 import {db} from "../db";
-import {Account, PasswordRecord, Preferences, Privileges} from "../../definitions/data-types";
+import { Account, PasswordRecord, Preferences, Privileges, ScryptRecord } from "../../definitions/data-types";
 import { v4 as uuidv4 } from "uuid";
 import {MaltaaAction, Register} from "../../definitions/actions";
-import {randomString} from "../serverUtils";
-import {SCRYPT_KEYLEN, SCRYPT_SALT_LENGTH} from "../../settings";
-import {BinaryLike, scrypt} from "crypto";
+import { createToken, hashPassword, randomString } from "../serverUtils";
 import {getMyId, loginToMatters} from "../matters-graphq-api";
 import {AuthToken} from "../../definitions/authToken";
-import {Token} from "graphql";
 import {spiderCommander} from "../spider-commander";
+import { SCRYPT_KEYLEN, SCRYPT_SALT_LENGTH } from "../../settings";
 
-async function scryptAsync(
-    password: BinaryLike,
-    salt: BinaryLike,
-    keylen: number,
-): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-        scrypt(password, salt, keylen, (error, derivedKey) => {
-            if (error) {
-                reject(error)
-            }
-            else {
-                resolve(derivedKey)
-            }
-        })
-    })
-}
-
-async function hashPassword(password: string): Promise<PasswordRecord> {
-    const salt = randomString(SCRYPT_SALT_LENGTH);
-    const keylen = SCRYPT_KEYLEN;
-    const hash = (await scryptAsync(password, salt, keylen)).toString("hex");
-    return {
-        type: "scrypt",
-        hash,
-        salt,
-        keylen,
-    }
-}
 
 async function makeAccount(params: {
     username: string,
@@ -48,23 +18,25 @@ async function makeAccount(params: {
     const {username, password, preferences} = params;
     const accountPreferences = preferences || getFallbackPreferences();
     const privileges: Privileges[] = ["normal"];
+    const salt = await randomString(SCRYPT_SALT_LENGTH);
+    const passwordHash = await hashPassword(password, salt, SCRYPT_KEYLEN);
+    const passwordRecord: ScryptRecord = {
+        type: "scrypt",
+        hash: passwordHash,
+        keylen: SCRYPT_KEYLEN,
+        salt,
+    }
     const account: Account = {
         id: uuidv4(),
         username,
         privileges,
         preferences: accountPreferences,
-        password: await hashPassword(password),
+        password: passwordRecord,
         mattersIds: [],
         mattersTokens: {},
         publicKeys: [],
     };
-    const token: AuthToken = {
-        id: uuidv4(),
-        holder: account.id,
-        secret: randomString(32),
-        valid: true,
-        created: Date.now(),
-    };
+    const token: AuthToken = createToken(account.id);
     return {
         account,
         token,

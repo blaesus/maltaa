@@ -5,6 +5,7 @@ import {MaltaaDispatch} from "../../uiUtils";
 import { useState } from "react";
 import { AuthenticateDialog } from "./AuthenticateDialog";
 import { AuthForm } from "./AuthForm";
+import { USER_URL_SIGIL } from "../../../../settings";
 
 export function MeDialog(props: {
     me: AccountSelf | null,
@@ -24,13 +25,18 @@ export function MeDialog(props: {
         <div className="MeDialog">
             <div>
                 已連接的Matters賬戶
+                <ol>
                 {
-                    me.mattersIds.map(id => (
-                        <div key={id}>
-                            {id}
-                        </div>
-                    ))
+                    me.mattersIds.map(id => {
+                        const user = users[id];
+                        return (
+                            <li key={id}>
+                                {user.displayName}({USER_URL_SIGIL}{user.userName})
+                            </li>
+                        )
+                    })
                 }
+                </ol>
                 <AnchorButton
                     onClick={() => setConnecting(true)}
                 >

@@ -163,7 +163,11 @@ export function getFallbackPreferences(): Preferences {
 
         identity: {
             operator: null,
-        }
+        },
+
+        privacy: {
+            doNotTrack: false,
+        },
     }
 }
 

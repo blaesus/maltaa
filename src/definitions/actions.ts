@@ -6,15 +6,23 @@ import { Assortment, AssortmentContentType, AssortmentId, AssortmentItem, Matter
 import { AssortmentUIIdentifier } from "../client/web/uiUtils";
 
 export interface BaseMeta {
+
     request?: MaltaaAction,
+
     // Action client ID, for servers to deduplicate.
     acid?: string,
 
+    // Assigned by server to be transformed into cookie
     token?: AuthToken | null
 
+    // Assigned by server authenticator
     account?: AccountId,
 
+    // Specified by client to claim which Matters User as operator
     operator?: UserId | null,
+
+    // Specified by client
+    doNotTrack?: boolean,
 }
 
 export interface BaseAction<ExtraMeta = {}> {

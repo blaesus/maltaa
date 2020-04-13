@@ -311,7 +311,11 @@ export interface Preferences {
 
     identity: {
         operator: UserId | null,
-    }
+    },
+
+    privacy: {
+        doNotTrack: boolean,
+    },
 }
 
 export interface SiteConfig {

@@ -8,6 +8,7 @@ import { API_PORT } from "./server-configs";
 import { MaltaaAction } from "../definitions/Actions";
 import { respond } from "./action-api";
 import { Article, ArticleId, Comment } from "../definitions/Article";
+import { TOKEN_LIFE } from "../settings";
 
 function getEntityRequestHandler<T>(
     idFieldName: string,
@@ -132,6 +133,10 @@ async function handleAction(context: Koa.Context, next: any) {
         }
         const token = await db.token.findById(targetTokenId);
         if (!token) {
+            return request;
+        }
+        const now = Date.now();
+        if (now - token.created > TOKEN_LIFE) {
             return request;
         }
         const claimedSecret = context.cookies.get(AUTH_TOKEN_SECRET_KEY);

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { AuthToken } from "../definitions/AuthToken";
 import { AccountId } from "../definitions/MaltaaAccount";
 
-import { SCRYPT_KEYLEN } from "../settings";
+import { SCRYPT_KEYLEN, TOKEN_LENGTH } from "../settings";
 
 export const btoa = (s: string) => Buffer.from(s).toString("base64");
 export const atob = (s: string) => Buffer.from(s, "base64").toString();
@@ -42,7 +42,7 @@ export function createToken(holder: AccountId): AuthToken {
     return {
         id: uuidv4(),
         holder,
-        secret: randomString(32),
+        secret: randomString(TOKEN_LENGTH),
         valid: true,
         created: Date.now(),
     };

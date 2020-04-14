@@ -1,5 +1,5 @@
-import { MaltaaAction, ViewAssortment } from "../../definitions/actions";
-import { Assortment, AssortmentIdentifier } from "../../definitions/assortment";
+import { MaltaaAction, ViewAssortment } from "../../definitions/Actions";
+import { Assortment, AssortmentIdentifier } from "../../definitions/Assortment";
 import { db } from "../db";
 import { Article, UserPublic } from "../../definitions/data-types";
 import { dedupeById } from "../../utils";

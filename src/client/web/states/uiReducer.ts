@@ -1,4 +1,4 @@
-import { MaltaaAction, ProvideEntities } from "../../../definitions/actions";
+import { MaltaaAction, ProvideEntities } from "../../../definitions/Actions";
 import { ArticleSort } from "../../../sorts";
 import { ArticleId, Preferences } from "../../../definitions/data-types";
 import { AssortmentUIIdentifier, parsePathName } from "../uiUtils";

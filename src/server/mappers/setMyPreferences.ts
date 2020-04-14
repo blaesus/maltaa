@@ -1,5 +1,5 @@
 import { db } from "../db";
-import { MaltaaAction, SetMyPreferences } from "../../definitions/actions";
+import { MaltaaAction, SetMyPreferences } from "../../definitions/Actions";
 
 export async function setMyPreferences(request: SetMyPreferences): Promise<MaltaaAction> {
     const accountId = request?.meta?.account;

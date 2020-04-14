@@ -1,4 +1,4 @@
-import {AccountId} from "./data-types";
+import { AccountId } from "./MaltaaAccount";
 
 export type AuthTokenId = string;
 

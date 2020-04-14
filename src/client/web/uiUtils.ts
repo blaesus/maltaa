@@ -1,11 +1,11 @@
 import { MouseEvent } from "react";
 import { THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
-import {articleIdToSerial, articleSerialToId} from "../../matters-specifics";
+import {articleIdToSerial, articleSerialToId} from "../../mattersSpecifics";
 import { ArticleId, Preferences, UserId } from "../../definitions/data-types";
 import {assortmentPrefix, assortmentTypes} from "../../utils";
-import { MaltaaAction } from "../../definitions/actions";
+import { MaltaaAction } from "../../definitions/Actions";
 import {ClientUIState} from "./states/uiReducer";
-import { Assortment, AssortmentContentType, AssortmentIdentifier } from "../../definitions/assortment";
+import { Assortment, AssortmentContentType, AssortmentIdentifier } from "../../definitions/Assortment";
 import { ClientState } from "./states/reducer";
 
 export interface AssortmentUIIdentifier extends Omit<AssortmentIdentifier, "owner"> {

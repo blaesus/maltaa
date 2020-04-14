@@ -5,7 +5,7 @@ import "./Podium.css"
 
 import { PodiumPageState } from "../../states/uiReducer";
 import { ClientState } from "../../states/reducer";
-import { MaltaaAction } from "../../../../definitions/actions";
+import { MaltaaAction } from "../../../../definitions/Actions";
 
 import { ArticleList } from "../ArticleList/ArticleList";
 import { PodiumPeriodChooser, PodiumSortChooser } from "../PreferenceChoosers";

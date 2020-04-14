@@ -1,25 +1,14 @@
 import { Db, MongoClient } from "mongodb";
-import {
-    Account,
-    AccountId,
-    Article,
-    ArticleId,
-    Comment,
-    CommentId,
-    SiteConfig,
-    SpiderRecord,
-    SpiderRecordEntity,
-    SpiderState,
-    Tag,
-    TagId,
-    Transaction,
-    TransactionMaltaaId,
-    UserId,
-    UserPublic,
-} from "../definitions/data-types";
-import { AuthToken, AuthTokenId } from "../definitions/authToken";
-import { Assortment, AssortmentId, AssortmentIdentifier } from "../definitions/assortment";
-import { Activity } from "../definitions/activity";
+import { AuthToken, AuthTokenId } from "../definitions/AuthToken";
+import { Assortment, AssortmentId, AssortmentIdentifier } from "../definitions/Assortment";
+import { Activity } from "../definitions/Activity";
+import { Article, ArticleId, Comment, CommentId, UserId } from "../definitions/Article";
+import { Transaction, TransactionMaltaaId } from "../definitions/Transaction";
+import { UserPublic } from "../definitions/User";
+import { SpiderRecord, SpiderRecordEntity, SpiderState } from "../definitions/Spider";
+import { SiteConfig } from "../definitions/SiteConfig";
+import { Tag, TagId } from "../definitions/Tag";
+import { AccountId, MaltaaAccount } from "../definitions/MaltaaAccount";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -547,24 +536,24 @@ const mongodb = {
         },
     },
     account: {
-        async upsert(account: Account) {
+        async upsert(account: MaltaaAccount) {
             return mainDB && await mainDB.collection("accounts").replaceOne(
                 {id: account.id},
                 account,
                 {upsert: true},
             );
         },
-        async findByUserName(username: string): Promise<Account | null> {
+        async findByUserName(username: string): Promise<MaltaaAccount | null> {
             return mainDB && mainDB.collection("accounts").findOne({
                 username,
             });
         },
-        async findById(id: AccountId): Promise<Account | null> {
+        async findById(id: AccountId): Promise<MaltaaAccount | null> {
             return mainDB && mainDB.collection("accounts").findOne({
                 id,
             });
         },
-        async findByMattersId(id: UserId): Promise<Account | null> {
+        async findByMattersId(id: UserId): Promise<MaltaaAccount | null> {
             return mainDB && mainDB.collection("accounts").findOne({
                 "matters.id": id,
             });

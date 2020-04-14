@@ -1,4 +1,4 @@
-import { MaltaaAction } from "./actions";
+import { MaltaaAction } from "./Actions";
 
 export type ActivityId = string;
 

@@ -1,5 +1,5 @@
 import { db } from "../db";
-import {CreateAssortment, MaltaaAction, Signout} from "../../definitions/actions";
+import {CreateAssortment, MaltaaAction, Signout} from "../../definitions/Actions";
 
 export async function signout(request: Signout): Promise<MaltaaAction> {
     const account = request?.meta?.account;

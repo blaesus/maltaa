@@ -1,10 +1,10 @@
-import { MaltaaAction } from "../../../definitions/actions";
+import { MaltaaAction } from "../../../definitions/Actions";
 import {ClientUIState, getInitialUIState, uiReducer} from "./uiReducer";
 import { preferencesReducer } from "./preferencesReducer";
 import {entitiesReducer, EntitiesState, getInitialEntitiesState} from "./entitiesReducer";
 import { crossPostReducer, crossPreReducer } from "./crossReducer";
 import { getFallbackPreferences } from "../../../utils";
-import {Preferences} from "../../../definitions/data-types";
+import { Preferences } from "../../../definitions/Preferences";
 
 export interface ClientState {
     entities: EntitiesState,

@@ -4,10 +4,10 @@ import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
 import { db } from "./db";
 import { fetchArticle, fetchTag, fetchUser } from "./matters-graphq-api";
-import { Article, ArticleId, Comment } from "../definitions/data-types";
 import { API_PORT } from "./server-configs";
-import { MaltaaAction } from "../definitions/actions";
+import { MaltaaAction } from "../definitions/Actions";
 import { respond } from "./action-api";
+import { Article, ArticleId, Comment } from "../definitions/Article";
 
 function getEntityRequestHandler<T>(
     idFieldName: string,

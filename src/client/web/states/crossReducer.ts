@@ -1,4 +1,4 @@
-import { MaltaaAction } from "../../../definitions/actions";
+import { MaltaaAction } from "../../../definitions/Actions";
 import { ClientState } from "./reducer";
 import { AssortmentUIIdentifier } from "../uiUtils";
 

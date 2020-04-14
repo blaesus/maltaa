@@ -1,5 +1,7 @@
-import { Account, AccountSelf, ObjectMap, ObjectWithId, Preferences } from "./definitions/data-types";
-import { AssortmentContentType } from "./definitions/assortment";
+import { AssortmentContentType } from "./definitions/Assortment";
+import { ObjectMap, ObjectWithId } from "./definitions/data-types";
+import { AccountSelf, MaltaaAccount } from "./definitions/MaltaaAccount";
+import { Preferences } from "./definitions/Preferences";
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -171,7 +173,7 @@ export function getFallbackPreferences(): Preferences {
     }
 }
 
-export function protectAccountFromSelf(account: Account): AccountSelf {
+export function protectAccountFromSelf(account: MaltaaAccount): AccountSelf {
     return {
         id: account.id,
         username: account.username,

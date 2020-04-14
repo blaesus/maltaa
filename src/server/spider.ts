@@ -19,7 +19,7 @@ import {
     tagSerialToId,
     userIdToSerial,
     userSerialToId,
-} from "../matters-specifics";
+} from "../mattersSpecifics";
 import {atob, btoa} from "./serverUtils"
 import { SPIDER_COMMAND_PORT } from "./server-configs";
 

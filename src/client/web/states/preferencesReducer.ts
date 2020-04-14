@@ -1,4 +1,4 @@
-import { MaltaaAction } from "../../../definitions/actions";
+import { MaltaaAction } from "../../../definitions/Actions";
 import { Preferences } from "../../../definitions/data-types";
 
 export function preferencesReducer(preferences: Preferences, action: MaltaaAction): Preferences {

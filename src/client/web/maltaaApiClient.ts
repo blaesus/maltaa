@@ -1,4 +1,4 @@
-import {MaltaaAction} from "../../definitions/actions";
+import {MaltaaAction} from "../../definitions/Actions";
 
 export const maltaaApi = {
     async action(action: MaltaaAction): Promise<MaltaaAction> {

@@ -11,7 +11,7 @@ import {
 } from "../../../../../definitions/data-types";
 import "./CommentTree.css";
 import {commentSorts} from "../../../../../sorts";
-import {commentIdToSerial} from "../../../../../matters-specifics";
+import {commentIdToSerial} from "../../../../../mattersSpecifics";
 import {Byline} from "../../Byline/Byline";
 import {HtmlRender} from "../../HtmlRender/HtmlRender";
 import { heuristicallyShouldIndent } from "./shouldIndent";

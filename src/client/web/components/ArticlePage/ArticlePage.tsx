@@ -3,10 +3,9 @@ import { useEffect } from "react";
 
 import "./ArticlePage.css"
 
-import { ArticleId } from "../../../../definitions/data-types";
-import { MaltaaAction } from "../../../../definitions/actions";
+import { MaltaaAction } from "../../../../definitions/Actions";
 import { ArticleSort } from "../../../../sorts";
-import { Assortment } from "../../../../definitions/assortment";
+import { Assortment } from "../../../../definitions/Assortment";
 import { ClientState } from "../../states/reducer";
 
 import { CommentTree } from "./CommentTree/CommentTree";
@@ -16,8 +15,9 @@ import { Divider } from "./Divider/Divider";
 import { StreamList } from "./StreamList/StreamList";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 
-import { mattersArticleUrl } from "../../../../matters-specifics";
+import { mattersArticleUrl } from "../../../../mattersSpecifics";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
+import { ArticleId } from "../../../../definitions/Article";
 
 
 export function ArticlePage(props: {

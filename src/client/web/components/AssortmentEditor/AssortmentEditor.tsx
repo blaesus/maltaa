@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { UserId, UserPublic } from "../../../../definitions/data-types";
 import { ClientState } from "../../states/reducer";
-import { AssortmentContentType } from "../../../../definitions/assortment";
+import { AssortmentContentType } from "../../../../definitions/Assortment";
 
 import { Chooser } from "../Chooser/Chooser";
 

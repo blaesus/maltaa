@@ -2,7 +2,7 @@ import * as React from "react";
 
 import "./AssortmentSummary.css"
 
-import { Assortment } from "../../../../definitions/assortment";
+import { Assortment } from "../../../../definitions/Assortment";
 import { assortmentUrl, getAnchorClickHandler } from "../../uiUtils";
 import { assortmentNames } from "../../../../utils";
 import { ObjectMap, UserPublic } from "../../../../definitions/data-types";

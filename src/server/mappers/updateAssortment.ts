@@ -1,7 +1,7 @@
 import { db } from "../db";
 
-import { MaltaaAction, UpdateAssortment } from "../../definitions/actions";
-import { MattersEntity, MattersEntityType } from "../../definitions/assortment";
+import { MaltaaAction, UpdateAssortment } from "../../definitions/Actions";
+import { MattersEntity, MattersEntityType } from "../../definitions/Assortment";
 
 export async function updateAssortment(request: UpdateAssortment): Promise<MaltaaAction> {
     const accountId = request?.meta?.account;

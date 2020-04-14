@@ -1,9 +1,9 @@
-import { MaltaaAction, ViewArticle } from "../../definitions/actions";
+import { MaltaaAction, ViewArticle } from "../../definitions/Actions";
 import { db } from "../db";
 import { spiderCommander } from "../spider-commander";
-import { Article, UserId } from "../../definitions/data-types";
 import { findCommentsUnderArticle } from "../restlike-api";
 import { dedupe } from "../../utils";
+import { Article, UserId } from "../../definitions/Article";
 
 export async function viewArticle(request: ViewArticle): Promise<MaltaaAction> {
     const article = await db.article.findActiveById(request.article);

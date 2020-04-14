@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AccountId } from "../definitions/data-types";
 import { SCRYPT_KEYLEN } from "../settings";
-import { AuthToken } from "../definitions/authToken";
+import { AuthToken } from "../definitions/AuthToken";
 
 export const btoa = (s: string) => Buffer.from(s).toString("base64");
 export const atob = (s: string) => Buffer.from(s, "base64").toString();

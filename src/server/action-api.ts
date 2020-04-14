@@ -2,8 +2,8 @@ import * as URL from "url";
 
 import { db } from "./db";
 
-import { Article } from "../definitions/data-types";
-import { MaltaaAction } from "../definitions/actions";
+import { MaltaaAction } from "../definitions/Actions";
+import { Article } from "../definitions/Article";
 import { ArticleSort } from "../sorts";
 
 import { register } from "./mappers/register";
@@ -14,7 +14,7 @@ import { updateAssortment } from "./mappers/updateAssortment";
 import { viewAssortment } from "./mappers/viewAssortment";
 import { signin } from "./mappers/signin";
 
-import { isMattersArticleUrl } from "../matters-specifics";
+import { isMattersArticleUrl } from "../mattersSpecifics";
 import { daysAgoInEpoch, daysToMs, dedupe, last } from "../utils";
 import { setMyPreferences } from "./mappers/setMyPreferences";
 

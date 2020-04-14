@@ -1,7 +1,7 @@
 import * as React from "react";
 import {ArticleSummary} from "../ArticleSummary/ArticleSummary";
 import "./ArticleList.css";
-import { MaltaaAction } from "../../../../definitions/actions";
+import { MaltaaAction } from "../../../../definitions/Actions";
 import { daysAgoInEpoch } from "../../../../utils";
 import { articleSorts } from "../../../../sorts";
 import {ClientState} from "../../states/reducer";

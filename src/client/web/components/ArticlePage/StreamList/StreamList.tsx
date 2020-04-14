@@ -5,7 +5,7 @@ import "./StreamList.css";
 
 import { Article, ObjectMap, UserId, UserPublic } from "../../../../../definitions/data-types";
 import { ArticleSort, articleSorts } from "../../../../../sorts";
-import { MaltaaAction } from "../../../../../definitions/actions";
+import { MaltaaAction } from "../../../../../definitions/Actions";
 import { ArticleSummary } from "../../ArticleSummary/ArticleSummary";
 import { AnchorButton } from "../../AnchorButton/AnchorButton";
 

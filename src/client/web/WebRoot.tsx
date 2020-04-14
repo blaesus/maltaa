@@ -8,7 +8,7 @@ import "./normalize.css"
 import "./WebRoot.css"
 
 import { PageName } from "./states/uiReducer";
-import { MaltaaAction } from "../../definitions/actions";
+import { MaltaaAction } from "../../definitions/Actions";
 import { ClientState, getInitialClientState, reducer } from "./states/reducer";
 
 import { ArticlePage } from "./components/ArticlePage/ArticlePage";

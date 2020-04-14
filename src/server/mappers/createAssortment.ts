@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../db";
 
-import { CreateAssortment, MaltaaAction } from "../../definitions/actions";
-import { Assortment } from "../../definitions/assortment";
+import { CreateAssortment, MaltaaAction } from "../../definitions/Actions";
+import { Assortment } from "../../definitions/Assortment";
 
 export async function createAssortment(request: CreateAssortment): Promise<MaltaaAction> {
     const accountId = request?.meta?.account;

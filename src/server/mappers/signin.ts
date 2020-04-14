@@ -1,5 +1,5 @@
 import {db} from "../db";
-import { MaltaaAction, Signin } from "../../definitions/actions";
+import { MaltaaAction, Signin } from "../../definitions/Actions";
 import { createToken, hashPassword } from "../serverUtils";
 
 export async function signin(request: Signin): Promise<MaltaaAction> {

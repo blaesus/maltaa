@@ -1,9 +1,11 @@
 import { ArticleSort } from "../sorts";
-import { AccountId, AccountSelf, Article, ArticleId, Comment, Preferences, UserId, UserPublic } from "./data-types";
 import { PageName } from "../client/web/states/uiReducer";
-import { AuthToken } from "./authToken";
-import { Assortment, AssortmentContentType, AssortmentId, AssortmentItem, MattersEntityType } from "./assortment";
+import { AuthToken } from "./AuthToken";
+import { Assortment, AssortmentContentType, AssortmentId, AssortmentItem, MattersEntityType } from "./Assortment";
 import { AssortmentUIIdentifier } from "../client/web/uiUtils";
+import { AccountId, AccountSelf } from "./MaltaaAccount";
+import { Article, Comment, UserId } from "./Article";
+import { UserPublic } from "./User";
 
 export interface BaseMeta {
 

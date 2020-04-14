@@ -22,7 +22,7 @@ export interface BaseMeta {
     operator?: UserId | null,
 
     // Specified by client
-    doNotTrack?: boolean,
+    doNotTrack?: 0 | 1 | null,
 }
 
 export interface BaseAction<ExtraMeta = {}> {

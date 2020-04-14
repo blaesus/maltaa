@@ -14,10 +14,11 @@ import { dedupe, last, SECOND, sleep } from "../utils";
 // appreciations: bafyreifckcbis24jqthtjxq7b52h7s2os5oszlkrhb4pdrzl3i53avdgma
 // comments: zdpuApwK98VnSKQS4ucPeWWzQf852wPHg7dAaNB2Bf5VCkvGd
 
-const EDGE_REQUEST_LIMIT = 100;
-const EDGE_REQUEST_INTERVAL = 0.5 * SECOND;
+const EDGE_COUNT_PER_REQUEST = 100;
+const LOW_EDGE_COUNT_PER_REQUEST = 10;
 
-const EDGE_REQUEST_LOW_LIMIT = 10;
+const EDGE_REQUEST_INTERVAL = 0.1 * SECOND;
+const DEFAULT_EDGE_REQUEST_TIMEOUT = 20 * SECOND;
 
 function deepClean<T extends any>(obj: T, undesirableField: string): T {
     if (Array.isArray(obj)) {
@@ -88,31 +89,31 @@ function enforceStringOrNull(input: any): string | null {
 async function fetchAllEdges<N>(
     seedEdges: Edge<N>[],
     getNewEdges: (cursor: string) => Promise<Edge<N>[]>,
+    maxEdgeFetchTimeMs: number = DEFAULT_EDGE_REQUEST_TIMEOUT,
 ): Promise<Edge<N>[]> {
     let edges = [...seedEdges];
 
-    if (edges.length === EDGE_REQUEST_LIMIT) {
-        let lastCursor = last(edges)?.cursor;
-        if (!lastCursor) {
-            return edges;
+    let lastCursor = last(edges)?.cursor;
+    if (!lastCursor) {
+        return edges;
+    }
+    let start = Date.now();
+    while (true) {
+        await sleep(EDGE_REQUEST_INTERVAL);
+        const newEdges = await getNewEdges(lastCursor);
+        if (!newEdges.length) {
+            break;
         }
-        while (true) {
-            await sleep(EDGE_REQUEST_INTERVAL);
-            const newEdges = await getNewEdges(lastCursor);
-            if (!newEdges.length) {
-                break;
-            }
-            edges = [
-                ...edges,
-                ...newEdges,
-            ];
-            lastCursor = last(edges)?.cursor;
-            if (!lastCursor) {
-                break;
-            }
-            if (newEdges.length < EDGE_REQUEST_LIMIT) {
-                break;
-            }
+        edges = [
+            ...edges,
+            ...newEdges,
+        ];
+        lastCursor = last(edges)?.cursor;
+        if (!lastCursor) {
+            break;
+        }
+        if (Date.now() - start > maxEdgeFetchTimeMs) {
+            break;
         }
     }
 
@@ -216,7 +217,7 @@ function commentEdgeGql(after?: string) {
     return `
       comments(input: {
         sort: newest,
-        first: ${EDGE_REQUEST_LIMIT},
+        first: ${EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
       }) {
       totalCount,
@@ -247,7 +248,7 @@ function commentEdgeGql(after?: string) {
 function appreciationEdgeGql(after?: string) {
     return `
     appreciationsReceived(input: {
-        first: ${EDGE_REQUEST_LIMIT},
+        first: ${EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
     }) {
         totalCount,
@@ -268,7 +269,7 @@ function appreciationEdgeGql(after?: string) {
 function collectionEdgeGql(after?: string) {
     return `
     collection(input: {
-        first: ${EDGE_REQUEST_LIMIT},
+        first: ${EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
     }) {
         totalCount,
@@ -285,7 +286,7 @@ function collectionEdgeGql(after?: string) {
 function relatedArticlesEdgeGql(after?: string) {
     return `
     relatedArticles(input: {
-        first: ${EDGE_REQUEST_LIMIT},
+        first: ${EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
     }) {
         totalCount,
@@ -302,7 +303,7 @@ function relatedArticlesEdgeGql(after?: string) {
 function subscribersEdgeGql(after?: string) {
     return `
     subscribers(input: {
-        first: ${EDGE_REQUEST_LIMIT},
+        first: ${EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
     }) {
         totalCount,
@@ -319,7 +320,7 @@ function subscribersEdgeGql(after?: string) {
 function featuredCommentsEdgeGql(after?: string) {
     return `
     featuredComments(input: {
-        first: ${EDGE_REQUEST_LOW_LIMIT},
+        first: ${LOW_EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
     }) {
         totalCount,
@@ -637,7 +638,7 @@ function userBasicsGql() {
 function followeeEdgeGql(after?: string) {
     return `
     followees(input: {
-        first: ${EDGE_REQUEST_LIMIT},
+        first: ${EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
     }) {
         totalCount,
@@ -654,7 +655,7 @@ function followeeEdgeGql(after?: string) {
 function followerEdgeGql(after?: string) {
     return `
       followers(input: {
-          first: ${EDGE_REQUEST_LIMIT},
+          first: ${EDGE_COUNT_PER_REQUEST},
           ${after ? `after: "${after}"` : ""}
       }) {
         totalCount,
@@ -671,7 +672,7 @@ function followerEdgeGql(after?: string) {
 function articlesEdgeGql(after?: string) {
     return `
     articles(input: {
-        first: ${EDGE_REQUEST_LIMIT},
+        first: ${EDGE_COUNT_PER_REQUEST},
         ${after ? `after: "${after}"` : ""}
     }) {
         totalCount,

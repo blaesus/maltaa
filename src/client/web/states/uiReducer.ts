@@ -37,12 +37,12 @@ export interface UserPageState {
 
 export type PageName =
     "podium"
-    | "explore"
+    | "organs"
     | "article"
     | "user"
     | "assortment"
 
-export interface ExplorePageState {
+export interface OrgansPageState {
 
 }
 
@@ -55,7 +55,7 @@ export type PagesState = {
     podium: PodiumPageState,
     article: ArticlePageState,
     user: UserPageState,
-    explore: ExplorePageState,
+    organs: OrgansPageState,
     assortment: AssortmentPageState,
 }
 
@@ -80,7 +80,7 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             user: {
                 name: "",
             },
-            explore: {},
+            organs: {},
             assortment: {
                 identifier: null,
             },

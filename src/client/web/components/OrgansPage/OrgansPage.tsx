@@ -8,14 +8,14 @@ import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { AssortmentEditor } from "../AssortmentEditor/AssortmentEditor";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 
-export function ExplorePage(props: {
+export function OrgansPage(props: {
     state: ClientState,
     dispatch: MaltaaDispatch
 }) {
     const {state, dispatch} = props;
     const [creatingAssortment, setCreatingAssortment] = useState(false);
 
-    if (state.ui.pages.current !== "explore") {
+    if (state.ui.pages.current !== "organs") {
         return null;
     }
     return (

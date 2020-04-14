@@ -159,7 +159,7 @@ export function ArticlePage(props: {
                 }
                 {
                     state.preferences.articles.showArticleDevInfo &&
-                    <code><pre>{JSON.stringify(article)}</pre></code>
+                    <pre className="ArticleDevInfo"><code>{JSON.stringify(article, null, 4)}</code></pre>
                 }
             </footer>
 

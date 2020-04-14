@@ -48,7 +48,7 @@ export function promiseWithTimeout<T>(timeoutInMs: number, promise: Promise<T>):
         const id = setTimeout(
             () => {
                 clearTimeout(id);
-                reject(timeoutInMs)
+                reject(new Error(`time out in ${timeoutInMs}`))
             },
             timeoutInMs
         );

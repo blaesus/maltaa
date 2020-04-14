@@ -393,9 +393,9 @@ async function scan() {
         serialUserIndexer(),
         serialTagIndexer(),
         obsoleteIndexer(),
-        ...parallel(articleFetcher, 8),
-        ...parallel(userFetcher, 8),
-        ...parallel(tagFetcher, 8),
+        ...parallel(articleFetcher, 4),
+        ...parallel(userFetcher, 4),
+        ...parallel(tagFetcher, 4),
     ]);
 }
 

@@ -3,7 +3,8 @@ import { db } from "../db";
 import { spiderCommander } from "../spider-commander";
 import { findCommentsUnderArticle } from "../restlike-api";
 import { dedupe } from "../../utils";
-import { Article, UserId } from "../../definitions/Article";
+import { Article } from "../../definitions/Article";
+import { UserId } from "../../definitions/User";
 
 export async function viewArticle(request: ViewArticle): Promise<MaltaaAction> {
     const article = await db.article.findActiveById(request.article);

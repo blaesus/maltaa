@@ -1,5 +1,5 @@
-import { } from "./data-types";
-import { ArticleId, UserId } from "./Article";
+import { ArticleId } from "./Article";
+import { UserId } from "./User";
 
 export type MattersEntityType = "article" | "user"
 

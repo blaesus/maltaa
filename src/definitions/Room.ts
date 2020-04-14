@@ -1,4 +1,4 @@
-import { UserId } from "./Article";
+import { UserId } from "./User";
 
 export type RoomId = string;
 

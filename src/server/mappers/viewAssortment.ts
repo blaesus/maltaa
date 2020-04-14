@@ -1,7 +1,9 @@
 import { MaltaaAction, ViewAssortment } from "../../definitions/Actions";
 import { Assortment, AssortmentIdentifier } from "../../definitions/Assortment";
+import { Article } from "../../definitions/Article";
+import { UserPublic } from "../../definitions/User";
+
 import { db } from "../db";
-import { Article, UserPublic } from "../../definitions/data-types";
 import { dedupeById } from "../../utils";
 
 export async function viewAssortment(request: ViewAssortment): Promise<MaltaaAction> {

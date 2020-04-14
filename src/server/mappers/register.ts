@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { MaltaaAction, Register } from "../../definitions/Actions";
 import { AuthToken } from "../../definitions/AuthToken";
 import { Preferences } from "../../definitions/Preferences";
-import { Privileges, ScryptRecord } from "../../definitions/MaltaaAccount";
+import { MaltaaAccount, Privileges, ScryptRecord } from "../../definitions/MaltaaAccount";
 
 import { db } from "../db";
 import { getMyId, loginToMatters } from "../matters-graphq-api";
@@ -18,7 +18,7 @@ async function makeAccount(params: {
     username: string,
     password: string,
     preferences?: Preferences,
-}): Promise<{ account: Account, token: AuthToken }> {
+}): Promise<{ account: MaltaaAccount, token: AuthToken }> {
     const {username, password, preferences} = params;
     const accountPreferences = preferences || getFallbackPreferences();
     const privileges: Privileges[] = ["normal"];
@@ -30,7 +30,7 @@ async function makeAccount(params: {
         keylen: SCRYPT_KEYLEN,
         salt,
     };
-    const account: Account = {
+    const account: MaltaaAccount = {
         id: uuidv4(),
         username,
         privileges,

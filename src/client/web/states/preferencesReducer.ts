@@ -1,5 +1,5 @@
 import { MaltaaAction } from "../../../definitions/Actions";
-import { Preferences } from "../../../definitions/data-types";
+import { Preferences } from "../../../definitions/Preferences";
 
 export function preferencesReducer(preferences: Preferences, action: MaltaaAction): Preferences {
     switch (action.type) {

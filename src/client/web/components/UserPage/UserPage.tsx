@@ -1,10 +1,14 @@
 import * as React from "react";
-import { UserId, UserPublic } from "../../../../definitions/data-types";
+
+import "./UserPage.css";
+
+import { UserId, UserPublic } from "../../../../definitions/User";
+
+import { AnchorButton } from "../AnchorButton/AnchorButton";
+
 import { USER_URL_SIGIL } from "../../../../settings";
 import { readableDateTime } from "../../../../utils";
 
-import "./UserPage.css";
-import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 export function UserPage(props: {
     user?: UserPublic,

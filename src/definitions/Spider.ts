@@ -1,5 +1,6 @@
-import { TagId } from "./data-types";
-import { ArticleId, UserId } from "./Article";
+import { ArticleId } from "./Article";
+import { TagId } from "./Tag";
+import { UserId } from "./User";
 
 export interface SpiderRecordEntityArticle {
     type: "article",

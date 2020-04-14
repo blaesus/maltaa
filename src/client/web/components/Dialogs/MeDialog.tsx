@@ -1,7 +1,10 @@
 import * as React from "react";
 import { useState } from "react";
 
-import { AccountSelf, ObjectMap, UserPublic } from "../../../../definitions/data-types";
+import { AccountSelf } from "../../../../definitions/MaltaaAccount";
+import { ObjectMap } from "../../../../definitions/Objects";
+import { UserPublic } from "../../../../definitions/User";
+
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { MaltaaDispatch } from "../../uiUtils";
 import { AuthForm } from "./AuthForm";

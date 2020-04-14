@@ -1,5 +1,5 @@
 import { AssortmentContentType } from "./definitions/Assortment";
-import { ObjectMap, ObjectWithId } from "./definitions/data-types";
+import { ObjectMap, ObjectWithId } from "./definitions/Objects";
 import { AccountSelf, MaltaaAccount } from "./definitions/MaltaaAccount";
 import { Preferences } from "./definitions/Preferences";
 

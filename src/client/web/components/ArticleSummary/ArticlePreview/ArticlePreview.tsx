@@ -3,9 +3,8 @@ import { useRef, useState } from "react";
 
 import "./ArticlePreview.css";
 
-import { Article } from "../../../../../definitions/data-types";
-
 import { HtmlRender } from "../../HtmlRender/HtmlRender";
+import { Article } from "../../../../../definitions/Article";
 
 export function ArticlePreview(props: {
     article: Article,

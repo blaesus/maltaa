@@ -5,8 +5,9 @@ import "./AssortmentSummary.css"
 import { Assortment } from "../../../../definitions/Assortment";
 import { assortmentUrl, getAnchorClickHandler } from "../../uiUtils";
 import { assortmentNames } from "../../../../utils";
-import { ObjectMap, UserPublic } from "../../../../definitions/data-types";
+import { ObjectMap } from "../../../../definitions/Objects";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
+import { UserPublic } from "../../../../definitions/User";
 
 export function AssortmentSummary(props: {
     assortment: Assortment,

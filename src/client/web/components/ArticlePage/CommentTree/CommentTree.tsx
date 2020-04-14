@@ -1,14 +1,4 @@
 import * as React from "react";
-import {
-    Article,
-    ArticleId,
-    Comment,
-    CommentId,
-    ObjectMap,
-    Preferences,
-    UserId,
-    UserPublic
-} from "../../../../../definitions/data-types";
 import "./CommentTree.css";
 import {commentSorts} from "../../../../../sorts";
 import {commentIdToSerial} from "../../../../../mattersSpecifics";
@@ -17,6 +7,10 @@ import {HtmlRender} from "../../HtmlRender/HtmlRender";
 import { heuristicallyShouldIndent } from "./shouldIndent";
 import { AnchorButton } from "../../AnchorButton/AnchorButton";
 import {INFINITY_JSON} from "../../../../../utils";
+import { Article, ArticleId, CommentId, Comment } from "../../../../../definitions/Article";
+import { ObjectMap } from "../../../../../definitions/Objects";
+import { UserId, UserPublic } from "../../../../../definitions/User";
+import { Preferences } from "../../../../../definitions/Preferences";
 
 type DisplayMode = "peek" | "extend-all" | "fold";
 

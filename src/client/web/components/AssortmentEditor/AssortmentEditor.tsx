@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useState } from "react";
 
-import { UserId, UserPublic } from "../../../../definitions/data-types";
 import { ClientState } from "../../states/reducer";
 import { AssortmentContentType } from "../../../../definitions/Assortment";
+import { UserPublic } from "../../../../definitions/User";
 
 import { Chooser } from "../Chooser/Chooser";
 
@@ -21,7 +21,7 @@ const entityTypeOptions: OptionList<AssortmentContentType> = [
     },
     {
         value: "mixed",
-        label: "雜燴"
+        label: "什錦"
     },
 ];
 

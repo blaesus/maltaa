@@ -1,7 +1,8 @@
 import { MaltaaAction, ProvideEntities } from "../../../definitions/Actions";
 import { ArticleSort } from "../../../sorts";
-import { ArticleId, Preferences } from "../../../definitions/data-types";
 import { AssortmentUIIdentifier, parsePathName } from "../uiUtils";
+import { ArticleId } from "../../../definitions/Article";
+import { Preferences } from "../../../definitions/Preferences";
 
 export interface PaginationStatus {
     nextPage: number,

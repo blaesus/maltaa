@@ -4,8 +4,9 @@ import { AuthToken } from "./AuthToken";
 import { Assortment, AssortmentContentType, AssortmentId, AssortmentItem, MattersEntityType } from "./Assortment";
 import { AssortmentUIIdentifier } from "../client/web/uiUtils";
 import { AccountId, AccountSelf } from "./MaltaaAccount";
-import { Article, Comment, UserId } from "./Article";
-import { UserPublic } from "./User";
+import { Article, ArticleId, Comment } from "./Article";
+import { UserId, UserPublic } from "./User";
+import { Preferences } from "./Preferences";
 
 export interface BaseMeta {
 

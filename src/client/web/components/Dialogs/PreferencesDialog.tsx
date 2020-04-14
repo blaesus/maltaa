@@ -1,12 +1,14 @@
 import * as React from "react";
 import "./PreferencesDialog.css";
-import { ObjectMap, Preferences, UserPublic } from "../../../../definitions/data-types";
+import { ObjectMap } from "../../../../definitions/Objects";
 import { PodiumSortChooser, PodiumPeriodChooser } from "../PreferenceChoosers";
 import {MaltaaDispatch, OptionList} from "../../uiUtils";
 import { Chooser } from "../Chooser/Chooser";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import {CommentSort} from "../../../../sorts";
 import {INFINITY_JSON} from "../../../../utils";
+import { Preferences } from "../../../../definitions/Preferences";
+import { UserPublic } from "../../../../definitions/User";
 
 const booleanOptions = [
     {

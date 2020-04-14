@@ -1,10 +1,14 @@
+import { v4 as uuidv4 } from "uuid";
 import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
+import * as fetch from "isomorphic-fetch";
 
-import * as fetch from "isomorphic-fetch"
+import { Article, ArticleId, Comment } from "../definitions/Article";
+import { UserId, UserPublic } from "../definitions/User";
+import { Transaction } from "../definitions/Transaction";
+import { Tag } from "../definitions/Tag";
+
 import { dedupe, last, SECOND, sleep } from "../utils";
-import {Article, ArticleId, Comment, CommentId, Tag, Transaction, UserId, UserPublic} from "../definitions/data-types";
-import { v4 as uuidv4 } from "uuid";
 
 // To test high edge,
 // appreciations: bafyreifckcbis24jqthtjxq7b52h7s2os5oszlkrhb4pdrzl3i53avdgma
@@ -21,7 +25,7 @@ function deepClean<T extends any>(obj: T, undesirableField: string): T {
     }
     else if (typeof obj === "object") {
         const result: T = {
-            ...obj
+            ...obj,
         };
         delete result[undesirableField];
         for (let key in result) {
@@ -45,7 +49,7 @@ const getApolloClient = () => new ApolloClient({
 });
 
 function enforceNumber(input: any, fallback = 0): number {
-    if (typeof input === "number")  {
+    if (typeof input === "number") {
         return input;
     }
     else {
@@ -54,7 +58,7 @@ function enforceNumber(input: any, fallback = 0): number {
 }
 
 function enforceNumberOrNull(input: any): number | null {
-    if (typeof input === "number")  {
+    if (typeof input === "number") {
         return input;
     }
     else {
@@ -63,9 +67,8 @@ function enforceNumberOrNull(input: any): number | null {
 }
 
 
-
 function enforceString(input: any, fallback = ""): string {
-    if (typeof input === "string")  {
+    if (typeof input === "string") {
         return input;
     }
     else {
@@ -74,7 +77,7 @@ function enforceString(input: any, fallback = ""): string {
 }
 
 function enforceStringOrNull(input: any): string | null {
-    if (typeof input === "string")  {
+    if (typeof input === "string") {
         return input;
     }
     else {
@@ -84,9 +87,9 @@ function enforceStringOrNull(input: any): string | null {
 
 async function fetchAllEdges<N>(
     seedEdges: Edge<N>[],
-    getNewEdges: (cursor: string) => Promise<Edge<N>[]>
+    getNewEdges: (cursor: string) => Promise<Edge<N>[]>,
 ): Promise<Edge<N>[]> {
-    let edges = [ ...seedEdges ];
+    let edges = [...seedEdges];
 
     if (edges.length === EDGE_REQUEST_LIMIT) {
         let lastCursor = last(edges)?.cursor;
@@ -156,23 +159,21 @@ interface ArticleSummaryResponse {
     }
 }
 
-export type ArticleDigest = Pick<
-    Article,
-    "id"
->
+export type ArticleDigest = Pick<Article,
+    "id">
 
 export async function fetchArticleIds(
     count: number,
     mode: ArticleQueryMode = "newest",
     cursor?: string | null,
-): Promise<{ids: ArticleId[], lastCursor: string | null}> {
+): Promise<{ ids: ArticleId[], lastCursor: string | null }> {
     const client = getApolloClient();
     const response = await client.query<ArticleSummaryResponse>({
         query: getArticleDigestQuery(mode),
         variables: {
             first: count,
             after: cursor,
-        }
+        },
     });
     const edges = response.data.viewer.recommendation[mode]?.edges;
     if (!edges) {
@@ -208,7 +209,7 @@ function articleBasicGql() {
     tags {
       id
     }
-`
+`;
 }
 
 function commentEdgeGql(after?: string) {
@@ -240,7 +241,7 @@ function commentEdgeGql(after?: string) {
         }
       }
     }
-    `
+    `;
 }
 
 function appreciationEdgeGql(after?: string) {
@@ -261,7 +262,7 @@ function appreciationEdgeGql(after?: string) {
             }
         }
     }
-    `
+    `;
 }
 
 function collectionEdgeGql(after?: string) {
@@ -278,7 +279,7 @@ function collectionEdgeGql(after?: string) {
             }
         }
     }
-    `
+    `;
 }
 
 function relatedArticlesEdgeGql(after?: string) {
@@ -295,7 +296,7 @@ function relatedArticlesEdgeGql(after?: string) {
             }
         }
     }
-    `
+    `;
 }
 
 function subscribersEdgeGql(after?: string) {
@@ -312,7 +313,7 @@ function subscribersEdgeGql(after?: string) {
             }
         }
     }
-    `
+    `;
 }
 
 function featuredCommentsEdgeGql(after?: string) {
@@ -329,7 +330,7 @@ function featuredCommentsEdgeGql(after?: string) {
             }
         }
     }
-    `
+    `;
 }
 
 function pinnedComments() {
@@ -337,7 +338,7 @@ function pinnedComments() {
     pinnedComments {
         id,
     }
-    `
+    `;
 }
 
 
@@ -386,7 +387,7 @@ query($id: ID!) {
 `;
 }
 
-interface CommentResponseNode extends Omit<Comment, "author"| "replyTarget" | "parent" | "rootPost" | "derived"> {
+interface CommentResponseNode extends Omit<Comment, "author" | "replyTarget" | "parent" | "rootPost" | "derived"> {
     author: {
         id: string
     },
@@ -401,8 +402,7 @@ interface CommentResponseNode extends Omit<Comment, "author"| "replyTarget" | "p
 }
 
 interface AppreciationResponseNode extends Omit<Transaction,
-    "mid" | "sender" | "createdAt" | "recipient" | "target"
-> {
+    "mid" | "sender" | "createdAt" | "recipient" | "target"> {
     sender: {
         id: string,
     },
@@ -411,11 +411,10 @@ interface AppreciationResponseNode extends Omit<Transaction,
 
 interface ArticleResponseFullNode extends Omit<Article,
     "author" | "comments" | "createdAt" | "tags" | "appreciations" | "upstreams" | "subscribers" | "derived"
-    | "featuredComments" | "pinnedComments"
-> {
+    | "featuredComments" | "pinnedComments"> {
     createdAt: string,
-    author: {id: string},
-    tags: {id: string}[],
+    author: { id: string },
+    tags: { id: string }[],
     comments: {
         totalCount: number,
         edges: Edge<CommentResponseNode>[],
@@ -426,21 +425,21 @@ interface ArticleResponseFullNode extends Omit<Article,
     },
     collection: {
         totalCount: number,
-        edges: Edge<{id: string}>[],
+        edges: Edge<{ id: string }>[],
     }
     relatedArticles: {
         totalCount: number,
-        edges: Edge<{id: string}>[],
+        edges: Edge<{ id: string }>[],
     }
     subscribers: {
         totalCount: number,
-        edges: Edge<{id: string}>[],
+        edges: Edge<{ id: string }>[],
     }
     featuredComments: {
         totalCount: number,
-        edges: Edge<{id: string}>[],
+        edges: Edge<{ id: string }>[],
     }
-    pinnedComments: {id: string}[]
+    pinnedComments: { id: string }[]
 
 }
 
@@ -474,14 +473,14 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
         query: articleGql(),
         variables: {
             id,
-        }
+        },
     });
     if (!response.data.node) {
-        return null
+        return null;
     }
-    const { node: articleResponse } = response.data;
+    const {node: articleResponse} = response.data;
 
-    const commentEdges = await fetchAllEdges(articleResponse.comments.edges, async function(cursor) {
+    const commentEdges = await fetchAllEdges(articleResponse.comments.edges, async function (cursor) {
         const response = await client.query<ArticleResponseCommentData>({
             query: articleGql({
                 basics: false,
@@ -490,7 +489,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
             }),
             variables: {
                 id,
-            }
+            },
         });
         if (!response.data.node) {
             return [];
@@ -509,7 +508,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
         derived: {
             upvotes: edge.node.upvotes,
             downvotes: edge.node.downvotes,
-        }
+        },
     })).map(deepCleanTypename);
 
     for (const c of comments) {
@@ -521,7 +520,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
 
     const appreciationsEdges = await fetchAllEdges(
         articleResponse.appreciationsReceived.edges,
-        async function(cursor) {
+        async function (cursor) {
             const response = await client.query<ArticleResponseAppreciationData>({
                 query: articleGql({
                     basics: false,
@@ -530,7 +529,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
                 }),
                 variables: {
                     id,
-                }
+                },
             });
             if (!response.data.node) {
                 return [];
@@ -538,12 +537,12 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
             else {
                 return response.data.node.appreciationsReceived.edges;
             }
-        }
+        },
     );
 
     const subscriberEdges = await fetchAllEdges(
         articleResponse.subscribers.edges,
-        async function(cursor) {
+        async function (cursor) {
             const response = await client.query<ArticleResponseSubscribersData>({
                 query: articleGql({
                     basics: false,
@@ -552,7 +551,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
                 }),
                 variables: {
                     id,
-                }
+                },
             });
             if (!response.data.node) {
                 return [];
@@ -560,7 +559,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
             else {
                 return response.data.node.subscribers.edges;
             }
-        }
+        },
     );
 
     const transactions: Transaction[] = appreciationsEdges.map(edge => ({
@@ -588,7 +587,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
             appreciationAmount: transactions.map(tx => tx.amount).reduce((sum, v) => sum + v, 0),
             appreciators: transactions.map(tx => tx.sender).filter(dedupe).length,
             featuredComments: articleResponse.featuredComments.edges.map(edge => edge.node.id),
-        }
+        },
     });
 
     delete (article as any)["relatedArticles"];
@@ -600,7 +599,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
         ...comments.map(comment => comment.author),
         ...transactions.map(tx => tx.sender),
         ...article.subscribers,
-        article.author
+        article.author,
     ].filter(dedupe);
 
     // Inherited from response
@@ -632,7 +631,7 @@ function userBasicsGql() {
         unreadFolloweeArticles,
         unreadResponseInfoPopUp,
       }
-    `
+    `;
 }
 
 function followeeEdgeGql(after?: string) {
@@ -649,7 +648,7 @@ function followeeEdgeGql(after?: string) {
           }
         }
       }
-    `
+    `;
 }
 
 function followerEdgeGql(after?: string) {
@@ -666,7 +665,7 @@ function followerEdgeGql(after?: string) {
           }
         }   
       }
-    `
+    `;
 }
 
 function articlesEdgeGql(after?: string) {
@@ -683,7 +682,7 @@ function articlesEdgeGql(after?: string) {
           }
         }
       }
-    `
+    `;
 }
 
 
@@ -726,15 +725,15 @@ interface UserResponseNode extends Omit<UserPublic, "followees" | "info"> {
     }
     articles: {
         totalCount: number,
-        edges: Edge<{id: string}>[],
+        edges: Edge<{ id: string }>[],
     }
     followees: {
         totalCount: number,
-        edges: Edge<{id: string}>[],
+        edges: Edge<{ id: string }>[],
     }
     followers: {
         totalCount: number,
-        edges: Edge<{id: string}>[],
+        edges: Edge<{ id: string }>[],
     }
 }
 
@@ -763,7 +762,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
         query: userGql(),
         variables: {
             id,
-        }
+        },
     });
 
     const userResponse = response.data.node;
@@ -771,7 +770,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
         return null;
     }
 
-    const followeeEdges = await fetchAllEdges(userResponse.followees.edges, async function(cursor) {
+    const followeeEdges = await fetchAllEdges(userResponse.followees.edges, async function (cursor) {
         const response = await client.query<UserFolloweeResponse>({
             query: userGql({
                 followees: true,
@@ -779,7 +778,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
             }),
             variables: {
                 id,
-            }
+            },
         });
         if (!response.data.node) {
             return [];
@@ -791,7 +790,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
 
     const followees: UserId[] = followeeEdges.map(edge => edge.node.id);
 
-    const followerEdges = await fetchAllEdges(userResponse.followers.edges, async function(cursor) {
+    const followerEdges = await fetchAllEdges(userResponse.followers.edges, async function (cursor) {
         const response = await client.query<UserFollowerResponse>({
             query: userGql({
                 followers: true,
@@ -799,7 +798,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
             }),
             variables: {
                 id,
-            }
+            },
         });
         if (!response.data.node) {
             return [];
@@ -820,7 +819,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
             description: enforceString(userResponse.info.description),
             agreeOn: +new Date(userResponse.info.agreeOn),
             profileCover: enforceStringOrNull(userResponse.info.profileCover),
-        }
+        },
     });
     const mentionedUsers = [
         ...userResponse.followers.edges.map(edge => edge.node.id),
@@ -891,7 +890,7 @@ export async function fetchTag(id: string): Promise<TagFetchData | null> {
             query: fetchOneTag,
             variables: {
                 id,
-            }
+            },
         });
 
         const tagResponse = response.data.node;
@@ -903,14 +902,13 @@ export async function fetchTag(id: string): Promise<TagFetchData | null> {
             createdAt: +new Date(tagResponse.createdAt),
         });
         return {entity: tag};
-    }
-    catch (error) {
+    } catch (error) {
         const typedError = error as GraphQLErrorResponse;
         if (typedError.graphQLErrors) {
             const firstError = typedError.graphQLErrors[0];
             if (firstError) {
                 if (firstError.message === "target does not exist") {
-                    return null
+                    return null;
                 }
             }
         }
@@ -936,7 +934,7 @@ function userLoginMutation() {
 
 export async function loginToMatters(credential: {
     email: string, password: string
-}): Promise<{token: string} | null>  {
+}): Promise<{ token: string } | null> {
     const client = getApolloClient();
     const {email, password} = credential;
     try {
@@ -945,19 +943,18 @@ export async function loginToMatters(credential: {
             variables: {
                 email,
                 password,
-            }
+            },
         });
         if (response.data) {
             return {
-                token: response.data.userLogin.token
+                token: response.data.userLogin.token,
             };
         }
         else {
             return null;
         }
-    }
-    catch (error) {
-        return null
+    } catch (error) {
+        return null;
     }
 }
 
@@ -974,22 +971,21 @@ interface MyIdResponse {
     }
 }
 
-export async function getMyId(token: string): Promise<string | null>  {
+export async function getMyId(token: string): Promise<string | null> {
     try {
         const authedClient = new ApolloClient({
             uri: "https://server.matters.news/graphql",
             fetch,
             headers: {
                 "x-access-token": token,
-            }
+            },
         });
         const response = await authedClient.query<MyIdResponse>({
             query: myIdQuery,
         });
         return response.data.viewer.id;
-    }
-    catch (error) {
-        return null
+    } catch (error) {
+        return null;
     }
 }
 

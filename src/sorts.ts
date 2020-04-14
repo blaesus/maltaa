@@ -1,4 +1,4 @@
-import {Article, Comment} from "./definitions/data-types";
+import { Article, Comment } from "./definitions/Article";
 
 export type ArticleSort = "comments" | "recent" | "appreciationAmount"
 

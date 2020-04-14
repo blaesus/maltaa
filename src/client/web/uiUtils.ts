@@ -1,15 +1,15 @@
 import { MouseEvent } from "react";
 import { THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
-import {articleIdToSerial, articleSerialToId} from "../../mattersSpecifics";
-import { ArticleId, Preferences, UserId } from "../../definitions/data-types";
-import {assortmentPrefix, assortmentTypes} from "../../utils";
+import { articleIdToSerial, articleSerialToId } from "../../mattersSpecifics";
+import { assortmentPrefix, assortmentTypes } from "../../utils";
 import { MaltaaAction } from "../../definitions/Actions";
-import {ClientUIState} from "./states/uiReducer";
+import { ClientUIState } from "./states/uiReducer";
 import { Assortment, AssortmentContentType, AssortmentIdentifier } from "../../definitions/Assortment";
 import { ClientState } from "./states/reducer";
+import { Preferences } from "../../definitions/Preferences";
 
 export interface AssortmentUIIdentifier extends Omit<AssortmentIdentifier, "owner"> {
-    ownerUsername: UserId,
+    ownerUsername: string,
     contentType: AssortmentContentType
     subpath: string,
 }
@@ -47,8 +47,8 @@ export function parsePathName(pathName: string): PathState {
                             ownerUsername: username,
                             contentType: contentType,
                             subpath: decodeURIComponent(thirdSegment),
-                        }
-                    }
+                        },
+                    };
                 }
             }
         }
@@ -66,7 +66,7 @@ export function parsePathName(pathName: string): PathState {
 
 export function serializeToPathName(state: ClientUIState): string {
     if (state.pages.current === "user") {
-        return `/${USER_URL_SIGIL}${state.pages.user.name}`
+        return `/${USER_URL_SIGIL}${state.pages.user.name}`;
     }
     else if (state.pages?.current === "article" && state.pages.article.id) {
         return articleUrl(state.pages.article.id);
@@ -75,7 +75,7 @@ export function serializeToPathName(state: ClientUIState): string {
         return assortmentUrl(state.pages.assortment.identifier);
     }
     else {
-        return "/"
+        return "/";
     }
 }
 
@@ -87,7 +87,7 @@ export function getAnchorClickHandler(onClick?: () => void) {
                 onClick();
             }
         }
-    }
+    };
 }
 
 const PREFERENCES_KEY = "PREFERENCES";
@@ -98,15 +98,15 @@ export function loadStoredPreference(): Preferences | undefined {
         if (saved) {
             return JSON.parse(saved);
         }
+    } catch {
     }
-    catch {}
 }
 
 export function storePreference(preferences: Preferences) {
     try {
-        localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences))
+        localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences));
+    } catch {
     }
-    catch {}
 }
 
 export function getViewportWidth() {
@@ -115,7 +115,7 @@ export function getViewportWidth() {
 
 export type MaltaaDispatch = (action: MaltaaAction) => void;
 
-export type OptionList<Value = string> = {value: Value, label: string}[]
+export type OptionList<Value = string> = { value: Value, label: string }[]
 
 export function findAssortmentFromState(state: ClientState, identifier: AssortmentUIIdentifier): Assortment | null {
     const owner = Object.values(state.entities.users).find(u => u.userName === identifier.ownerUsername);
@@ -125,8 +125,8 @@ export function findAssortmentFromState(state: ClientState, identifier: Assortme
     const assortment = Object.values(state.entities.assortments).find(
         a => a.owner === owner.id
             && a.subpath === identifier.subpath
-            && a.contentType === identifier.contentType
-    )
+            && a.contentType === identifier.contentType,
+    );
     if (!assortment) {
         return null;
     }

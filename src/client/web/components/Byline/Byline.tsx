@@ -1,9 +1,10 @@
-import * as React from "react"
-import {AuthorTag} from "../AuthorTag/AuthorTag";
-import {UserPublic} from "../../../../definitions/data-types";
-import {TimeTag} from "../TimeTag/TimeTag";
-
+import * as React from "react";
 import "./Byline.css";
+
+import { UserPublic } from "../../../../definitions/User";
+import { AuthorTag } from "../AuthorTag/AuthorTag";
+import { TimeTag } from "../TimeTag/TimeTag";
+
 
 export function Byline(props: {
     author: UserPublic,
@@ -15,7 +16,7 @@ export function Byline(props: {
         <span className="Byline">
             <AuthorTag author={props.author} onClick={props.onAuthorClick}/>
             {" "}
-            <TimeTag time={props.publishTime} />
+            <TimeTag time={props.publishTime}/>
         </span>
-    )
+    );
 }

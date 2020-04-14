@@ -3,7 +3,8 @@ import { useCallback, useState } from "react";
 
 import "./ArticleSummary.css"
 
-import { Article, UserPublic } from "../../../../definitions/data-types";
+import { UserPublic } from "../../../../definitions/User";
+import { Article } from "../../../../definitions/Article";
 
 import { TimeTag } from "../TimeTag/TimeTag";
 import { AuthorTag } from "../AuthorTag/AuthorTag";

@@ -1,8 +1,8 @@
 import * as React from "react";
 import "./AuthorTag.css"
-import { UserPublic } from "../../../../definitions/data-types";
 import { USER_URL_SIGIL } from "../../../../settings";
 import { getAnchorClickHandler } from "../../uiUtils";
+import { UserPublic } from "../../../../definitions/User";
 
 export function AuthorTag(props: {
     author?: UserPublic | null,

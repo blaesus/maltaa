@@ -2,7 +2,7 @@ import { MaltaaAction } from "../../../definitions/Actions";
 import {mergeArray, newEmptyObject} from "../../../utils";
 import {Assortment} from "../../../definitions/Assortment";
 import { Article, Comment } from "../../../definitions/Article";
-import { ObjectMap } from "../../../definitions/data-types";
+import { ObjectMap } from "../../../definitions/Objects";
 import { UserPublic } from "../../../definitions/User";
 import { AccountSelf } from "../../../definitions/MaltaaAccount";
 

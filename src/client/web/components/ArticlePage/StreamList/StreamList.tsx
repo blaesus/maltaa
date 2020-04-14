@@ -3,11 +3,13 @@ import { useState } from "react";
 
 import "./StreamList.css";
 
-import { Article, ObjectMap, UserId, UserPublic } from "../../../../../definitions/data-types";
 import { ArticleSort, articleSorts } from "../../../../../sorts";
 import { MaltaaAction } from "../../../../../definitions/Actions";
 import { ArticleSummary } from "../../ArticleSummary/ArticleSummary";
 import { AnchorButton } from "../../AnchorButton/AnchorButton";
+import { Article } from "../../../../../definitions/Article";
+import { ObjectMap } from "../../../../../definitions/Objects";
+import { UserId, UserPublic } from "../../../../../definitions/User";
 
 export function StreamList(props: {
     label: string,

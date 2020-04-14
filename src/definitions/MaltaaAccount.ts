@@ -1,5 +1,5 @@
 import { Preferences } from "./Preferences";
-import { UserId } from "./Article";
+import { UserId } from "./User";
 
 interface TokenRecord {
     content: string,

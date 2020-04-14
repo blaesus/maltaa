@@ -1,10 +1,10 @@
 import { BinaryLike, randomBytes, scrypt } from "crypto";
-
 import { v4 as uuidv4 } from "uuid";
 
-import { AccountId } from "../definitions/data-types";
-import { SCRYPT_KEYLEN } from "../settings";
 import { AuthToken } from "../definitions/AuthToken";
+import { AccountId } from "../definitions/MaltaaAccount";
+
+import { SCRYPT_KEYLEN } from "../settings";
 
 export const btoa = (s: string) => Buffer.from(s).toString("base64");
 export const atob = (s: string) => Buffer.from(s, "base64").toString();
@@ -37,7 +37,6 @@ export async function hashPassword(
 ): Promise<string> {
     return (await scryptAsync(password, salt, keylen)).toString("base64");
 }
-
 
 export function createToken(holder: AccountId): AuthToken {
     return {

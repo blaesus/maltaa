@@ -1,4 +1,5 @@
-import { CommentId, UserId } from "./Article";
+import { CommentId } from "./Article";
+import { UserId } from "./User";
 
 interface ChatMessage {
     id: string,

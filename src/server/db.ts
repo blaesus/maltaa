@@ -1,10 +1,11 @@
 import { Db, MongoClient } from "mongodb";
+
 import { AuthToken, AuthTokenId } from "../definitions/AuthToken";
 import { Assortment, AssortmentId, AssortmentIdentifier } from "../definitions/Assortment";
 import { Activity } from "../definitions/Activity";
-import { Article, ArticleId, Comment, CommentId, UserId } from "../definitions/Article";
+import { Article, ArticleId, Comment, CommentId } from "../definitions/Article";
 import { Transaction, TransactionMaltaaId } from "../definitions/Transaction";
-import { UserPublic } from "../definitions/User";
+import { UserId, UserPublic } from "../definitions/User";
 import { SpiderRecord, SpiderRecordEntity, SpiderState } from "../definitions/Spider";
 import { SiteConfig } from "../definitions/SiteConfig";
 import { Tag, TagId } from "../definitions/Tag";

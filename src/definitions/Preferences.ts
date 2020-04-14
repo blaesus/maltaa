@@ -1,6 +1,6 @@
-import { ArticleSort } from "../sorts";
-import { LeveledCommentPreferences, TagId } from "./data-types";
-import { UserId } from "./Article";
+import { ArticleSort, CommentSort } from "../sorts";
+import { UserId } from "./User";
+import { TagId } from "./Tag";
 
 export interface Preferences {
     version: number,
@@ -41,5 +41,10 @@ export interface Preferences {
     privacy: {
         doNotTrack: 0 | 1 | null,
     },
+}
+
+export interface LeveledCommentPreferences {
+    sort: CommentSort,
+    displayThreshold: number,
 }
 

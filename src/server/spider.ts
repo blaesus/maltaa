@@ -3,6 +3,10 @@ import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
 import * as KoaRouter from "koa-router";
 import { argv } from "yargs";
+
+import { ArticleId } from "../definitions/Article";
+import { EntityState, SpiderState } from "../definitions/Spider";
+import { UserId } from "../definitions/User";
 import {
     ArticleQueryMode,
     fetchArticle,
@@ -10,9 +14,9 @@ import {
     fetchTag,
     fetchUser,
 } from "./matters-graphq-api";
+
 import { db } from "./db";
-import {DAY, dedupe, HOUR, MINUTE, promiseWithTimeout, range, SECOND, sleep} from "../utils";
-import { ArticleId, EntityState, SpiderRecordEntityArticle, SpiderState, TagId, UserId } from "../definitions/data-types";
+
 import {
     articleIdToSerial,
     articleSerialToId, tagIdToSerial,
@@ -22,6 +26,7 @@ import {
 } from "../mattersSpecifics";
 import {atob, btoa} from "./serverUtils"
 import { SPIDER_COMMAND_PORT } from "./server-configs";
+import {DAY, dedupe, HOUR, MINUTE, promiseWithTimeout, range, SECOND, sleep} from "../utils";
 
 const NEWEST_ARTICLE_INDEXER_INTERVAL = 10 * SECOND;
 const NEWEST_ARTICLE_INDEXER_INTERVAL_AFTER_EXHAUSTION = 60 * SECOND;

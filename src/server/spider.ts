@@ -400,8 +400,8 @@ async function crawl() {
         serialTagIndexer(),
         obsoleteIndexer(),
         ...parallel(articleFetcher, 4),
-        ...parallel(userFetcher, 4),
-        ...parallel(tagFetcher, 4),
+        ...parallel(userFetcher, 6),
+        ...parallel(tagFetcher, 6),
     ]);
 }
 

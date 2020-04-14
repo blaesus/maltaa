@@ -452,7 +452,6 @@ function launchCommandServer() {
         context.body = state;
         return next();
     });
-
     router.post("/articles/:id", async (context, next) => {
         const id = context.params.id;
         supplyIds([id], state.articles, true);
@@ -466,7 +465,6 @@ function launchCommandServer() {
         context.body = {};
         return next();
     });
-
     router.post("/users/:id", async (context, next) => {
         const id = context.params.id;
         supplyIds([id], state.users, true);

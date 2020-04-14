@@ -4,7 +4,8 @@ export type RoomId = string;
 
 interface Room {
     id: RoomId,
-    mattersArticleBaseId: string,
+    mattersArticleBaseId: string | null,
+    global: boolean,
     owner: UserId,
     admins: UserId[],
     name: string,

@@ -1,13 +1,11 @@
 import { ArticleSort, CommentSort } from "../sorts";
 import { UserId } from "./User";
-import { TagId } from "./Tag";
 
 export interface Preferences {
     version: number,
 
     data: {
         screenedUsers: UserId[],
-        screenedTags: TagId[],
         followedUsers: UserId[],
     }
 

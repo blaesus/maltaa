@@ -1,4 +1,5 @@
 import { UserId } from "./User";
+import { RoomId } from "./Room";
 
 export type ArticleId = string;
 export type CommentId = string
@@ -69,6 +70,7 @@ type License =
 
 export interface ArticleSupplement {
     license: License,
+    room: RoomId | null,
     canon: string | null,
     editors: UserId[],
     newVersions: {

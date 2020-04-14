@@ -2,7 +2,6 @@ import * as Koa from "koa";
 import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
 import * as KoaRouter from "koa-router";
-import { argv } from "yargs";
 
 import { ArticleId } from "../definitions/Article";
 import { EntityState, SpiderState } from "../definitions/Spider";

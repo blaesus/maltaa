@@ -40,6 +40,8 @@ const WEEKLY_NEWEST_RANGE = 7 * DAY;
 const WEEKLY_INDEXER_INTERVAL = 12 * HOUR;
 const WEEKLY_NEW_ARTICLE_STALE_LIMIT = 24 * HOUR;
 
+const DOWNLOAD_TIMEOUT = 10 * SECOND;
+
 const state: SpiderState = {
     type: "spider-state",
     entityId: "spider-state",
@@ -295,7 +297,7 @@ function makeFetcher(props: {
             console.info(`${entityName} fetcher ${fetcherName} fetching`, nextId);
             entityState.fetching.push(nextId);
             try {
-                await promiseWithTimeout(30000, download(nextId, downloadMentioned));
+                await promiseWithTimeout(DOWNLOAD_TIMEOUT, download(nextId, downloadMentioned));
                 console.info(`${entityName} fetch successfully fetched ${nextId}`);
                 entityState.fetching = entityState.fetching.filter(id => id !== nextId);
             }

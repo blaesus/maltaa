@@ -68,15 +68,18 @@ type License =
     | "CC0"
     ;
 
+type ArticleVersion = {
+    time: number,
+    content: string,
+    mediaHash: string,
+    editor: UserId,
+}
+
 export interface ArticleSupplement {
     license: License,
     room: RoomId | null,
     canon: string | null,
     editors: UserId[],
-    newVersions: {
-        time: number,
-        content: string,
-        editor: UserId,
-    }[],
+    newVersions: ArticleVersion[],
 }
 

@@ -255,6 +255,7 @@ function appreciationEdgeGql(after?: string) {
         edges {
             cursor,
             node {
+                createdAt,
                 amount,
                 sender {
                     id,

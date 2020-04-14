@@ -49,7 +49,6 @@ const pageOptions: OptionList<PageName> = [
     },
 ]
 
-
 const DEV = location.hostname === "localhost";
 
 function WebRoot(props: {

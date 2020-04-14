@@ -19,17 +19,18 @@ import {
 } from "../definitions/data-types";
 import { AuthToken, AuthTokenId } from "../definitions/authToken";
 import { Assortment, AssortmentId, AssortmentIdentifier } from "../definitions/assortment";
+import { Activity } from "../definitions/activity";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
 
 const mainDBName = "maltaa";
-const actionDBName = "maltaa_action";
+const activityDBName = "maltaaActivity";
 
-let clientToMain: MongoClient | null = null;
+let client: MongoClient | null = null;
 
 let mainDB: Db | null = null;
-let actionDB: Db | null = null;
+let activityDB: Db | null = null;
 
 interface ArticleQueryInternalParams {
     sortConditions: {},
@@ -96,14 +97,18 @@ function paramsConvert(sortConditions: {}, params: SortedArticleQueryParams): Ar
 const mongodb = {
     async connect() {
         const url = "mongodb://localhost:27017";
-        clientToMain = new MongoClient(url, {
+        client = new MongoClient(url, {
             useUnifiedTopology: true,
         });
-        await clientToMain.connect();
-        mainDB = clientToMain.db(mainDBName);
+        await client.connect();
+        mainDB = client.db(mainDBName);
+        activityDB = client.db(activityDBName);
     },
     async ensureIndices() {
         if (!mainDB) {
+            return;
+        }
+        if (!activityDB) {
             return;
         }
         {
@@ -171,6 +176,11 @@ const mongodb = {
                 "items.id": 1,
             });
         }
+
+        {
+            await activityDB.createIndex("activities", {id: 1}, {unique: true});
+        }
+
     },
     article: {
         async upsert(article: Article) {
@@ -624,6 +634,11 @@ const mongodb = {
         },
 
     },
+    activity: {
+        async insert(activity: Activity) {
+            return activityDB && await activityDB.collection("activities").insertOne({...activity});
+        },
+    },
 
     siteConfig: {
         async get(): Promise<SiteConfig | null> {
@@ -646,7 +661,7 @@ const mongodb = {
         },
     },
     async close() {
-        return clientToMain?.close();
+        return client?.close();
     },
 };
 

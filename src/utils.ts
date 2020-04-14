@@ -130,7 +130,6 @@ export function getFallbackPreferences(): Preferences {
 
         data: {
             screenedUsers: [],
-            screenedTags: [],
             followedUsers: [],
         },
 

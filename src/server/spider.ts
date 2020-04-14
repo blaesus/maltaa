@@ -387,7 +387,7 @@ function parallel(worker: (name: string) => Promise<void>, count: number): Promi
     return Array.from(Array(count)).map((_, index) => worker(index.toString()))
 }
 
-async function scan() {
+async function crawl() {
     setInterval(() => {
         reportState(state);
         saveSpiderState(state);
@@ -404,52 +404,6 @@ async function scan() {
         ...parallel(userFetcher, 4),
         ...parallel(tagFetcher, 4),
     ]);
-}
-
-async function userChecker(name: string) {
-    while (state.users.toFetch.length) {
-        await sleep(1000);
-        const id = state.users.toFetch[0];
-        state.users.toFetch.splice(0, 1);
-        console.info(`User checker ${name} checking`, id);
-        const matchUsers = await db.user.findByIds([id]);
-        if (!matchUsers.length) {
-            console.warn(`[!] No record for ${id}; downloading...`);
-            await downloadUser(id);
-        }
-        else {
-            const user = matchUsers[0];
-            const matchedFollowees = await db.user.findByIds(user.followees);
-            if (matchedFollowees.length < user.followees.length) {
-                const missedFollowees = user.followees
-                                            .filter(userId =>
-                                                matchedFollowees.every(userInDB => userInDB.id !== userId
-                                                ));
-                console.warn(`[!] User ${id} missing followees`, missedFollowees, "- downloading all");
-                for (const id of missedFollowees) {
-                    await downloadUser(id);
-                }
-            }
-        }
-    }
-
-}
-
-async function checkUsers(ids?: UserId[]) {
-    if (ids) {
-        state.users.toFetch = [...ids, ...state.users.toFetch];
-    }
-    else {
-        const ids = await db.user.getAllIds();
-        state.users.toFetch = [
-            ...ids,
-            ...state.users.toFetch
-        ].filter(dedupe);
-    }
-    await Promise.all([
-        ...parallel(userChecker, 32),
-    ]);
-
 }
 
 function reportState(spiderState: SpiderState) {
@@ -485,53 +439,6 @@ async function restoreSpiderState() {
 
 async function saveSpiderState(state: SpiderState) {
     return db.spiderRecord.saveSpiderState(state);
-}
-
-async function articleChecker(name: string) {
-    console.info(`Article checker ${name} launched`);
-    while (state.articles.toFetch.length) {
-        const id = state.articles.toFetch[0];
-        state.articles.toFetch.splice(0, 1);
-        const article = await db.article.findActiveById(id);
-        if (!article) {
-            console.warn(`Missing data for article ${id}, downloading...`);
-            await downloadArticle(id);
-        }
-        else {
-            const collectionArticles = await db.article.findActiveByIds(article.upstreams);
-            if (collectionArticles.length < article.upstreams.length) {
-                console.warn(`Missing collection articles for article ${id}, downloading...`);
-                const missingArticles = article.upstreams
-                                               .filter(id =>
-                                                   collectionArticles.every(
-                                                       articleInDB => articleInDB.id !== id
-                                                   ));
-                for (const id of missingArticles) {
-                    console.info(`Downloading article ${id}`);
-                    await downloadArticle(id);
-                }
-            }
-        }
-    }
-}
-
-async function checkArticles(ids?: ArticleId[]) {
-    if (ids) {
-        state.articles.toFetch = [
-            ...ids,
-            ...state.articles.toFetch,
-        ];
-    }
-    else {
-        const allIds = await db.article.getAllIds();
-        state.articles.toFetch = [
-            ...allIds,
-            ...state.articles.toFetch,
-        ];
-    }
-    await Promise.all([
-        ...parallel(articleChecker, 32),
-    ]);
 }
 
 function launchCommandServer() {
@@ -596,55 +503,23 @@ function launchCommandServer() {
     console.log(`Maltaa spider command server running at ${SPIDER_COMMAND_PORT}`);
 }
 
-async function main() {
+async function launchSpider() {
     await db.connect();
     await db.ensureIndices();
     await restoreSpiderState();
     reportState(state);
     launchCommandServer();
 
-    if (argv._[0] === "check") {
-        if (argv._[1] === "user") {
-            let checkTargetIds: string[] | undefined;
-            if (argv["serially"]) {
-                const serialEnd = Number(argv["serially"]) || 1;
-                checkTargetIds = Array.from(Array(serialEnd)).map((_, i) => i + 1).map(s => userSerialToId(s, btoa));
-            }
-            else if (argv._[2]) {
-                checkTargetIds = [argv._[2]];
-            }
-            else {
-                checkTargetIds = undefined;
-            }
-            await checkUsers(checkTargetIds);
-        }
-        else if (argv._[1] === "article") {
-            let checkTargetIds: ArticleId[] | undefined;
-            if (argv["serially"]) {
-                const serialEnd = Number(argv["serially"]) || 1;
-                checkTargetIds = Array.from(Array(serialEnd)).map((_, i) => i + 1).map((s) => articleSerialToId(s, btoa));
-            }
-            else if (argv._[2]) {
-                checkTargetIds = [argv._[2]];
-            }
-            else {
-                checkTargetIds = undefined;
-            }
-            await checkArticles(checkTargetIds);
-        }
-    }
-    else {
-        process.on('SIGINT', async (code) => {
-            await saveSpiderState(state);
-            console.log('Process exit event with code: ', code);
-        });
-        await scan();
-    }
+    process.on('SIGINT', async (code) => {
+        await saveSpiderState(state);
+        console.log('Process exit event with code: ', code);
+    });
+    await crawl();
     await db.close();
 }
 
 if (require.main === module) {
-    !!main();
+    !!launchSpider();
 }
 
 

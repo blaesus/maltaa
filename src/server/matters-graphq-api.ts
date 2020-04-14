@@ -18,7 +18,7 @@ const EDGE_COUNT_PER_REQUEST = 100;
 const LOW_EDGE_COUNT_PER_REQUEST = 10;
 
 const EDGE_REQUEST_INTERVAL = 0.1 * SECOND;
-const DEFAULT_EDGE_REQUEST_TIMEOUT = 20 * SECOND;
+const DEFAULT_EDGE_REQUEST_TIMEOUT = 10 * SECOND;
 
 function deepClean<T extends any>(obj: T, undesirableField: string): T {
     if (Array.isArray(obj)) {
@@ -791,25 +791,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
 
     const followees: UserId[] = followeeEdges.map(edge => edge.node.id);
 
-    const followerEdges = await fetchAllEdges(userResponse.followers.edges, async function (cursor) {
-        const response = await client.query<UserFollowerResponse>({
-            query: userGql({
-                followers: true,
-                followerCursor: cursor,
-            }),
-            variables: {
-                id,
-            },
-        });
-        if (!response.data.node) {
-            return [];
-        }
-        else {
-            return response.data.node.followers.edges;
-        }
-    });
-
-    const followers: UserId[] = followerEdges.map(edge => edge.node.id);
+    const firstFollowers: UserId[] = userResponse.followers.edges.map(edge => edge.node.id);
 
     const user: UserPublic = deepCleanTypename({
         ...userResponse,
@@ -825,7 +807,7 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
     const mentionedUsers = [
         ...userResponse.followers.edges.map(edge => edge.node.id),
         ...followees,
-        ...followers,
+        ...firstFollowers,
         user.id,
     ].filter(dedupe);
     const mentionedArticles = userResponse.articles.edges.map(edge => edge.node.id);

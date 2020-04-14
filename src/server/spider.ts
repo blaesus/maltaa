@@ -40,7 +40,7 @@ const WEEKLY_NEWEST_RANGE = 7 * DAY;
 const WEEKLY_INDEXER_INTERVAL = 12 * HOUR;
 const WEEKLY_NEW_ARTICLE_STALE_LIMIT = 24 * HOUR;
 
-const DOWNLOAD_TIMEOUT = 10 * SECOND;
+const DOWNLOAD_TIMEOUT = 20 * SECOND;
 
 const state: SpiderState = {
     type: "spider-state",

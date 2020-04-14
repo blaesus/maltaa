@@ -30,6 +30,10 @@ interface ArticleQueryInternalParams {
     latest?: number,
 }
 
+const fallbackParams: SortedArticleQueryParams = {
+    pageNumber: 0,
+}
+
 async function findActiveArticles(params: ArticleQueryInternalParams): Promise<Article[]> {
     const {sortConditions, pageNumber, pageSize, earliest, latest} = params;
     if (mainDB) {
@@ -227,13 +231,13 @@ const mongodb = {
                 return [];
             }
         },
-        async findActiveByRecency(params: SortedArticleQueryParams): Promise<Article[]> {
+        async findActiveByRecency(params = fallbackParams): Promise<Article[]> {
             return findActiveArticles(paramsConvert({createdAt: -1}, params));
         },
-        async findActiveByComments(params: SortedArticleQueryParams): Promise<Article[]> {
+        async findActiveByComments(params = fallbackParams): Promise<Article[]> {
             return findActiveArticles(paramsConvert({"derived.comments": -1}, params));
         },
-        async findActiveByAppreciationAmount(params: SortedArticleQueryParams): Promise<Article[]> {
+        async findActiveByAppreciationAmount(params = fallbackParams): Promise<Article[]> {
             return findActiveArticles(paramsConvert({"derived.appreciationAmount": -1}, params));
         },
         internal: {

@@ -29,7 +29,7 @@ server {
     }
 
     location ~ \.(js|css)$ {
-        expires 90d;
+        expires 1000d;
         add_header Pragma public;
         add_header Cache-Control "public";
     }

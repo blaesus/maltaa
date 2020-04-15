@@ -53,6 +53,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         editors: [owner],
         upstreams: request.upstreams,
         contentType: request.contentType,
+        description: "",
         items: [],
     }
 

@@ -29,6 +29,7 @@ export interface Assortment {
     title: string,
     subpath: string,
     mattersArticleBaseId: ArticleId | null,
+    description: string,
     owner: UserId,
     editors: UserId[],
     upstreams: AssortmentId[],

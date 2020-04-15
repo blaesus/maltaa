@@ -61,3 +61,8 @@
 .HtmlRender blockquote:last-of-type {
     margin-bottom: 0.7rem;
 }
+
+.HtmlRender pre {
+    white-space: pre-wrap;
+}
+

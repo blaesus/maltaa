@@ -12,7 +12,7 @@ export function HtmlRender(props: {
     }
     return (
         <div
-            className={`HtmlRender`}
+            className="HtmlRender"
             dangerouslySetInnerHTML={{__html: html}}
         />
     )

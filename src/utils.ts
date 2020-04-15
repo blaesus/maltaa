@@ -139,7 +139,7 @@ export function getFallbackPreferences(): Preferences {
 
         podium: {
             defaultSort: "comments",
-            defaultPeriod: 7,
+            defaultPeriod: 1,
             hoverPreview: true,
         },
 

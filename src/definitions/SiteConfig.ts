@@ -3,6 +3,5 @@ export interface SiteConfig {
     syncToMatters: boolean,
 
     spiderConfig: {
-
     }
 }

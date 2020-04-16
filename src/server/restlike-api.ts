@@ -2,7 +2,7 @@ import * as Koa from "koa";
 import * as KoaRouter from "koa-router";
 import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
-import { db } from "./db";
+import { db, SortedArticleQueryParams } from "./db";
 import { fetchArticle, fetchTag, fetchUser } from "./matters-graphq-api";
 import { API_PORT } from "./server-configs";
 import { MaltaaAction } from "../definitions/Actions";
@@ -86,15 +86,21 @@ async function getArticles(context: Koa.Context, next: any) {
     const {query} = context.request;
     context.response.type = "json";
     let articles: Article[] = [];
+    const params: SortedArticleQueryParams = {
+        pageNumber: Number.parseInt(query.page, 10),
+    };
     switch (query.sort) {
         case "comments": {
-            articles = await db.article.findActiveByComments(query.page);
+            articles = await db.article.findActiveByComments(params);
+            break;
+        }
+        case "appreciationAmount": {
+            articles = await db.article.findActiveByAppreciationAmount(params);
             break;
         }
         default: {
-            articles = await db.article.findActiveByRecency(query.page);
+            articles = await db.article.findActiveByRecency(params);
             break;
-
         }
     }
     context.status = 203;

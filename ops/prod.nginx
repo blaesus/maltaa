@@ -35,4 +35,5 @@ http {
 
     include /etc/nginx/conf.d/*.nginx;
     include /etc/nginx/routes.nginx;
+    include /etc/nginx/ip_blacklist.nginx;
 }

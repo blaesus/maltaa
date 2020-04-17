@@ -38,7 +38,7 @@ const fallbackParams: SortedArticleQueryParams = {
 
 async function findActiveArticles(params: ArticleQueryInternalParams): Promise<Article[]> {
     const {sortConditions, pageNumber, pageSize, earliest, latest} = params;
-    if (mainDB) {
+    if (mattersSyncDB) {
         const activeQuery = {state: "active"};
         const earliestCondition = {$gt: earliest};
         const latestCondition = {$lt: latest};
@@ -61,12 +61,18 @@ async function findActiveArticles(params: ArticleQueryInternalParams): Promise<A
             query.createdAt = latestCondition;
         }
 
-        return mainDB.collection("articles")
-                     .find(query)
-                     .sort(sortConditions)
-                     .skip(pageNumber * pageSize)
-                     .limit(pageSize)
-                     .toArray();
+        console.info(query)
+
+        console.info(
+            await mattersSyncDB.collection("articles").find(query).limit(10).toArray()
+        );
+
+        return mattersSyncDB.collection("articles")
+                            .find(query)
+                            .sort(sortConditions)
+                            .skip(pageNumber * pageSize)
+                            .limit(pageSize)
+                            .toArray();
     }
     else {
         return [];
@@ -194,9 +200,11 @@ const mongodb = {
             }
         },
         async findActiveById(id: string): Promise<Article | null> {
+            console.info(mattersSyncDB)
             return mattersSyncDB && mattersSyncDB.collection("articles").findOne({id, state: "active"});
         },
         async findActiveByIds(ids: string[]): Promise<Article[]> {
+            console.info(mattersSyncDB)
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("articles").find({id: {$in: ids}, state: "active"}).toArray();
             }
@@ -260,23 +268,23 @@ const mongodb = {
     },
     transaction: {
         async upsert(transaction: Transaction) {
-            return mainDB && await mainDB.collection("transactions").replaceOne(
+            return mattersSyncDB && await mattersSyncDB.collection("transactions").replaceOne(
                 {mid: transaction.mid},
                 transaction,
                 {upsert: true},
             );
         },
         async findActiveByIds(ids: TransactionMaltaaId[]): Promise<Transaction[]> {
-            if (mainDB) {
-                return mainDB.collection("transactions").find({mid: {$in: ids}}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("transactions").find({mid: {$in: ids}}).toArray();
             }
             else {
                 return [];
             }
         },
         async getAllIds(): Promise<{ mid: string }[]> {
-            if (mainDB) {
-                return mainDB.collection("transactions")
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("transactions")
                              .find()
                              .project({mid: 1})
                              // .map((tx: Transaction) => tx.mid)
@@ -287,16 +295,16 @@ const mongodb = {
             }
         },
         async findByTarget(target: string): Promise<Transaction[]> {
-            if (mainDB) {
-                return mainDB.collection("transactions").find({target}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("transactions").find({target}).toArray();
             }
             else {
                 return [];
             }
         },
         async deleteById(id: string) {
-            if (mainDB) {
-                return mainDB.collection("comments").deleteMany({
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments").deleteMany({
                     id,
                 });
             }
@@ -307,15 +315,15 @@ const mongodb = {
     },
     comment: {
         async upsert(comment: Comment) {
-            return mainDB && await mainDB.collection("comments").replaceOne(
+            return mattersSyncDB && await mattersSyncDB.collection("comments").replaceOne(
                 {id: comment.id},
                 comment,
                 {upsert: true},
             );
         },
         async findActiveByIds(ids: TransactionMaltaaId[]): Promise<Comment[]> {
-            if (mainDB) {
-                return mainDB.collection("comments")
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments")
                              .find({
                                  id: {$in: ids},
                                  state: "active",
@@ -327,24 +335,24 @@ const mongodb = {
             }
         },
         async findByParent(parent: ArticleId | CommentId): Promise<Comment[]> {
-            if (mainDB) {
-                return mainDB.collection("comments").find({parent}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments").find({parent}).toArray();
             }
             else {
                 return [];
             }
         },
         async findByParents(parents: (ArticleId | CommentId)[]): Promise<Comment[]> {
-            if (mainDB) {
-                return mainDB.collection("comments").find({parent: {$in: parents}}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments").find({parent: {$in: parents}}).toArray();
             }
             else {
                 return [];
             }
         },
         async getAllIds(): Promise<UserId[]> {
-            if (mainDB) {
-                return mainDB.collection("comments")
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments")
                              .find()
                              .project({id: 1})
                              .map((comment: Comment) => comment.id)
@@ -355,8 +363,8 @@ const mongodb = {
             }
         },
         async deleteById(id: string) {
-            if (mainDB) {
-                return mainDB.collection("comments").deleteMany({
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments").deleteMany({
                     id,
                 });
             }
@@ -366,8 +374,8 @@ const mongodb = {
         },
         internal: {
             async findByIds(ids: TransactionMaltaaId[]): Promise<Comment[]> {
-                if (mainDB) {
-                    return mainDB.collection("comments").find({id: {$in: ids}}).toArray();
+                if (mattersSyncDB) {
+                    return mattersSyncDB.collection("comments").find({id: {$in: ids}}).toArray();
                 }
                 else {
                     return [];

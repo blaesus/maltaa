@@ -1,5 +1,5 @@
 import * as React from "react";
-import { articleUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
+import { articleUrl, assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
 import { ClientState } from "../../states/reducer";
 import { assortmentNames, readableDateTime } from "../../../../utils";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
@@ -30,10 +30,14 @@ export function AssortmentPage(props: {
     if (!assortment) {
         return null;
     }
+    const url = assortmentUrl(identifier);
     return (
         <div className="AssortmentPage">
-            <h1>{assortment.title}</h1>
-            <div>{assortmentNames[assortment.contentType]}</div>
+            <h1>
+                {assortment.title}
+                【{assortmentNames[assortment.contentType]}】
+            </h1>
+            <a href={url}>{url}</a>
             <div>
                 {
                     assortment.items.map((item, index) => {

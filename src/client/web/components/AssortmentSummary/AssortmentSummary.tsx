@@ -30,9 +30,7 @@ export function AssortmentSummary(props: {
             href={url}
             onClick={getAnchorClickHandler(onClick)}
         >
-            {owner.displayName}/
             {assortment.title}
-            【{assortmentNames[assortment.contentType]}】
         </AnchorButton>
     )
 }

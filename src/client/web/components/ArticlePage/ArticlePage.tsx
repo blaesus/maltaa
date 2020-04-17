@@ -111,7 +111,7 @@ export function ArticlePage(props: {
                         <AssortmentSummary
                             key={assortment.id}
                             assortment={assortment}
-                            users={state.entities.users}
+                            owner={state.entities.users[assortment.owner]}
                             onClick={() => {
                                 dispatch({
                                     type: "ViewAssortment",

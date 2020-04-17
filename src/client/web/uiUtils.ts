@@ -5,7 +5,7 @@ import { Assortment, AssortmentContentType, AssortmentIdentifier } from "../../d
 import { ClientState } from "./states/reducer";
 import { Preferences } from "../../definitions/Preferences";
 
-import { THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
+import { STUDY_SUBPATH, THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
 import { articleIdToSerial, articleSerialToId } from "../../mattersSpecifics";
 import { assortmentPrefix, assortmentTypes } from "../../utils";
 
@@ -29,6 +29,7 @@ export interface PathState {
     username?: string,
     articleId?: string,
     assortment?: AssortmentUIIdentifier,
+    page?: "study"
 }
 
 export function parsePathName(pathName: string): PathState {
@@ -62,6 +63,12 @@ export function parsePathName(pathName: string): PathState {
             articleId: id,
         };
     }
+    else if (firstSegment === STUDY_SUBPATH) {
+        return {
+            page: "study"
+        };
+    }
+
     return {};
 }
 
@@ -69,10 +76,13 @@ export function serializeToPathName(state: ClientUIState): string {
     if (state.pages.current === "user") {
         return `/${USER_URL_SIGIL}${state.pages.user.name}`;
     }
-    else if (state.pages?.current === "article" && state.pages.article.id) {
+    else if (state.pages.current === "article" && state.pages.article.id) {
         return articleUrl(state.pages.article.id);
     }
-    else if (state.pages?.current === "assortment" && state.pages.assortment.identifier) {
+    else if (state.pages.current === "study") {
+        return `/${STUDY_SUBPATH}`;
+    }
+    else if (state.pages.current === "assortment" && state.pages.assortment.identifier) {
         return assortmentUrl(state.pages.assortment.identifier);
     }
     else {

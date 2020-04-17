@@ -25,13 +25,14 @@ const entityTypeOptions: OptionList<AssortmentContentType> = [
     },
 ];
 
-export function AssortmentEditor(props: {
+export function AssortmentCreator(props: {
     state: ClientState,
     dispatch: MaltaaDispatch,
+    fixedContentType?: AssortmentContentType
 }) {
-    const {state, dispatch} = props;
+    const {state, dispatch, fixedContentType} = props;
     const me = state.entities.me;
-    const [contentType, setContentType] = useState<AssortmentContentType>("article");
+    const [contentType, setContentType] = useState<AssortmentContentType>(props.fixedContentType || "article");
     const owner: UserPublic | null = state.preferences.identity.operator ? state.entities.users[state.preferences.identity.operator] : null;
     const [title, setTitle] = useState("");
     const [subpath, setSubpath] = useState("");
@@ -45,28 +46,22 @@ export function AssortmentEditor(props: {
         )
     }
     return (
-        <div className="AssortmentEditor">
+        <div className="AssortmentCreator">
             {
-                me &&
-                <Chooser
-                    options={me.mattersIds.map(id => ({value: id, label: id}))}
-                    chosen={state.preferences.identity.operator}
-                    onChoose={operator => dispatch({
-                        type: "SetMyPreferences",
-                        preferencesPatch: {
-                            identity: {
-                                ...state.preferences,
-                                operator,
-                            }
-                        }
-                    })}
+                me && (me.mattersIds.length >= 2) &&
+                <OperatorSelector
+                    state={state}
+                    dispatch={dispatch}
                 />
             }
-            <Chooser
-                options={entityTypeOptions}
-                chosen={contentType}
-                onChoose={setContentType}
-            />
+            {
+                !fixedContentType &&
+                <Chooser
+                    options={entityTypeOptions}
+                    chosen={contentType}
+                    onChoose={setContentType}
+                />
+            }
             <div>
                 <div>
                     {assortmentUrl({ownerUsername: owner.userName, contentType, subpath: ""})}
@@ -84,17 +79,19 @@ export function AssortmentEditor(props: {
             </div>
             <button
                 onClick={() => {
+                    setTitle("");
+                    setSubpath("");
                     dispatch({
                         type: "CreateAssortment",
                         subpath,
                         title,
+                        contentType,
                         upstreams: [],
-                        contentType: contentType,
                         items: [],
                     })
                 }}
             >
-                create
+                新創
             </button>
         </div>
     )

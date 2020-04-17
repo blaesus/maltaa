@@ -11,11 +11,13 @@ import { UserPublic } from "../../../../definitions/User";
 
 export function AssortmentSummary(props: {
     assortment: Assortment,
-    users: ObjectMap<UserPublic>,
+    owner?: UserPublic,
     onClick?(): void,
 }) {
-    const {assortment, users, onClick} = props;
-    const owner = users[assortment.owner];
+    const {assortment, owner, onClick} = props;
+    if (!owner) {
+        return null;
+    }
     const url = assortmentUrl({
         ownerUsername: owner.userName,
         contentType: assortment.contentType,
@@ -28,7 +30,7 @@ export function AssortmentSummary(props: {
             href={url}
             onClick={getAnchorClickHandler(onClick)}
         >
-            {owner?.displayName}/
+            {owner.displayName}/
             {assortment.title}
             【{assortmentNames[assortment.contentType]}】
         </AnchorButton>

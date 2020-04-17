@@ -171,7 +171,8 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                             },
                         }
                     }
-                } else {
+                }
+                else {
                     return {
                         ...ui,
                         pages: {
@@ -181,6 +182,15 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                                 name: pathState.username
                             }
                         }
+                    }
+                }
+            }
+            else if (pathState.page === "study") {
+                return {
+                    ...ui,
+                    pages: {
+                        ...ui.pages,
+                        current: "study",
                     }
                 }
             } else {

@@ -210,3 +210,14 @@ export const assortmentNames: { [key in AssortmentContentType]: string } = {
     mixed: "什錦",
 }
 
+export function hasIntersection<T>(a?: T[], b?: T[]): boolean {
+    if (!a || !b) {
+        return false;
+    }
+    for (const item of a) {
+        if (b.includes(item)) {
+            return true;
+        }
+    }
+    return false;
+}

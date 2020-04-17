@@ -13,7 +13,15 @@ export function OperatorSelector(props: {
     const {state, dispatch} = props;
     return (
         <Chooser
-            options={state.entities.me?.mattersIds.map(id => ({value: id, label: id}))}
+            options={
+                state.entities.me?.mattersIds.map(id => {
+                    const user = state.entities.users[id];
+                    return {
+                        value: id,
+                        label: user?.userName || id,
+                    }
+                })
+            }
             chosen={state.preferences.identity.operator}
             onChoose={operator => dispatch({
                 type: "SetMyPreferences",

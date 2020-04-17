@@ -15,11 +15,13 @@ const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
 
 const mainDBName = "maltaa";
+const mattersSyncDBName = "maltaaMattersSync";
 const activityDBName = "maltaaActivity";
 
 let client: MongoClient | null = null;
 
 let mainDB: Db | null = null;
+let mattersSyncDB: Db | null = null;
 let activityDB: Db | null = null;
 
 interface ArticleQueryInternalParams {
@@ -97,96 +99,94 @@ const mongodb = {
         await client.connect();
         mainDB = client.db(mainDBName);
         activityDB = client.db(activityDBName);
+        mattersSyncDB = client.db(mattersSyncDBName);
     },
     async ensureIndices() {
-        if (!mainDB) {
-            return;
+        if (mainDB) {
+            {
+                await mainDB.createIndex("accounts", {id: 1}, {unique: true});
+                await mainDB.createIndex("accounts", {
+                    "matters.id": 1,
+                });
+            }
+            {
+                await mainDB.createIndex("tokens", {id: 1}, {unique: true});
+            }
+            {
+                await mainDB.createIndex("assortments", {id: 1}, {unique: true});
+                await mainDB.createIndex("assortments", {
+                    subpath: 1,
+                    owner: 1,
+                    contentType: 1,
+                }, {unique: true});
+                await mainDB.createIndex("assortments", {
+                    editors: 1,
+                });
+                await mainDB.createIndex("assortments", {
+                    "items.id": 1,
+                });
+            }
         }
-        if (!activityDB) {
-            return;
+        if (mattersSyncDB) {
+            {
+                await mattersSyncDB.createIndex("articles", {id: 1}, {unique: true});
+                await mattersSyncDB.createIndex("articles", {mediaHash: 1});
+                await mattersSyncDB.createIndex("articles", {
+                    createdAt: 1,
+                    author: 1,
+                    state: 1,
+                    "derived.comments": 1,
+                    "derived.commenters": 1,
+                    "derived.appreciations": 1,
+                    "derived.appreciationAmount": 1,
+                }, {
+                    name: "article-sorts",
+                });
+            }
+            {
+                await mattersSyncDB.createIndex("spiderRecords", {entityId: 1, type: 1}, {unique: true});
+                await mattersSyncDB.createIndex("spiderRecords", {lastFetch: 1});
+            }
+            {
+                await mattersSyncDB.createIndex("users", {
+                    id: 1,
+                    userName: 1,
+                }, {unique: true});
+            }
+            {
+                await mattersSyncDB.createIndex("comments", {id: 1}, {unique: true});
+                await mattersSyncDB.createIndex("comments", {
+                    parent: 1,
+                    state: 1,
+                });
+            }
+            {
+                await mattersSyncDB.createIndex("transactions", {mid: 1}, {unique: true});
+                await mattersSyncDB.createIndex("transactions", {target: 1});
+            }
+            {
+                await mattersSyncDB.createIndex("tags", {id: 1}, {unique: true});
+            }
         }
-        {
-            await mainDB.createIndex("articles", {id: 1}, {unique: true});
-            await mainDB.createIndex("articles", {mediaHash: 1});
-            await mainDB.createIndex("articles", {
-                createdAt: 1,
-                author: 1,
-                state: 1,
-                "derived.comments": 1,
-                "derived.commenters": 1,
-                "derived.appreciations": 1,
-                "derived.appreciationAmount": 1,
-            }, {
-                name: "article-sorts",
-            });
+        if (activityDB) {
+            {
+                await activityDB.createIndex("activities", {id: 1}, {unique: true});
+            }
         }
 
-        {
-            await mainDB.createIndex("spiderRecords", {entityId: 1, type: 1}, {unique: true});
-            await mainDB.createIndex("spiderRecords", {lastFetch: 1});
-        }
-        {
-            await mainDB.createIndex("users", {
-                id: 1,
-                userName: 1,
-            }, {unique: true});
-        }
-        {
-            await mainDB.createIndex("accounts", {id: 1}, {unique: true});
-        }
-        {
-            await mainDB.createIndex("accounts", {
-                "matters.id": 1,
-            });
-        }
-        {
-            await mainDB.createIndex("comments", {id: 1}, {unique: true});
-            await mainDB.createIndex("comments", {
-                parent: 1,
-                state: 1,
-            });
-        }
-        {
-            await mainDB.createIndex("transactions", {mid: 1}, {unique: true});
-            await mainDB.createIndex("transactions", {target: 1});
-        }
-        {
-            await mainDB.createIndex("tags", {id: 1}, {unique: true});
-        }
-        {
-            await mainDB.createIndex("tokens", {id: 1}, {unique: true});
-        }
-        {
-            await mainDB.createIndex("assortments", {id: 1}, {unique: true});
-            await mainDB.createIndex("assortments", {
-                subpath: 1,
-                owner: 1,
-                contentType: 1,
-            }, {unique: true});
-            await mainDB.createIndex("assortments", {
-                editors: 1,
-            });
-            await mainDB.createIndex("assortments", {
-                "items.id": 1,
-            });
-        }
-
-        {
-            await activityDB.createIndex("activities", {id: 1}, {unique: true});
-        }
 
     },
     article: {
         async upsert(article: Article) {
-            return mainDB && await mainDB.collection("articles").replaceOne(
+            return mattersSyncDB && await mattersSyncDB.collection("articles").replaceOne(
                 {id: article.id},
                 article,
                 {upsert: true},
             );
         },
         async exists(id: string): Promise<boolean> {
-            if (mainDB) {
-                const existings = mainDB.collection("articles").find({id}).limit(1);
+            if (mattersSyncDB) {
+                const existings = mattersSyncDB.collection("articles").find({id}).limit(1);
                 return await existings.count() >= 1;
             }
             else {
@@ -194,35 +194,35 @@ const mongodb = {
             }
         },
         async findActiveById(id: string): Promise<Article | null> {
-            return mainDB && mainDB.collection("articles").findOne({id, state: "active"});
+            return mattersSyncDB && mattersSyncDB.collection("articles").findOne({id, state: "active"});
         },
         async findActiveByIds(ids: string[]): Promise<Article[]> {
-            if (mainDB) {
-                return mainDB.collection("articles").find({id: {$in: ids}, state: "active"}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("articles").find({id: {$in: ids}, state: "active"}).toArray();
             }
             else {
                 return [];
             }
         },
         async findActiveByMHs(mhs: string[]): Promise<Article[]> {
-            if (mainDB) {
-                return mainDB.collection("articles").find({mediaHash: {$in: mhs}, state: "active"}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("articles").find({mediaHash: {$in: mhs}, state: "active"}).toArray();
             }
             else {
                 return [];
             }
         },
         async findActiveByUpstreams(id: string): Promise<Article[]> {
-            if (mainDB) {
-                return mainDB.collection("articles").find({upstreams: id, state: "active"}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("articles").find({upstreams: id, state: "active"}).toArray();
             }
             else {
                 return [];
             }
         },
         async getAllIds(): Promise<ArticleId[]> {
-            if (mainDB) {
-                return mainDB.collection("articles")
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("articles")
                              .find()
                              .project({id: 1})
                              .map((article: Article) => article.id).toArray();
@@ -242,11 +242,11 @@ const mongodb = {
         },
         internal: {
             async findById(id: string): Promise<Article | null> {
-                return mainDB && mainDB.collection("articles").findOne({id});
+                return mattersSyncDB && mattersSyncDB.collection("articles").findOne({id});
             },
             async findCreatedAfter(earliest: number): Promise<Article[]> {
-                if (mainDB) {
-                    return mainDB.collection("articles")
+                if (mattersSyncDB) {
+                    return mattersSyncDB.collection("articles")
                                  .find({
                                      createdAt: {$gt: earliest},
                                  })
@@ -256,7 +256,6 @@ const mongodb = {
                     return [];
                 }
             },
-
         },
     },
     transaction: {
@@ -378,15 +377,15 @@ const mongodb = {
     },
     user: {
         async upsert(user: UserPublic) {
-            return mainDB && await mainDB.collection("users").replaceOne(
+            return mattersSyncDB && await mattersSyncDB.collection("users").replaceOne(
                 {id: user.id},
                 user,
                 {upsert: true},
             );
         },
         async exists(id: UserId): Promise<boolean> {
-            if (mainDB) {
-                const existings = mainDB.collection("users").find({id}).limit(1);
+            if (mattersSyncDB) {
+                const existings = mattersSyncDB.collection("users").find({id}).limit(1);
                 return await existings.count() >= 1;
             }
             else {
@@ -394,32 +393,32 @@ const mongodb = {
             }
         },
         async findByIds(ids: UserId[]): Promise<UserPublic[]> {
-            if (mainDB) {
-                return mainDB.collection("users").find({id: {$in: ids}}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("users").find({id: {$in: ids}}).toArray();
             }
             else {
                 return [];
             }
         },
         async findByUserName(userName: UserId): Promise<UserPublic | null> {
-            if (mainDB) {
-                return mainDB.collection("users").findOne({userName});
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("users").findOne({userName});
             }
             else {
                 return null;
             }
         },
         async getAllIds(): Promise<UserId[]> {
-            if (mainDB) {
-                return mainDB.collection("users").find().map((user: UserPublic) => user.id).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("users").find().map((user: UserPublic) => user.id).toArray();
             }
             else {
                 return [];
             }
         },
         async deleteById(id: string) {
-            if (mainDB) {
-                return mainDB.collection("users").deleteMany({
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("users").deleteMany({
                     id,
                 });
             }
@@ -432,15 +431,15 @@ const mongodb = {
     },
     tag: {
         async upsert(tag: Tag) {
-            return mainDB && await mainDB.collection("tags").replaceOne(
+            return mattersSyncDB && await mattersSyncDB.collection("tags").replaceOne(
                 {id: tag.id},
                 tag,
                 {upsert: true},
             );
         },
         async exists(id: TagId): Promise<boolean> {
-            if (mainDB) {
-                const existings = mainDB.collection("tags").find({id}).limit(1);
+            if (mattersSyncDB) {
+                const existings = mattersSyncDB.collection("tags").find({id}).limit(1);
                 return await existings.count() >= 1;
             }
             else {
@@ -448,16 +447,16 @@ const mongodb = {
             }
         },
         async findActiveByIds(ids: TagId[]): Promise<Tag[]> {
-            if (mainDB) {
-                return mainDB.collection("tags").find({id: {$in: ids}}).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("tags").find({id: {$in: ids}}).toArray();
             }
             else {
                 return [];
             }
         },
         async getAllIds(): Promise<TagId[]> {
-            if (mainDB) {
-                return mainDB.collection("tags").find().map((tag: Tag) => tag.id).toArray();
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("tags").find().map((tag: Tag) => tag.id).toArray();
             }
             else {
                 return [];
@@ -466,15 +465,15 @@ const mongodb = {
     },
     spiderRecord: {
         async upsert(record: SpiderRecord) {
-            return mainDB && await mainDB.collection("spiderRecords").replaceOne(
+            return mattersSyncDB && await mattersSyncDB.collection("spiderRecords").replaceOne(
                 {entityId: record.entityId},
                 record,
                 {upsert: true},
             );
         },
         async exists(entityId: string): Promise<boolean> {
-            if (mainDB) {
-                const existings = mainDB.collection("spiderRecords").find({entityId}).limit(1);
+            if (mattersSyncDB) {
+                const existings = mattersSyncDB.collection("spiderRecords").find({entityId}).limit(1);
                 return await existings.count() >= 1;
             }
             else {
@@ -482,7 +481,7 @@ const mongodb = {
             }
         },
         async findByEntityId(entityId: string): Promise<SpiderRecord | null> {
-            return mainDB && mainDB.collection("spiderRecords").findOne({
+            return mattersSyncDB && mattersSyncDB.collection("spiderRecords").findOne({
                 entityId,
             });
         },
@@ -493,8 +492,8 @@ const mongodb = {
             return await mongodb.spiderRecord.findByEntityId("spider-state") as SpiderState;
         },
         async findBefore(time: number): Promise<SpiderRecordEntity[]> {
-            if (mainDB) {
-                return mainDB.collection("spiderRecords").find({
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("spiderRecords").find({
                     lastFetch: {
                         $exists: true,
                         $lt: time,
@@ -506,8 +505,8 @@ const mongodb = {
             }
         },
         async findAfter(time: number): Promise<SpiderRecordEntity[]> {
-            if (mainDB) {
-                return mainDB.collection("spiderRecords").find({
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("spiderRecords").find({
                     lastFetch: {
                         $exists: true,
                         $gt: time,
@@ -519,8 +518,8 @@ const mongodb = {
             }
         },
         async deleteById(entityId: string) {
-            if (mainDB) {
-                return mainDB.collection("spiderRecords").deleteMany({
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("spiderRecords").deleteMany({
                     entityId,
                 });
             }
@@ -529,8 +528,8 @@ const mongodb = {
             }
         },
         async getAllEntityIds(): Promise<ArticleId[]> {
-            if (mainDB) {
-                return mainDB.collection("spiderRecords")
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("spiderRecords")
                              .find()
                              .project({entityId: 1})
                              .map((r: SpiderRecord) => r.entityId).toArray();

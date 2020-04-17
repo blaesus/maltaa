@@ -61,12 +61,6 @@ async function findActiveArticles(params: ArticleQueryInternalParams): Promise<A
             query.createdAt = latestCondition;
         }
 
-        console.info(query)
-
-        console.info(
-            await mattersSyncDB.collection("articles").find(query).limit(10).toArray()
-        );
-
         return mattersSyncDB.collection("articles")
                             .find(query)
                             .sort(sortConditions)
@@ -200,11 +194,9 @@ const mongodb = {
             }
         },
         async findActiveById(id: string): Promise<Article | null> {
-            console.info(mattersSyncDB)
             return mattersSyncDB && mattersSyncDB.collection("articles").findOne({id, state: "active"});
         },
         async findActiveByIds(ids: string[]): Promise<Article[]> {
-            console.info(mattersSyncDB)
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("articles").find({id: {$in: ids}, state: "active"}).toArray();
             }

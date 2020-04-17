@@ -17,7 +17,7 @@ import { UserPage } from "./components/UserPage/UserPage";
 import { Podium } from "./components/Podium/Podium";
 import { Dialogs } from "./components/Dialogs/Dialogs";
 import { Chooser } from "./components/Chooser/Chooser";
-import { OrgansPage } from "./components/OrgansPage/OrgansPage";
+import { Study } from "./components/Study/Study";
 import { AssortmentPage } from "./components/AssortmentPage/AssortmentPage";
 
 import { maltaaApi } from "./maltaaApiClient";
@@ -44,8 +44,8 @@ const pageOptions: OptionList<PageName> = [
         label: "廣場",
     },
     {
-        value: "organs",
-        label: "組織",
+        value: "study",
+        label: "書房",
     },
 ]
 
@@ -201,7 +201,7 @@ function WebRoot(props: {
                 state={state}
                 dispatch={dispatch}
             />
-            <OrgansPage state={state} dispatch={dispatch}/>
+            <Study state={state} dispatch={dispatch}/>
             <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state}/>
             <AssortmentPage state={state} dispatch={dispatch}/>
             {

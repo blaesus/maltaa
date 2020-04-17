@@ -8,7 +8,7 @@ import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { AssortmentEditor } from "../AssortmentEditor/AssortmentEditor";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 
-export function OrgansPage(props: {
+export function Study(props: {
     state: ClientState,
     dispatch: MaltaaDispatch
 }) {

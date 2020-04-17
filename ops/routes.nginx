@@ -15,22 +15,28 @@ server {
     return 301 https://maltaa.org$request_uri;
 }
 
+limit_req_zone $binary_remote_addr zone=static:4m rate=4r/s;
+limit_req_zone $binary_remote_addr zone=api:4m rate=4r/s;
+
 server {
     server_name maltaa.org;
     root /var/maltaa/web;
 
     location / {
         expires off;
+        limit_req zone=static burst=5 nodelay;
         try_files $uri $uri/ /index.html;
     }
     location /api {
         expires off;
+        limit_req zone=api burst=10 delay=5;
         proxy_pass http://localhost:2000;
     }
 
     location ~ \.(js|css)$ {
         expires 1000d;
         add_header Pragma public;
+        limit_req zone=static burst=5 nodelay;
         add_header Cache-Control "public";
     }
 

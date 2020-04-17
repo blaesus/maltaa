@@ -132,6 +132,7 @@ const AUTH_TOKEN_SECRET_KEY = "SEC";
 async function handleAction(context: Koa.Context, next: any) {
     context.response.type = "json";
 
+
     async function authenticateFromCookie(request: MaltaaAction, context: Koa.Context): Promise<MaltaaAction> {
         const targetTokenId = context.cookies.get(AUTH_TOKEN_ID_KEY);
         if (!targetTokenId) {
@@ -162,6 +163,7 @@ async function handleAction(context: Koa.Context, next: any) {
     }
 
     try {
+        console.info(context.request.body);
         const request = verifyActionForm(JSON.parse(context.request.body));
         const authenticatedRequest = await authenticateFromCookie(request, context);
         const response = await respond(authenticatedRequest);

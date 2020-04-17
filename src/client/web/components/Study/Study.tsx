@@ -15,7 +15,7 @@ export function Study(props: {
     const {state, dispatch} = props;
     const [creatingAssortment, setCreatingAssortment] = useState(false);
 
-    if (state.ui.pages.current !== "organs") {
+    if (state.ui.pages.current !== "study") {
         return null;
     }
     return (

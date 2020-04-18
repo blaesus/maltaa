@@ -1,10 +1,17 @@
 import * as React from "react";
-import { articleUrl, assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
+import { useEffect, useState } from "react";
+
 import { ClientState } from "../../states/reducer";
-import { assortmentNames, readableDateTime } from "../../../../utils";
+
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
-import { useEffect } from "react";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
+import { EditableText } from "../EditableText/EditableText";
+
+import { assortmentNames, hasIntersection, readableDateTime } from "../../../../utils";
+import { assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
+import { AssortmentId, MattersEntityType } from "../../../../definitions/Assortment";
+import { ArticleId } from "../../../../definitions/Article";
+import { UserId } from "../../../../definitions/User";
 
 export function AssortmentPage(props: {
     state: ClientState,
@@ -20,7 +27,7 @@ export function AssortmentPage(props: {
             dispatch({
                 type: "ViewAssortment",
                 assortment: identifier,
-            })
+            });
         }
     }, [identifier]);
     if (state.ui.pages.current !== "assortment" || !identifier) {
@@ -31,6 +38,7 @@ export function AssortmentPage(props: {
         return null;
     }
     const url = assortmentUrl(identifier);
+    const {me, articles, users} = state.entities;
     return (
         <div className="AssortmentPage">
             <h1>
@@ -43,12 +51,12 @@ export function AssortmentPage(props: {
                     assortment.items.map((item, index) => {
                         switch (item.entityType) {
                             case "article": {
-                                const article = state.entities.articles[item.id];
+                                const article = articles[item.id];
                                 if (!article) {
-                                    return `Missing article data ${JSON.stringify(item)}`
+                                    return `Missing article data ${JSON.stringify(item)}`;
                                 }
-                                const author = state.entities.users[article.author];
-                                const collector = state.entities.users[item.addedBy];
+                                const author = users[article.author];
+                                const collector = users[item.addedBy];
                                 return (
                                     <div
                                         key={item.id}
@@ -59,9 +67,22 @@ export function AssortmentPage(props: {
                                             hoverPreview={true}
                                             onClick={() => dispatch({type: "ViewArticle", article: article.id})}
                                         />
-                                        <div>
-                                            {item.note}
-                                        </div>
+                                        <EditableText
+                                            content={item.note}
+                                            canEdit={hasIntersection(assortment.editors, me?.mattersIds)}
+                                            onEdit={content => {
+                                                dispatch({
+                                                    type: "UpdateAssortment",
+                                                    operation: "SetItem",
+                                                    target: assortment.id,
+                                                    targetItemId: item.id,
+                                                    item: {
+                                                        ...item,
+                                                        note: content,
+                                                    },
+                                                })
+                                            }}
+                                        />
                                         <div>
                                             {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
                                         </div>
@@ -71,17 +92,16 @@ export function AssortmentPage(props: {
                                                 <AnchorButton
                                                     onClick={() => {
                                                         const items = assortment.items.map(item => item.id);
-                                                        const temp = items[index-1];
-                                                        items[index-1] = items[index];
+                                                        const temp = items[index - 1];
+                                                        items[index - 1] = items[index];
                                                         items[index] = temp;
                                                         dispatch({
                                                             type: "UpdateAssortment",
                                                             operation: "OrderItems",
                                                             target: assortment.id,
                                                             items: items,
-                                                            meta: {
-                                                            }
-                                                        })
+                                                            meta: {},
+                                                        });
                                                     }}
                                                 >
                                                     上移
@@ -92,17 +112,16 @@ export function AssortmentPage(props: {
                                                 <AnchorButton
                                                     onClick={() => {
                                                         const items = assortment.items.map(item => item.id);
-                                                        const temp = items[index+1];
-                                                        items[index+1] = items[index];
+                                                        const temp = items[index + 1];
+                                                        items[index + 1] = items[index];
                                                         items[index] = temp;
                                                         dispatch({
                                                             type: "UpdateAssortment",
                                                             operation: "OrderItems",
                                                             target: assortment.id,
                                                             items: items,
-                                                            meta: {
-                                                            }
-                                                        })
+                                                            meta: {},
+                                                        });
                                                     }}
                                                 >
                                                     下移
@@ -110,7 +129,7 @@ export function AssortmentPage(props: {
                                             }
                                         </div>
                                     </div>
-                                )
+                                );
                             }
                             default: {
                                 return (
@@ -125,5 +144,5 @@ export function AssortmentPage(props: {
             </div>
 
         </div>
-    )
+    );
 }

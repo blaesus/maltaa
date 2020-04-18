@@ -154,16 +154,18 @@ export interface CreateAssortment extends BaseAction {
     items: AssortmentItem[],
 }
 
+type ItemSpec = {
+    source: "matters",
+    entityType: MattersEntityType,
+    id: ArticleId | UserId,
+    note: string,
+}
+
 export interface UpdateAssortmentAddItem extends BaseAction {
     type: "UpdateAssortment",
     operation: "AddItem",
     target: AssortmentId,
-    item: {
-        source: "matters",
-        entityType: MattersEntityType,
-        id: ArticleId | UserId,
-        note: string,
-    }
+    item: ItemSpec,
 }
 
 export interface UpdateAssortmentOrderItems extends BaseAction {
@@ -173,8 +175,20 @@ export interface UpdateAssortmentOrderItems extends BaseAction {
     items: string[],
 }
 
+export interface UpdateAssortmentSetItem extends BaseAction {
+    type: "UpdateAssortment",
+    operation: "SetItem",
+    target: AssortmentId,
+    targetItemId: string,
+    item: ItemSpec,
+}
 
-export type UpdateAssortment = UpdateAssortmentAddItem | UpdateAssortmentOrderItems;
+
+export type UpdateAssortment =
+    UpdateAssortmentAddItem
+    | UpdateAssortmentOrderItems
+    | UpdateAssortmentSetItem
+;
 
 export interface Signout extends BaseAction {
     type: "Signout",

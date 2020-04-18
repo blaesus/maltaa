@@ -29,6 +29,7 @@ export interface Assortment {
     title: string,
     subpath: string,
     mattersArticleBaseId: ArticleId | null,
+    archived: boolean,
     description: string,
     owner: UserId,
     editors: UserId[],

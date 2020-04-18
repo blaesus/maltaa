@@ -2,6 +2,7 @@ import { db } from "../db";
 
 import { MaltaaAction, UpdateAssortment } from "../../definitions/Actions";
 import { MattersEntity } from "../../definitions/Assortment";
+import { hasIntersection } from "../../utils";
 
 export async function updateAssortment(request: UpdateAssortment): Promise<MaltaaAction> {
     const accountId = request?.meta?.account;
@@ -36,6 +37,34 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
         return {
             type: "GenericError",
             reason: "Can't find it",
+        };
+    }
+    if (request.operation === "Archive") {
+        if (!hasIntersection([target.owner], account.mattersIds)) {
+            return {
+                type: "GenericError",
+                reason: "Not authorized to archive",
+            };
+        }
+        target.archived = request.archived;
+        await db.assortment.upsert(target);
+        return {
+            type: "ProvideEntities",
+            data: {
+                assortments: [target],
+            },
+        };
+    }
+    if (target.archived) {
+        return {
+            type: "GenericError",
+            reason: "Target is archived",
+        };
+    }
+    if (!hasIntersection(target.editors, account.mattersIds)) {
+        return {
+            type: "GenericError",
+            reason: "Can't edit",
         };
     }
     switch (request.operation) {
@@ -98,7 +127,6 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                     assortments: [target],
                 },
             };
-
         }
         default: {
             return {

@@ -11,7 +11,7 @@ import { EditableText } from "../EditableText/EditableText";
 
 import { assortmentNames, hasIntersection, readableDateTime } from "../../../../utils";
 import { assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
-import { Assortment, AssortmentItem } from "../../../../definitions/Assortment";
+import { Assortment, AssortmentId, AssortmentItem } from "../../../../definitions/Assortment";
 import { UserPublic } from "../../../../definitions/User";
 
 function AssortmentItemCard(props: {
@@ -121,14 +121,36 @@ export function AssortmentPage(props: {
     }
     const url = assortmentUrl(identifier);
     const {me, articles, users} = state.entities;
-    const canEdit = hasIntersection(me?.mattersIds, assortment.editors);
+    const canEdit = !assortment.archived && hasIntersection(me?.mattersIds, assortment.editors);
+    const isOwner = hasIntersection(me?.mattersIds, [assortment.owner]);
     return (
         <div className="AssortmentPage">
             <h1>
                 {assortment.title}
                 【{assortmentNames[assortment.contentType]}】
             </h1>
-            <a href={url}>{url}</a>
+            <div>
+                <a href={url}>{url}</a>
+                {
+                    assortment.archived &&
+                    <span>
+                        已廢棄
+                    </span>
+                }
+                {
+                    isOwner &&
+                    <AnchorButton
+                        onClick={() => dispatch({
+                            type: "UpdateAssortment",
+                            operation: "Archive",
+                            target: assortment.id,
+                            archived: !assortment.archived
+                        })}
+                    >
+                        {assortment.archived ? "撤銷廢棄" : "廢棄集合"}
+                    </AnchorButton>
+                }
+            </div>
             <div>
                 {
                     assortment.items.map((item, index) => {
@@ -170,6 +192,7 @@ export function AssortmentPage(props: {
                     })
                 }
             </div>
+
 
         </div>
     );

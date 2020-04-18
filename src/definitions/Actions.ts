@@ -183,11 +183,18 @@ export interface UpdateAssortmentSetItem extends BaseAction {
     item: ItemSpec,
 }
 
+export interface UpdateAssortmentArchive extends BaseAction {
+    type: "UpdateAssortment",
+    operation: "Archive",
+    target: AssortmentId,
+    archived: boolean
+}
 
 export type UpdateAssortment =
     UpdateAssortmentAddItem
     | UpdateAssortmentOrderItems
     | UpdateAssortmentSetItem
+    | UpdateAssortmentArchive
 ;
 
 export interface Signout extends BaseAction {

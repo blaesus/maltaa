@@ -49,6 +49,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         title: request.title,
         subpath: request.subpath,
         mattersArticleBaseId: null,
+        archived: false,
         owner,
         editors: [owner],
         upstreams: request.upstreams,

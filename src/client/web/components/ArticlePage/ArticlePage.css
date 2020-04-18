@@ -1,8 +1,4 @@
 .ArticlePage {
-    font-family:
-            "Avenir Next", "Segoe UI", "Helvetica Neue", Arial,
-            "Hiragino Sans GB", "PingFang SC", "Heiti SC", "Microsoft YaHei UI", "Microsoft YaHei", "Source Han Sans",
-            sans-serif;
     overflow-x: hidden;
     margin: 0 var(--side-margin);
 }

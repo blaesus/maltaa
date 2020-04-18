@@ -1,6 +1,8 @@
 import * as React from "react";
 import { useEffect } from "react";
 
+import "./AssortmentPage.css";
+
 import { ClientState } from "../../states/reducer";
 
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
@@ -9,6 +11,89 @@ import { EditableText } from "../EditableText/EditableText";
 
 import { assortmentNames, hasIntersection, readableDateTime } from "../../../../utils";
 import { assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
+import { Assortment, AssortmentItem } from "../../../../definitions/Assortment";
+import { UserPublic } from "../../../../definitions/User";
+
+function AssortmentItemCard(props: {
+    item: AssortmentItem,
+    canEdit: boolean,
+    index: number,
+    dispatch: MaltaaDispatch,
+    assortment: Assortment,
+    collector?: UserPublic,
+    children: React.ReactNode,
+}) {
+    const {item, canEdit, collector, dispatch, assortment, index} = props;
+    return (
+        <div className="AssortmentCard">
+            {props.children}
+            <EditableText
+                content={item.note}
+                canEdit={canEdit}
+                onEdit={content => {
+                    dispatch({
+                        type: "UpdateAssortment",
+                        operation: "SetItem",
+                        target: assortment.id,
+                        targetItemId: item.id,
+                        item: {
+                            ...item,
+                            note: content,
+                        },
+                    });
+                }}
+            />
+            <div>
+                {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
+            </div>
+            {
+                canEdit &&
+                <div>
+                    {
+                        index >= 1 &&
+                        <AnchorButton
+                            onClick={() => {
+                                const items = assortment.items.map(item => item.id);
+                                const temp = items[index - 1];
+                                items[index - 1] = items[index];
+                                items[index] = temp;
+                                dispatch({
+                                    type: "UpdateAssortment",
+                                    operation: "OrderItems",
+                                    target: assortment.id,
+                                    items: items,
+                                    meta: {},
+                                });
+                            }}
+                        >
+                            上移
+                        </AnchorButton>
+                    }
+                    {
+                        index < assortment.items.length - 1 &&
+                        <AnchorButton
+                            onClick={() => {
+                                const items = assortment.items.map(item => item.id);
+                                const temp = items[index + 1];
+                                items[index + 1] = items[index];
+                                items[index] = temp;
+                                dispatch({
+                                    type: "UpdateAssortment",
+                                    operation: "OrderItems",
+                                    target: assortment.id,
+                                    items: items,
+                                    meta: {},
+                                });
+                            }}
+                        >
+                            下移
+                        </AnchorButton>
+                    }
+                </div>
+            }
+        </div>
+    )
+}
 
 export function AssortmentPage(props: {
     state: ClientState,
@@ -56,8 +141,14 @@ export function AssortmentPage(props: {
                                 const author = users[article.author];
                                 const collector = users[item.addedBy];
                                 return (
-                                    <div
+                                    <AssortmentItemCard
                                         key={item.id}
+                                        item={item}
+                                        index={index}
+                                        assortment={assortment}
+                                        collector={collector}
+                                        canEdit={canEdit}
+                                        dispatch={dispatch}
                                     >
                                         <ArticleSummary
                                             article={article}
@@ -65,71 +156,7 @@ export function AssortmentPage(props: {
                                             hoverPreview={true}
                                             onClick={() => dispatch({type: "ViewArticle", article: article.id})}
                                         />
-                                        <EditableText
-                                            content={item.note}
-                                            canEdit={canEdit}
-                                            onEdit={content => {
-                                                dispatch({
-                                                    type: "UpdateAssortment",
-                                                    operation: "SetItem",
-                                                    target: assortment.id,
-                                                    targetItemId: item.id,
-                                                    item: {
-                                                        ...item,
-                                                        note: content,
-                                                    },
-                                                });
-                                            }}
-                                        />
-                                        <div>
-                                            {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
-                                        </div>
-                                        {
-                                            canEdit &&
-                                            <div>
-                                                {
-                                                    index >= 1 &&
-                                                    <AnchorButton
-                                                        onClick={() => {
-                                                            const items = assortment.items.map(item => item.id);
-                                                            const temp = items[index - 1];
-                                                            items[index - 1] = items[index];
-                                                            items[index] = temp;
-                                                            dispatch({
-                                                                type: "UpdateAssortment",
-                                                                operation: "OrderItems",
-                                                                target: assortment.id,
-                                                                items: items,
-                                                                meta: {},
-                                                            });
-                                                        }}
-                                                    >
-                                                        上移
-                                                    </AnchorButton>
-                                                }
-                                                {
-                                                    index < assortment.items.length - 1 &&
-                                                    <AnchorButton
-                                                        onClick={() => {
-                                                            const items = assortment.items.map(item => item.id);
-                                                            const temp = items[index + 1];
-                                                            items[index + 1] = items[index];
-                                                            items[index] = temp;
-                                                            dispatch({
-                                                                type: "UpdateAssortment",
-                                                                operation: "OrderItems",
-                                                                target: assortment.id,
-                                                                items: items,
-                                                                meta: {},
-                                                            });
-                                                        }}
-                                                    >
-                                                        下移
-                                                    </AnchorButton>
-                                                }
-                                            </div>
-                                        }
-                                    </div>
+                                    </AssortmentItemCard>
                                 );
                             }
                             default: {

@@ -1,6 +1,12 @@
 body {
     font-size: 16px;
-    font-family: sans-serif;
+    font-family:
+            /* Latin */
+            "Avenir Next", "Segoe UI", "Helvetica Neue", Arial,
+            /* Han */
+            "Hiragino Sans GB", "PingFang SC", "Heiti SC", "Microsoft YaHei UI", "Microsoft YaHei", "Source Han Sans",
+            /* fallback */
+            sans-serif;
     max-width: var(--main-max-width);
     margin: 0 auto 1rem;
 

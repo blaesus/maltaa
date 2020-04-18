@@ -105,7 +105,14 @@ export function ArticlePage(props: {
             />
 
             <div className="AssortmentList">
-                {includedAssortments.length}個集合收錄本文
+
+                {
+                    includedAssortments.length === 0 && `未有集合收錄本文`
+                }
+
+                {
+                    includedAssortments.length > 0 && `${includedAssortments.length}個集合收錄本文`
+                }
                 {
                     includedAssortments.map(assortment => (
                         <AssortmentSummary
@@ -122,27 +129,33 @@ export function ArticlePage(props: {
                     ))
                 }
                 {
-                    myAssortments.filter(a => includedAssortments.every(X => X.id !== a.assortment.id)).map(item => {
-                        return (
-                            <div key={item.assortment.id}>
-                                <AnchorButton onClick={() => {
-                                    dispatch({
-                                        type: "UpdateAssortment",
-                                        operation: "AddItem",
-                                        target: item.assortment.id,
-                                        item: {
-                                            source: "matters",
-                                            entityType: "article",
-                                            id: article.id,
-                                            note: "",
-                                        },
-                                    });
-                                }}>
-                                    加入{item.assortment.title}
-                                </AnchorButton>
-                            </div>
+                    myAssortments
+                        .filter(a =>
+                            (a.assortment.contentType === "article" || a.assortment.contentType === "mixed")
+                            &&
+                            includedAssortments.every(X => X.id !== a.assortment.id)
                         )
-                    })
+                        .map(item => {
+                            return (
+                                <div key={item.assortment.id}>
+                                    <AnchorButton onClick={() => {
+                                        dispatch({
+                                            type: "UpdateAssortment",
+                                            operation: "AddItem",
+                                            target: item.assortment.id,
+                                            item: {
+                                                source: "matters",
+                                                entityType: "article",
+                                                id: article.id,
+                                                note: "",
+                                            },
+                                        });
+                                    }}>
+                                        加入{item.assortment.title}
+                                    </AnchorButton>
+                                </div>
+                            )
+                        })
                 }
 
             </div>

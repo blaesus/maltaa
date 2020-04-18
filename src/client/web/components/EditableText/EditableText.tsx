@@ -27,7 +27,7 @@ export function EditableText(props: {
                 <AnchorButton
                     onClick={() => setEditing(editing => !editing)}
                 >
-                    編輯
+                    修改評語
                 </AnchorButton>
             }
             {

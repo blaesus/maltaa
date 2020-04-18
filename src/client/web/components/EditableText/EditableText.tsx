@@ -8,12 +8,14 @@ export function EditableText(props: {
     content: string,
     canEdit: boolean,
     onEdit(content: string): void
+    editButtonText?: boolean;
 }) {
     const {content, canEdit, onEdit} = props;
     const [editing, setEditing] = useState(false);
     const [newContent, setNewContent] = useState(content);
+    const editButtonText = props.editButtonText || "修改";
     return (
-        <div className="EditableText">
+        <span className="EditableText">
             {!editing && props.content}
             {
                 editing &&
@@ -27,7 +29,7 @@ export function EditableText(props: {
                 <AnchorButton
                     onClick={() => setEditing(editing => !editing)}
                 >
-                    修改評語
+                    {editButtonText}
                 </AnchorButton>
             }
             {
@@ -50,6 +52,6 @@ export function EditableText(props: {
                     </AnchorButton>
                 </>
             }
-        </div>
+        </span>
     );
 }

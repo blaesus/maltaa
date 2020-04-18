@@ -128,6 +128,15 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 },
             };
         }
+        case "EditTitle": {
+            target.title = request.title;
+            return {
+                type: "ProvideEntities",
+                data: {
+                    assortments: [target],
+                },
+            }
+        }
         default: {
             return {
                 type: "GenericError",

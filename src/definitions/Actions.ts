@@ -190,11 +190,19 @@ export interface UpdateAssortmentArchive extends BaseAction {
     archived: boolean
 }
 
+export interface UpdateAssortmentEditTitle extends BaseAction {
+    type: "UpdateAssortment",
+    operation: "EditTitle",
+    target: AssortmentId,
+    title: string,
+}
+
 export type UpdateAssortment =
     UpdateAssortmentAddItem
     | UpdateAssortmentOrderItems
     | UpdateAssortmentSetItem
     | UpdateAssortmentArchive
+    | UpdateAssortmentEditTitle
 ;
 
 export interface Signout extends BaseAction {

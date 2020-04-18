@@ -127,7 +127,18 @@ export function AssortmentPage(props: {
     return (
         <div className="AssortmentPage">
             <h1>
-                {assortment.title}
+                <EditableText
+                    content={assortment.title}
+                    canEdit={canEdit}
+                    onEdit={content => {
+                        dispatch({
+                            type: "UpdateAssortment",
+                            operation: "EditTitle",
+                            target: assortment.id,
+                            title: content,
+                        });
+                    }}
+                />
                 【{assortmentNames[assortment.contentType]}】
             </h1>
             <div>

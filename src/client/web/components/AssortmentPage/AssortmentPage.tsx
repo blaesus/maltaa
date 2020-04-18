@@ -13,6 +13,7 @@ import { assortmentNames, hasIntersection, readableDateTime } from "../../../../
 import { assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
 import { Assortment, AssortmentId, AssortmentItem } from "../../../../definitions/Assortment";
 import { UserPublic } from "../../../../definitions/User";
+import { AuthorTag } from "../AuthorTag/AuthorTag";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,
@@ -101,6 +102,7 @@ export function AssortmentPage(props: {
 }) {
     const {state, dispatch} = props;
     const identifier = state.ui.pages.assortment.identifier;
+    const {me, articles, users} = state.entities;
     useEffect(() => {
         if (state.ui.pages.current === "assortment") {
             window.scroll(0, 0);
@@ -120,7 +122,6 @@ export function AssortmentPage(props: {
         return null;
     }
     const url = assortmentUrl(identifier);
-    const {me, articles, users} = state.entities;
     const canEdit = !assortment.archived && hasIntersection(me?.mattersIds, assortment.editors);
     const isOwner = hasIntersection(me?.mattersIds, [assortment.owner]);
     return (
@@ -129,6 +130,22 @@ export function AssortmentPage(props: {
                 {assortment.title}
                 【{assortmentNames[assortment.contentType]}】
             </h1>
+            <div>
+                <span>總編
+                    <AuthorTag author={users[assortment.owner]} />
+                </span>
+                {
+                    assortment.editors.length >= 2 &&
+                    <span>
+                        編輯
+                        {
+                            assortment.editors.map(id =>
+                                <AuthorTag key={id} author={users[id]} />
+                            )
+                        }
+                    </span>
+                }
+            </div>
             <div>
                 <a href={url}>{url}</a>
                 {

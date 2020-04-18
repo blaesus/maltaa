@@ -108,7 +108,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 },
             };
         }
-        case "EditNote": {
+        case "EditReview": {
             const targetItemIndex = target.items.findIndex(item => item.id === request.targetItemId);
             if (targetItemIndex === -1) {
                 return {
@@ -119,7 +119,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             const originalItem = target.items[targetItemIndex];
             target.items[targetItemIndex] = {
                 ...originalItem,
-                review: request.note,
+                review: request.review,
                 lastReviewer: user,
                 lastReviewTime: Date.now(),
             };

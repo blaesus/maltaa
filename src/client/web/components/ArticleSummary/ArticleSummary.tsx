@@ -7,7 +7,7 @@ import { UserPublic } from "../../../../definitions/User";
 import { Article } from "../../../../definitions/Article";
 
 import { TimeTag } from "../TimeTag/TimeTag";
-import { AuthorTag } from "../AuthorTag/AuthorTag";
+import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
 import { ArticlePreview } from "./ArticlePreview/ArticlePreview";
 
 import { articleUrl, getAnchorClickHandler } from "../../uiUtils";
@@ -36,7 +36,7 @@ export function ArticleSummary(props: {
                 {article.title}
                 <span className="AuthorLine">
                     {"/"}
-                    <AuthorTag author={author} surpressAnchor={true}/>
+                    <AuthorLabel author={author} surpressAnchor={true}/>
                 </span>
             </h2>
             <span className="Meta">

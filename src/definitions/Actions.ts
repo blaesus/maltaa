@@ -175,12 +175,12 @@ export interface UpdateAssortmentOrderItems extends BaseAction {
     items: string[],
 }
 
-export interface UpdateAssortmentEditNote extends BaseAction {
+export interface UpdateAssortmentEditReview extends BaseAction {
     type: "UpdateAssortment",
-    operation: "EditNote",
+    operation: "EditReview",
     target: AssortmentId,
     targetItemId: string,
-    note: string,
+    review: string,
 }
 
 export interface UpdateAssortmentArchive extends BaseAction {
@@ -207,7 +207,7 @@ export interface UpdateAssortmentEdit extends BaseAction {
 export type UpdateAssortment =
     UpdateAssortmentAddItem
     | UpdateAssortmentOrderItems
-    | UpdateAssortmentEditNote
+    | UpdateAssortmentEditReview
     | UpdateAssortmentArchive
     | UpdateAssortmentEditTitle
     | UpdateAssortmentEdit

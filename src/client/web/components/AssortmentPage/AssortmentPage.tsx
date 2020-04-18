@@ -13,7 +13,7 @@ import { assortmentNames, hasIntersection, readableDateTime } from "../../../../
 import { assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
 import { Assortment, AssortmentId, AssortmentItem } from "../../../../definitions/Assortment";
 import { UserPublic } from "../../../../definitions/User";
-import { AuthorTag } from "../AuthorTag/AuthorTag";
+import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,
@@ -22,10 +22,10 @@ function AssortmentItemCard(props: {
     dispatch: MaltaaDispatch,
     assortment: Assortment,
     collector?: UserPublic,
-    lastNoter?: UserPublic,
+    lastReviewer?: UserPublic,
     children: React.ReactNode,
 }) {
-    const {item, canEdit, collector, dispatch, assortment, index, lastNoter} = props;
+    const {item, canEdit, collector, dispatch, assortment, index, lastReviewer} = props;
     return (
         <div className="AssortmentCard">
             {props.children}
@@ -35,10 +35,10 @@ function AssortmentItemCard(props: {
                 onEdit={content => {
                     dispatch({
                         type: "UpdateAssortment",
-                        operation: "EditNote",
+                        operation: "EditReview",
                         target: assortment.id,
                         targetItemId: item.id,
-                        note: content,
+                        review: content,
                     });
                 }}
             />
@@ -47,7 +47,7 @@ function AssortmentItemCard(props: {
                 {
                     item.collectionTime !== item.lastReviewTime &&
                     <span>
-                        。評語由{lastNoter?.displayName}於{readableDateTime(item.lastReviewTime)}撰寫。
+                        。評語由{lastReviewer?.displayName}於{readableDateTime(item.lastReviewTime)}撰寫。
                     </span>
                 }
             </div>
@@ -147,7 +147,7 @@ export function AssortmentPage(props: {
             <div>
                 <span>
                     {assortmentNames[assortment.contentType]}總編
-                    <AuthorTag author={users[assortment.owner]} />
+                    <AuthorLabel author={users[assortment.owner]} />
                 </span>
                 {
                     assortment.editors.length >= 2 &&
@@ -155,7 +155,7 @@ export function AssortmentPage(props: {
                         編輯
                         {
                             assortment.editors.map(id =>
-                                <AuthorTag key={id} author={users[id]} />
+                                <AuthorLabel key={id} author={users[id]} />
                             )
                         }
                     </span>
@@ -200,7 +200,7 @@ export function AssortmentPage(props: {
                                         index={index}
                                         assortment={assortment}
                                         collector={users[item.collector]}
-                                        lastNoter={users[item.collectionTime]}
+                                        lastReviewer={users[item.lastReviewer]}
                                         canEdit={canEdit}
                                         dispatch={dispatch}
                                     >

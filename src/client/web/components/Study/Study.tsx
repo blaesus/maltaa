@@ -76,8 +76,13 @@ function AssortmentSection(props: {
                 archivedAssortments.length > 0 &&
                 <div>
                     <h3>
-                        已封存({archivedAssortments.length})
-                        <AnchorButton onClick={() => setViewingArchived(true)}>查閱</AnchorButton>
+                        已封存
+                        {!viewingArchived &&
+                            <span>
+                                ({archivedAssortments.length})
+                                <AnchorButton onClick={() => setViewingArchived(true)}>查閱</AnchorButton>
+                            </span>
+                        }
                     </h3>
                     {
                         viewingArchived &&

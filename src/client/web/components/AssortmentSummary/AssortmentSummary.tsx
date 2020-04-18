@@ -3,7 +3,7 @@ import * as React from "react";
 import "./AssortmentSummary.css"
 
 import { Assortment } from "../../../../definitions/Assortment";
-import { assortmentUrl, getAnchorClickHandler } from "../../uiUtils";
+import { assortmentPath, getAnchorClickHandler } from "../../uiUtils";
 import { assortmentNames } from "../../../../utils";
 import { ObjectMap } from "../../../../definitions/Objects";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
@@ -18,7 +18,7 @@ export function AssortmentSummary(props: {
     if (!owner) {
         return null;
     }
-    const url = assortmentUrl({
+    const url = assortmentPath({
         ownerUsername: owner.userName,
         contentType: assortment.contentType,
         subpath: assortment.subpath,

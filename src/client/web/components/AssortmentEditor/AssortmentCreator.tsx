@@ -7,8 +7,9 @@ import { UserPublic } from "../../../../definitions/User";
 
 import { Chooser } from "../Chooser/Chooser";
 
-import { assortmentUrl, MaltaaDispatch, OptionList } from "../../uiUtils";
+import { assortmentPath, MaltaaDispatch, OptionList } from "../../uiUtils";
 import { OperatorSelector } from "../OperatorSelector";
+import { SubpathEditor } from "./SubpathEditor";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {
@@ -63,14 +64,11 @@ export function AssortmentCreator(props: {
                 />
             }
             <div>
-                <div>
-                    {assortmentUrl({ownerUsername: owner.userName, contentType, subpath: ""})}
-                    <input
-                        value={subpath}
-                        onChange={event => setSubpath(event.target.value)}
-                        placeholder={"路徑"}
-                    />
-                </div>
+                <SubpathEditor
+                    pathPrefix={assortmentPath({ownerUsername: owner.userName, contentType, subpath: ""})}
+                    subpath={subpath}
+                    onChange={setSubpath}
+                />
                 <input
                     value={title}
                     onChange={event => setTitle(event.target.value)}

@@ -187,7 +187,7 @@ export function newEmptyObject() {
     return Object.create(null);
 }
 
-export const assortmentPrefix: { [key in AssortmentContentType]: string } = {
+export const assortmentSigil: { [key in AssortmentContentType]: string } = {
     article: "an",
     user: "rl",
     mixed: "mx",
@@ -202,7 +202,7 @@ function reverseMap<K extends string, V extends string>(data: { [key in K]: V })
     return result;
 }
 
-export const assortmentTypes = reverseMap(assortmentPrefix);
+export const assortmentTypes = reverseMap(assortmentSigil);
 
 export const assortmentNames: { [key in AssortmentContentType]: string } = {
     article: "文選",

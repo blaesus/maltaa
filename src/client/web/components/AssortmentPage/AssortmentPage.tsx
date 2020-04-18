@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import "./AssortmentPage.css";
 
@@ -10,10 +10,18 @@ import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { EditableText } from "../EditableText/EditableText";
 
 import { assortmentNames, hasIntersection, readableDateTime } from "../../../../utils";
-import { assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
-import { Assortment, AssortmentId, AssortmentItem } from "../../../../definitions/Assortment";
+import {
+    AssortmentUIIdentifier,
+    assortmentPath,
+    findAssortmentFromState,
+    MaltaaDispatch,
+    assortmentPathPrefix,
+} from "../../uiUtils";
+import { Assortment, AssortmentId, AssortmentIdentifier, AssortmentItem } from "../../../../definitions/Assortment";
 import { UserPublic } from "../../../../definitions/User";
 import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
+import { isDefinitionNode } from "graphql";
+import { SubpathEditor } from "../AssortmentEditor/SubpathEditor";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,
@@ -100,6 +108,38 @@ function AssortmentItemCard(props: {
     )
 }
 
+export function Subpath(props: {
+    identifier: AssortmentUIIdentifier,
+    canEdit: boolean,
+}) {
+    const {identifier, canEdit} = props;
+    const url = assortmentPath(identifier);
+    const [editing, setEditing] = useState(false);
+
+    const [subpath, setSubpath] = useState(identifier.subpath);
+
+    return (
+        <div>
+            {
+                !editing &&
+                <a href={url}>{url}</a>
+            }
+            {
+                canEdit && !editing &&
+                    <AnchorButton onClick={() => setEditing(true)}>變更路徑</AnchorButton>
+            }
+            {
+                editing &&
+                <SubpathEditor
+                    pathPrefix={assortmentPathPrefix(identifier)}
+                    subpath={subpath}
+                    onChange={setSubpath}
+                />
+            }
+        </div>
+    )
+}
+
 export function AssortmentPage(props: {
     state: ClientState,
     dispatch: MaltaaDispatch,
@@ -125,7 +165,6 @@ export function AssortmentPage(props: {
     if (!assortment) {
         return null;
     }
-    const url = assortmentUrl(identifier);
     const canEdit = !assortment.archived && hasIntersection(me?.mattersIds, assortment.editors);
     const isOwner = hasIntersection(me?.mattersIds, [assortment.owner]);
     return (
@@ -162,7 +201,10 @@ export function AssortmentPage(props: {
                 }
             </div>
             <div>
-                <a href={url}>{url}</a>
+                <Subpath
+                    identifier={identifier}
+                    canEdit={canEdit}
+                />
                 {
                     assortment.archived &&
                     <span>

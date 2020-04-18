@@ -7,7 +7,7 @@ import { Preferences } from "../../definitions/Preferences";
 
 import { STUDY_SUBPATH, THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
 import { articleIdToSerial, articleSerialToId } from "../../mattersSpecifics";
-import { assortmentPrefix, assortmentTypes } from "../../utils";
+import { assortmentSigil, assortmentTypes } from "../../utils";
 
 export interface AssortmentUIIdentifier extends Omit<AssortmentIdentifier, "owner"> {
     ownerUsername: string,
@@ -15,9 +15,14 @@ export interface AssortmentUIIdentifier extends Omit<AssortmentIdentifier, "owne
     subpath: string,
 }
 
-export function assortmentUrl(identifier: AssortmentUIIdentifier): string {
-    const {ownerUsername, contentType, subpath} = identifier;
-    return `/${USER_URL_SIGIL}${ownerUsername}/${assortmentPrefix[contentType]}/${subpath}`;
+export function assortmentPathPrefix(identifier: Pick<AssortmentUIIdentifier, "ownerUsername" | "contentType">): string {
+    const {ownerUsername, contentType} = identifier;
+    return `/${USER_URL_SIGIL}${ownerUsername}/${assortmentSigil[contentType]}/`;
+}
+
+export function assortmentPath(identifier: AssortmentUIIdentifier): string {
+    const {subpath} = identifier;
+    return `${assortmentPathPrefix(identifier)}${subpath}`;
 }
 
 export function articleUrl(articleId: string) {
@@ -83,7 +88,7 @@ export function serializeToPathName(state: ClientUIState): string {
         return `/${STUDY_SUBPATH}`;
     }
     else if (state.pages.current === "assortment" && state.pages.assortment.identifier) {
-        return assortmentUrl(state.pages.assortment.identifier);
+        return assortmentPath(state.pages.assortment.identifier);
     }
     else {
         return "/";

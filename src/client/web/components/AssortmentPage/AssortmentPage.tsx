@@ -30,7 +30,7 @@ function AssortmentItemCard(props: {
         <div className="AssortmentCard">
             {props.children}
             <EditableText
-                content={item.note}
+                content={item.review}
                 canEdit={canEdit}
                 onEdit={content => {
                     dispatch({
@@ -43,11 +43,11 @@ function AssortmentItemCard(props: {
                 }}
             />
             <div className="CollectionByline">
-                {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
+                {collector?.displayName}於{readableDateTime(item.collectionTime)}收錄
                 {
-                    item.addedAt !== item.lastNotedAt &&
+                    item.collectionTime !== item.lastReviewTime &&
                     <span>
-                        。評語由{lastNoter?.displayName}於{readableDateTime(item.lastNotedAt)}撰寫。
+                        。評語由{lastNoter?.displayName}於{readableDateTime(item.lastReviewTime)}撰寫。
                     </span>
                 }
             </div>
@@ -199,8 +199,8 @@ export function AssortmentPage(props: {
                                         item={item}
                                         index={index}
                                         assortment={assortment}
-                                        collector={users[item.addedBy]}
-                                        lastNoter={users[item.lastNoteBy]}
+                                        collector={users[item.collector]}
+                                        lastNoter={users[item.collectionTime]}
                                         canEdit={canEdit}
                                         dispatch={dispatch}
                                     >

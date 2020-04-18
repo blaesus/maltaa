@@ -80,11 +80,11 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 source: "matters",
                 entityType: request.item.entityType,
                 id: request.item.id,
-                note: request.item.note,
-                addedBy: user,
-                addedAt: now,
-                lastNoteBy: user,
-                lastNotedAt: now,
+                review: request.item.note,
+                collector: user,
+                collectionTime: now,
+                lastReviewer: user,
+                lastReviewTime: now,
             };
             target.items.push(newItem);
             await db.assortment.upsert(target);
@@ -119,9 +119,9 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             const originalItem = target.items[targetItemIndex];
             target.items[targetItemIndex] = {
                 ...originalItem,
-                note: request.note,
-                lastNoteBy: user,
-                lastNotedAt: Date.now(),
+                review: request.note,
+                lastReviewer: user,
+                lastReviewTime: Date.now(),
             };
             await db.assortment.upsert(target);
             return {

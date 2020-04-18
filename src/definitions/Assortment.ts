@@ -7,13 +7,13 @@ export interface MattersEntity {
     source: "matters",
     entityType: MattersEntityType,
     id: ArticleId | UserId,
-    note: string,
+    review: string,
 
-    addedBy: UserId,
-    addedAt: number,
+    collector: UserId,
+    collectionTime: number,
 
-    lastNoteBy: UserId,
-    lastNotedAt: number,
+    lastReviewer: UserId,
+    lastReviewTime: number,
 }
 
 export type AssortmentItem = MattersEntity;

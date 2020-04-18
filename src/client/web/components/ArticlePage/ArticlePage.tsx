@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import "./ArticlePage.css"
 
@@ -18,6 +18,7 @@ import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { mattersArticleUrl } from "../../../../mattersSpecifics";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 import { ArticleId } from "../../../../definitions/Article";
+import { hasIntersection } from "../../../../utils";
 
 
 export function ArticlePage(props: {
@@ -27,6 +28,8 @@ export function ArticlePage(props: {
 }) {
     const {articleId, state, dispatch} = props;
     const {articles, users, comments} = state.entities;
+
+    const [addingToMyAssortments, setAddingToMyAssortments] = useState(false);
 
     useEffect(() => {
         if (state.ui.pages.current === "article") {
@@ -57,16 +60,17 @@ export function ArticlePage(props: {
     const author = users[article.author];
     const upstreams = article.upstreams.map(id => articles[id]).filter(Boolean);
     const downstreams = Object.values(articles).filter(a => a.upstreams.includes(article.id));
-    const includedAssortments =
+    const addedAssortments =
         Object.values(state.entities.assortments)
-            .filter(a => a.items.some(item => item.id === article.id));
-    const myAssortments: { assortment: Assortment, myEditors: string[] }[] =
+              .filter(a => a.items.some(item => item.id === article.id));
+    const myAssortmentsForAdding: Assortment[] =
         Object.values(state.entities.assortments)
-            .filter(a => state.entities.me?.mattersIds?.some(id => a.editors.includes(id)))
-            .map(a => ({
-                assortment: a,
-                myEditors: state.entities.me?.mattersIds.filter(id => a.editors.includes(id)) || [],
-            }))
+              .filter(a =>
+                  !a.archived &&
+                  (a.contentType === "article" || a.contentType === "mixed") &&
+                  addedAssortments.every(includedAssortment => includedAssortment.id !== a.id) &&
+                  hasIntersection(a.editors, state.entities.me?.mattersIds)
+              );
     return (
         <article className="ArticlePage">
             <section className="root-content">
@@ -107,14 +111,14 @@ export function ArticlePage(props: {
             <div className="AssortmentList">
 
                 {
-                    includedAssortments.length === 0 && `未有集合收錄本文`
+                    addedAssortments.length === 0 && `未有集合收錄本文`
                 }
 
                 {
-                    includedAssortments.length > 0 && `${includedAssortments.length}個集合收錄本文`
+                    addedAssortments.length > 0 && `${addedAssortments.length}個集合收錄本文`
                 }
                 {
-                    includedAssortments.map(assortment => (
+                    addedAssortments.map(assortment => (
                         <AssortmentSummary
                             key={assortment.id}
                             assortment={assortment}
@@ -129,22 +133,20 @@ export function ArticlePage(props: {
                     ))
                 }
                 {
-                    myAssortments
-                        .filter(a =>
-                            !a.assortment.archived
-                            &&
-                            (a.assortment.contentType === "article" || a.assortment.contentType === "mixed")
-                            &&
-                            includedAssortments.every(X => X.id !== a.assortment.id)
-                        )
-                        .map(item => {
+                    !addingToMyAssortments &&
+                    <AnchorButton onClick={() => setAddingToMyAssortments(true)}>加入我的集合</AnchorButton>
+                }
+                {
+                    addingToMyAssortments &&
+                    myAssortmentsForAdding
+                        .map(assortment => {
                             return (
-                                <div key={item.assortment.id}>
+                                <div key={assortment.id}>
                                     <AnchorButton onClick={() => {
                                         dispatch({
                                             type: "UpdateAssortment",
                                             operation: "AddItem",
-                                            target: item.assortment.id,
+                                            target: assortment.id,
                                             item: {
                                                 source: "matters",
                                                 entityType: "article",
@@ -153,7 +155,7 @@ export function ArticlePage(props: {
                                             },
                                         });
                                     }}>
-                                        加入{item.assortment.title}
+                                        加入{assortment.title}
                                     </AnchorButton>
                                 </div>
                             )

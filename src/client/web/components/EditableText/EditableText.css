@@ -4,4 +4,5 @@
 
 .EditableText textarea {
     display: block;
+    width: 100%;
 }

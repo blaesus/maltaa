@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export function SubpathEditor(props: {
+export function SubpathInput(props: {
     pathPrefix: string,
     subpath: string,
     onChange(value: string): void,

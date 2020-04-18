@@ -21,7 +21,7 @@ import { Assortment, AssortmentId, AssortmentIdentifier, AssortmentItem } from "
 import { UserPublic } from "../../../../definitions/User";
 import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
 import { isDefinitionNode } from "graphql";
-import { SubpathEditor } from "../AssortmentEditor/SubpathEditor";
+import { SubpathInput } from "../AssortmentEditor/SubpathInput";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,
@@ -130,11 +130,15 @@ export function Subpath(props: {
             }
             {
                 editing &&
-                <SubpathEditor
-                    pathPrefix={assortmentPathPrefix(identifier)}
-                    subpath={subpath}
-                    onChange={setSubpath}
-                />
+                <span>
+                    <SubpathInput
+                        pathPrefix={assortmentPathPrefix(identifier)}
+                        subpath={subpath}
+                        onChange={setSubpath}
+                    />
+                    <AnchorButton>確定</AnchorButton>
+                    <AnchorButton onClick={() => setEditing(false)}>取消</AnchorButton>
+                </span>
             }
         </div>
     )

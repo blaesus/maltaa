@@ -9,7 +9,7 @@ import { Chooser } from "../Chooser/Chooser";
 
 import { assortmentPath, MaltaaDispatch, OptionList } from "../../uiUtils";
 import { OperatorSelector } from "../OperatorSelector";
-import { SubpathEditor } from "./SubpathEditor";
+import { SubpathInput } from "./SubpathInput";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {
@@ -64,7 +64,7 @@ export function AssortmentCreator(props: {
                 />
             }
             <div>
-                <SubpathEditor
+                <SubpathInput
                     pathPrefix={assortmentPath({ownerUsername: owner.userName, contentType, subpath: ""})}
                     subpath={subpath}
                     onChange={setSubpath}

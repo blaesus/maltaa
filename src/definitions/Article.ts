@@ -49,7 +49,6 @@ export interface Article {
         commenters: number,
         appreciations: number,
         appreciationAmount: number,
-        appreciators: number,
 
         // "Selected by community"
         // Newly added, to await data sync

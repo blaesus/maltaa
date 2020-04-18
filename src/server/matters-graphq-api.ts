@@ -587,7 +587,6 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
             commenters: comments.map(c => c.author).filter(dedupe).length,
             appreciations: transactions.length,
             appreciationAmount: transactions.map(tx => tx.amount).reduce((sum, v) => sum + v, 0),
-            appreciators: transactions.map(tx => tx.sender).filter(dedupe).length,
             featuredComments: articleResponse.featuredComments.edges.map(edge => edge.node.id),
         },
     });

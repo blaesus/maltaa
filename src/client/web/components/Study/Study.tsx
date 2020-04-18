@@ -1,12 +1,14 @@
 import * as React from "react";
-import { Dispatch, useState } from "react";
+import { useState } from "react";
+
+import "./Study.css"
 
 import { ClientState } from "../../states/reducer";
 import { MaltaaDispatch } from "../../uiUtils";
 
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
-import { assortmentNames, hasIntersection } from "../../../../utils";
+import { assortmentNames, hasIntersection, splinter } from "../../../../utils";
 import { Assortment, AssortmentContentType } from "../../../../definitions/Assortment";
 import { ObjectMap } from "../../../../definitions/Objects";
 import { UserPublic } from "../../../../definitions/User";
@@ -47,13 +49,15 @@ function AssortmentSection(props: {
 }) {
     const {contentType, myAssortments, state, dispatch} = props;
     const [creating, setCreating] = useState(false);
+    const [viewingArchived, setViewingArchived] = useState(false);
     const assortments = myAssortments.filter(a => a.contentType === contentType);
+    const {yes: activeAssortments, no: archivedAssortments} = splinter(assortments, a => !a.archived)
     const assortmentName = assortmentNames[contentType];
     return (
-        <section>
+        <section className="AssortmentSection">
             <h2>我的{assortmentName}</h2>
             <AssortmentList
-                assortments={assortments}
+                assortments={activeAssortments}
                 users={state.entities.users}
                 dispatch={dispatch}
             />
@@ -67,6 +71,23 @@ function AssortmentSection(props: {
                     dispatch={dispatch}
                     fixedContentType={contentType}
                 />
+            }
+            {
+                archivedAssortments.length > 0 &&
+                <div>
+                    <h3>
+                        已封存({archivedAssortments.length})
+                        <AnchorButton onClick={() => setViewingArchived(true)}>查閱</AnchorButton>
+                    </h3>
+                    {
+                        viewingArchived &&
+                        <AssortmentList
+                            assortments={archivedAssortments}
+                            users={state.entities.users}
+                            dispatch={dispatch}
+                        />
+                    }
+                </div>
             }
         </section>
     )

@@ -134,7 +134,7 @@ export function AssortmentPage(props: {
                 {
                     assortment.archived &&
                     <span>
-                        已廢棄
+                        已封存
                     </span>
                 }
                 {
@@ -147,7 +147,7 @@ export function AssortmentPage(props: {
                             archived: !assortment.archived
                         })}
                     >
-                        {assortment.archived ? "撤銷廢棄" : "廢棄集合"}
+                        {assortment.archived ? "撤銷封存" : "封存集合"}
                     </AnchorButton>
                 }
             </div>

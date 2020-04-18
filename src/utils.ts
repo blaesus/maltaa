@@ -221,3 +221,17 @@ export function hasIntersection<T>(a?: T[], b?: T[]): boolean {
     }
     return false;
 }
+
+export function splinter<T>(array: T[], f: (item: T) => boolean): {yes: T[], no: T[]} {
+    const yes: T[] = [];
+    const no: T[] = [];
+    for (const item of array) {
+        if (f(item)) {
+            yes.push(item);
+        }
+        else {
+            no.push(item);
+        }
+    }
+    return {yes, no}
+}

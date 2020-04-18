@@ -1,7 +1,7 @@
 import { db } from "../db";
 
 import { MaltaaAction, UpdateAssortment } from "../../definitions/Actions";
-import { MattersEntity } from "../../definitions/Assortment";
+import { AssortmentIdentifier, MattersEntity } from "../../definitions/Assortment";
 import { hasIntersection } from "../../utils";
 
 export async function updateAssortment(request: UpdateAssortment): Promise<MaltaaAction> {
@@ -75,13 +75,16 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                     reason: "Cannot add duplicated item",
                 };
             }
+            const now = Date.now();
             const newItem: MattersEntity = {
                 source: "matters",
                 entityType: request.item.entityType,
                 id: request.item.id,
                 note: request.item.note,
                 addedBy: user,
-                addedAt: Date.now(),
+                addedAt: now,
+                lastNoteBy: user,
+                lastNotedAt: now,
             };
             target.items.push(newItem);
             await db.assortment.upsert(target);
@@ -105,8 +108,8 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 },
             };
         }
-        case "SetItem": {
-            const targetItemIndex = target.items.findIndex(item => item.id === request.item.id);
+        case "EditNote": {
+            const targetItemIndex = target.items.findIndex(item => item.id === request.targetItemId);
             if (targetItemIndex === -1) {
                 return {
                     type: "GenericError",
@@ -116,9 +119,9 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             const originalItem = target.items[targetItemIndex];
             target.items[targetItemIndex] = {
                 ...originalItem,
-                entityType: request.item.entityType,
-                id: request.item.id,
-                note: request.item.note,
+                note: request.note,
+                lastNoteBy: user,
+                lastNotedAt: Date.now(),
             };
             await db.assortment.upsert(target);
             return {
@@ -130,6 +133,28 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
         }
         case "EditTitle": {
             target.title = request.title;
+            return {
+                type: "ProvideEntities",
+                data: {
+                    assortments: [target],
+                },
+            }
+        }
+        case "EditSubpath": {
+            const newIdentifier: AssortmentIdentifier = {
+                owner: target.owner,
+                contentType: target.contentType,
+                subpath: request.subpath,
+            };
+            const existing = await db.assortment.findByIdentifier(newIdentifier);
+            if (existing) {
+                return {
+                    type: "GenericError",
+                    reason: "Identifier taken",
+                }
+            }
+            target.subpath = request.subpath;
+            await db.assortment.upsert(target);
             return {
                 type: "ProvideEntities",
                 data: {

@@ -131,6 +131,8 @@ export function ArticlePage(props: {
                 {
                     myAssortments
                         .filter(a =>
+                            !a.assortment.archived
+                            &&
                             (a.assortment.contentType === "article" || a.assortment.contentType === "mixed")
                             &&
                             includedAssortments.every(X => X.id !== a.assortment.id)

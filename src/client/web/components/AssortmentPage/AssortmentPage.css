@@ -1,3 +1,8 @@
 .AssortmentPage {
     margin: 0 var(--side-margin);
 }
+
+.AssortmentPage .CollectionByline {
+    font-size: 0.9em;
+    color: #888;
+}

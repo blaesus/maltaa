@@ -22,9 +22,10 @@ function AssortmentItemCard(props: {
     dispatch: MaltaaDispatch,
     assortment: Assortment,
     collector?: UserPublic,
+    lastNoter?: UserPublic,
     children: React.ReactNode,
 }) {
-    const {item, canEdit, collector, dispatch, assortment, index} = props;
+    const {item, canEdit, collector, dispatch, assortment, index, lastNoter} = props;
     return (
         <div className="AssortmentCard">
             {props.children}
@@ -34,18 +35,21 @@ function AssortmentItemCard(props: {
                 onEdit={content => {
                     dispatch({
                         type: "UpdateAssortment",
-                        operation: "SetItem",
+                        operation: "EditNote",
                         target: assortment.id,
                         targetItemId: item.id,
-                        item: {
-                            ...item,
-                            note: content,
-                        },
+                        note: content,
                     });
                 }}
             />
-            <div>
+            <div className="CollectionByline">
                 {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
+                {
+                    item.addedAt !== item.lastNotedAt &&
+                    <span>
+                        。評語由{lastNoter?.displayName}於{readableDateTime(item.lastNotedAt)}撰寫。
+                    </span>
+                }
             </div>
             {
                 canEdit &&
@@ -139,10 +143,10 @@ export function AssortmentPage(props: {
                         });
                     }}
                 />
-                【{assortmentNames[assortment.contentType]}】
             </h1>
             <div>
-                <span>總編
+                <span>
+                    {assortmentNames[assortment.contentType]}總編
                     <AuthorTag author={users[assortment.owner]} />
                 </span>
                 {
@@ -189,14 +193,14 @@ export function AssortmentPage(props: {
                                     return `Missing article data ${JSON.stringify(item)}`;
                                 }
                                 const author = users[article.author];
-                                const collector = users[item.addedBy];
                                 return (
                                     <AssortmentItemCard
                                         key={item.id}
                                         item={item}
                                         index={index}
                                         assortment={assortment}
-                                        collector={collector}
+                                        collector={users[item.addedBy]}
+                                        lastNoter={users[item.lastNoteBy]}
                                         canEdit={canEdit}
                                         dispatch={dispatch}
                                     >

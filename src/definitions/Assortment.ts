@@ -8,8 +8,12 @@ export interface MattersEntity {
     entityType: MattersEntityType,
     id: ArticleId | UserId,
     note: string,
+
     addedBy: UserId,
     addedAt: number,
+
+    lastNoteBy: UserId,
+    lastNotedAt: number,
 }
 
 export type AssortmentItem = MattersEntity;

@@ -37,7 +37,6 @@ export function EditableText(props: {
                         onClick={() => {
                             onEdit(newContent);
                             setEditing(false);
-                            setNewContent("");
                         }}
                     >
                         確定
@@ -45,7 +44,6 @@ export function EditableText(props: {
                     <AnchorButton
                         onClick={() => {
                             setEditing(false);
-                            setNewContent("");
                         }}
                     >
                         取消

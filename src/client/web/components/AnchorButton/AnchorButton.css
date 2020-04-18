@@ -1,6 +1,7 @@
 .AnchorButton {
     border-bottom: 1px solid transparent;
     cursor: pointer;
+    font-weight: bolder;
 }
 
 @media only screen and (min-width: 769px) {

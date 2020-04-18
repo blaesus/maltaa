@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { ClientState } from "../../states/reducer";
 
@@ -9,9 +9,6 @@ import { EditableText } from "../EditableText/EditableText";
 
 import { assortmentNames, hasIntersection, readableDateTime } from "../../../../utils";
 import { assortmentUrl, findAssortmentFromState, MaltaaDispatch } from "../../uiUtils";
-import { AssortmentId, MattersEntityType } from "../../../../definitions/Assortment";
-import { ArticleId } from "../../../../definitions/Article";
-import { UserId } from "../../../../definitions/User";
 
 export function AssortmentPage(props: {
     state: ClientState,
@@ -39,6 +36,7 @@ export function AssortmentPage(props: {
     }
     const url = assortmentUrl(identifier);
     const {me, articles, users} = state.entities;
+    const canEdit = hasIntersection(me?.mattersIds, assortment.editors);
     return (
         <div className="AssortmentPage">
             <h1>
@@ -69,7 +67,7 @@ export function AssortmentPage(props: {
                                         />
                                         <EditableText
                                             content={item.note}
-                                            canEdit={hasIntersection(assortment.editors, me?.mattersIds)}
+                                            canEdit={canEdit}
                                             onEdit={content => {
                                                 dispatch({
                                                     type: "UpdateAssortment",
@@ -80,54 +78,57 @@ export function AssortmentPage(props: {
                                                         ...item,
                                                         note: content,
                                                     },
-                                                })
+                                                });
                                             }}
                                         />
                                         <div>
                                             {collector?.displayName}於{readableDateTime(item.addedAt)}收錄
                                         </div>
-                                        <div>
-                                            {
-                                                index >= 1 &&
-                                                <AnchorButton
-                                                    onClick={() => {
-                                                        const items = assortment.items.map(item => item.id);
-                                                        const temp = items[index - 1];
-                                                        items[index - 1] = items[index];
-                                                        items[index] = temp;
-                                                        dispatch({
-                                                            type: "UpdateAssortment",
-                                                            operation: "OrderItems",
-                                                            target: assortment.id,
-                                                            items: items,
-                                                            meta: {},
-                                                        });
-                                                    }}
-                                                >
-                                                    上移
-                                                </AnchorButton>
-                                            }
-                                            {
-                                                index < assortment.items.length - 1 &&
-                                                <AnchorButton
-                                                    onClick={() => {
-                                                        const items = assortment.items.map(item => item.id);
-                                                        const temp = items[index + 1];
-                                                        items[index + 1] = items[index];
-                                                        items[index] = temp;
-                                                        dispatch({
-                                                            type: "UpdateAssortment",
-                                                            operation: "OrderItems",
-                                                            target: assortment.id,
-                                                            items: items,
-                                                            meta: {},
-                                                        });
-                                                    }}
-                                                >
-                                                    下移
-                                                </AnchorButton>
-                                            }
-                                        </div>
+                                        {
+                                            canEdit &&
+                                            <div>
+                                                {
+                                                    index >= 1 &&
+                                                    <AnchorButton
+                                                        onClick={() => {
+                                                            const items = assortment.items.map(item => item.id);
+                                                            const temp = items[index - 1];
+                                                            items[index - 1] = items[index];
+                                                            items[index] = temp;
+                                                            dispatch({
+                                                                type: "UpdateAssortment",
+                                                                operation: "OrderItems",
+                                                                target: assortment.id,
+                                                                items: items,
+                                                                meta: {},
+                                                            });
+                                                        }}
+                                                    >
+                                                        上移
+                                                    </AnchorButton>
+                                                }
+                                                {
+                                                    index < assortment.items.length - 1 &&
+                                                    <AnchorButton
+                                                        onClick={() => {
+                                                            const items = assortment.items.map(item => item.id);
+                                                            const temp = items[index + 1];
+                                                            items[index + 1] = items[index];
+                                                            items[index] = temp;
+                                                            dispatch({
+                                                                type: "UpdateAssortment",
+                                                                operation: "OrderItems",
+                                                                target: assortment.id,
+                                                                items: items,
+                                                                meta: {},
+                                                            });
+                                                        }}
+                                                    >
+                                                        下移
+                                                    </AnchorButton>
+                                                }
+                                            </div>
+                                        }
                                     </div>
                                 );
                             }

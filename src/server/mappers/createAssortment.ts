@@ -61,6 +61,9 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         contentType: request.contentType,
         description: "",
         items,
+        policies: {
+            allowForking: true,
+        }
     }
 
     await db.assortment.upsert(newAssortment);

@@ -10,3 +10,8 @@
 .AssortmentPage h1 .AnchorButton {
     font-size: 1rem;
 }
+
+.AssortmentPage .AssortmentCard {
+    border: 1px solid black;
+    margin: 0.5rem 0;
+}

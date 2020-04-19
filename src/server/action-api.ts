@@ -19,6 +19,7 @@ import { daysAgoInEpoch, daysToMs, dedupe, last } from "../utils";
 import { setMyPreferences } from "./mappers/setMyPreferences";
 import { search } from "./mappers/search";
 import { getMyData } from "./mappers/getMyData";
+import { viewUser } from "./mappers/viewUser";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -91,21 +92,7 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
             };
         }
         case "ViewUser": {
-            const user = await db.user.findByUserName(request.username);
-            if (user) {
-                return {
-                    type: "ProvideEntities",
-                    data: {
-                        users: [user],
-                    },
-                };
-            }
-            else {
-                return {
-                    type: "GenericError",
-                    reason: "user not found",
-                };
-            }
+            return viewUser(request);
         }
         case "ViewArticle": {
             return viewArticle(request);

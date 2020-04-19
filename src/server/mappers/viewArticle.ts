@@ -16,7 +16,7 @@ export async function viewArticle(request: ViewArticle): Promise<MaltaaAction> {
             article, ...upstreams, ...downstreams,
         ];
         const comments = await findCommentsUnderArticle(article.id);
-        const assortments = await db.assortment.findByMattersItemIds(articles.map(a => a.id));
+        const assortments = await db.assortment.findByItemIds(articles.map(a => a.id));
         const relatedUsers: UserId[] = [
             article.author,
             ...comments.map(comment => comment.author),

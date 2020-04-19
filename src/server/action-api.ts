@@ -18,6 +18,7 @@ import { isMattersArticleUrl } from "../mattersSpecifics";
 import { daysAgoInEpoch, daysToMs, dedupe, last } from "../utils";
 import { setMyPreferences } from "./mappers/setMyPreferences";
 import { search } from "./mappers/search";
+import { getMyData } from "./mappers/getMyData";
 
 async function getPodiumData(params: {
     sort: ArticleSort,
@@ -113,30 +114,7 @@ export async function respondCore(request: MaltaaAction): Promise<MaltaaAction> 
             return register(request);
         }
         case "GetMyData": {
-            const account = request?.meta?.account;
-            if (!account) {
-                return {
-                    type: "GenericError",
-                    reason: "I don't know you",
-                };
-            }
-            const me = await db.account.findById(account);
-            if (!me) {
-                return {
-                    type: "GenericError",
-                    reason: "I can't find you",
-                };
-            }
-            const myUsers = await db.user.findByIds(me.mattersIds);
-            const myAssortments = await db.assortment.findByOwners(me.mattersIds);
-            return {
-                type: "ProvideEntities",
-                data: {
-                    me,
-                    users: myUsers,
-                    assortments: myAssortments,
-                },
-            };
+            return getMyData(request);
         }
         case "CreateAssortment": {
             return createAssortment(request);

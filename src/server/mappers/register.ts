@@ -90,9 +90,16 @@ async function registerMatters(request: Register): Promise<MaltaaAction> {
     }
     const existing = await db.account.findByMattersId(myMattersId);
     if (existing) {
+        const token = createToken(existing.id);
+        await db.token.upsert(token);
         return {
-            type: "GenericError",
-            reason: "Matters ID conflict",
+            type: "ProvideEntities",
+            data: {
+                me: protectAccountFromSelf(existing),
+            },
+            meta: {
+                token,
+            }
         };
     }
     !!spiderCommander.addUser(myMattersId);

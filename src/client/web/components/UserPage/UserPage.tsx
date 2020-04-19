@@ -8,15 +8,60 @@ import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 import { USER_URL_SIGIL } from "../../../../settings";
 import { readableDateTime } from "../../../../utils";
+import { AssortmentList } from "../AssortmentEditor/AssortmentList";
+import { ClientState } from "../../states/reducer";
+import { MaltaaDispatch } from "../../uiUtils";
 
+
+/*
+                <UserPage
+                    user={Object.values(entities.users).find(user => user.userName === page.user.name)}
+                    screenedUsers={preferences.data.screenedUsers}
+                    onToggleScreen={userId => {
+                        const currentlyScreened = state.preferences.data.screenedUsers.includes(userId);
+                        dispatch({
+                            type: "SetMyPreferences", preferencesPatch: {
+                                data: {
+                                    ...preferences.data,
+                                    screenedUsers:
+                                        currentlyScreened
+                                            ? state.preferences.data.screenedUsers.filter(u => u !== userId)
+                                            : [...state.preferences.data.screenedUsers, userId]
+                                }
+                            }
+                        })
+                    }}
+                />
+ */
 
 export function UserPage(props: {
-    user?: UserPublic,
-    screenedUsers: UserId[],
-    onToggleScreen(id: UserId): any,
+    state: ClientState,
+    dispatch: MaltaaDispatch,
 }) {
-    const {user} = props;
-    if (!user) {
+    const {state, dispatch} = props;
+    const {entities, ui: {pages}, preferences} = state;
+
+    const user = Object.values(entities.users).find(user => user.userName === pages.user.name)
+
+    const onToggleScreen= (userId: UserId) => {
+        const currentlyScreened = state.preferences.data.screenedUsers.includes(userId);
+        dispatch({
+            type: "SetMyPreferences", preferencesPatch: {
+                data: {
+                    ...preferences.data,
+                    screenedUsers:
+                        currentlyScreened
+                            ? state.preferences.data.screenedUsers.filter(u => u !== userId)
+                            : [...state.preferences.data.screenedUsers, userId]
+                }
+            }
+        })
+    };
+
+    if (pages.current !== "user") {
+        return null;
+    }
+    else if (!user) {
         return <span>...</span>;
     }
     return (
@@ -33,13 +78,19 @@ export function UserPage(props: {
 
             <div>
                 <AnchorButton
-                    onClick={() => props.onToggleScreen(user.id)}
+                    onClick={() => onToggleScreen(user.id)}
                 >
-                    {props.screenedUsers.includes(user.id) ? "取消屏蔽" : "屏蔽"}
+                    {preferences.data.screenedUsers.includes(user.id) ? "取消屏蔽" : "屏蔽"}
                 </AnchorButton>
             </div>
 
-        </div>
+            <AssortmentList
+                entityId={user.id}
+                entityType={"user"}
+                state={state}
+                dispatch={dispatch}
+            />
 
+        </div>
     )
 }

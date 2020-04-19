@@ -24,6 +24,7 @@ import {
 import { AssortmentCreator } from "../AssortmentEditor/AssortmentCreator";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 import { AssortmentSummaryConnected } from "../AssortmentSummary/AssortmentSummaryConnected";
+import { EntitiesState } from "../../states/entitiesReducer";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,
@@ -230,13 +231,13 @@ export function UpstreamsSection(props: {
                     {
                         assortment.upstreams.map(id =>
                             <div key={id}>
-                                <AssortmentSummaryConnected id={id} state={state} />
+                                <AssortmentSummaryConnected id={id} state={state}/>
                                 <AnchorButton onClick={() => {
                                     dispatch({
                                         type: "UpdateAssortment",
                                         operation: "SyncFromUpstreams",
                                         target: assortment.id,
-                                    })
+                                    });
                                 }}>
                                     合併上游內容
                                 </AnchorButton>
@@ -247,11 +248,11 @@ export function UpstreamsSection(props: {
                                         operation: "EditUpstreams",
                                         target: assortment.id,
                                         upstreams: assortment.upstreams.filter(upstream => upstream !== id),
-                                })
+                                    });
                                 }}>
                                     刪除
                                 </AnchorButton>
-                            </div>
+                            </div>,
                         )
                     }
                 </div>
@@ -275,7 +276,48 @@ export function UpstreamsSection(props: {
 
         </section>
     );
+}
 
+function AssortmentItemSummary(props: {
+    item: AssortmentItem,
+    entities: EntitiesState;
+}) {
+    const {item, entities} = props;
+    const {articles, users} = entities;
+    switch (item.entityType) {
+        case "article": {
+            const article = articles[item.id];
+            if (!article) {
+                return <span>Missing article data ${JSON.stringify(item)}</span>;
+            }
+            const author = users[article.author];
+            return (
+                <ArticleSummary
+                    article={article}
+                    author={author}
+                    hoverPreview={true}
+                />
+            );
+        }
+        case "user": {
+            const user = users[item.id];
+            if (!user) {
+                return <span>Missing user data ${JSON.stringify(item)}</span>;
+            }
+            return (
+                <div>
+                    <AuthorLabel author={user} />
+                </div>
+            );
+        }
+        default: {
+            return (
+                <div>
+                    未實現：{item.id}
+                </div>
+            );
+        }
+    }
 }
 
 export function AssortmentPage(props: {
@@ -375,41 +417,23 @@ export function AssortmentPage(props: {
                 {
                     assortment.items.map((item, index) => {
                         const key = item.id + index;
-                        switch (item.entityType) {
-                            case "article": {
-                                const article = articles[item.id];
-                                if (!article) {
-                                    return `Missing article data ${JSON.stringify(item)}`;
-                                }
-                                const author = users[article.author];
-                                return (
-                                    <AssortmentItemCard
-                                        key={key}
-                                        item={item}
-                                        index={index}
-                                        assortment={assortment}
-                                        collector={users[item.collector]}
-                                        lastReviewer={users[item.lastReviewer]}
-                                        canEdit={canEdit}
-                                        dispatch={dispatch}
-                                    >
-                                        <ArticleSummary
-                                            article={article}
-                                            author={author}
-                                            hoverPreview={true}
-                                            onClick={() => dispatch({type: "ViewArticle", article: article.id})}
-                                        />
-                                    </AssortmentItemCard>
-                                );
-                            }
-                            default: {
-                                return (
-                                    <div key={key}>
-                                        未實現：{item.id}
-                                    </div>
-                                );
-                            }
-                        }
+                        return (
+                            <AssortmentItemCard
+                                key={key}
+                                item={item}
+                                index={index}
+                                assortment={assortment}
+                                collector={users[item.collector]}
+                                lastReviewer={users[item.lastReviewer]}
+                                canEdit={canEdit}
+                                dispatch={dispatch}
+                            >
+                                <AssortmentItemSummary
+                                    item={item}
+                                    entities={state.entities}
+                                />
+                            </AssortmentItemCard>
+                        );
                     })
                 }
             </section>

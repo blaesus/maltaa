@@ -204,27 +204,7 @@ function WebRoot(props: {
             <Study state={state} dispatch={dispatch}/>
             <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state}/>
             <AssortmentPage state={state} dispatch={dispatch}/>
-            {
-                page.current === "user" &&
-                <UserPage
-                    user={Object.values(entities.users).find(user => user.userName === page.user.name)}
-                    screenedUsers={preferences.data.screenedUsers}
-                    onToggleScreen={userId => {
-                        const currentlyScreened = state.preferences.data.screenedUsers.includes(userId);
-                        dispatch({
-                            type: "SetMyPreferences", preferencesPatch: {
-                                data: {
-                                    ...preferences.data,
-                                    screenedUsers:
-                                        currentlyScreened
-                                            ? state.preferences.data.screenedUsers.filter(u => u !== userId)
-                                            : [...state.preferences.data.screenedUsers, userId]
-                                }
-                            }
-                        })
-                    }}
-                />
-            }
+            <UserPage state={state} dispatch={dispatch} />
             <Dialogs
                 dialogState={ui.dialog}
                 dispatch={dispatch}

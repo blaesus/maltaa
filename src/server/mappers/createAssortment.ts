@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "../db";
 
 import { CreateAssortment, MaltaaAction } from "../../definitions/Actions";
-import { Assortment } from "../../definitions/Assortment";
+import { Assortment, AssortmentItem } from "../../definitions/Assortment";
 
 export async function createAssortment(request: CreateAssortment): Promise<MaltaaAction> {
     const accountId = request?.meta?.account;
@@ -43,6 +43,11 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             reason: "Path taken",
         }
     }
+    let items: AssortmentItem[] = [];
+    if (request.upstreams.length) {
+        const upstreams = await db.assortment.findByUpstreams(request.upstreams);
+        items = upstreams.map(upstream => upstream.items).flat();
+    }
 
     const newAssortment: Assortment = {
         id: uuidv4(),
@@ -55,7 +60,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         upstreams: request.upstreams,
         contentType: request.contentType,
         description: "",
-        items: [],
+        items,
     }
 
     await db.assortment.upsert(newAssortment);

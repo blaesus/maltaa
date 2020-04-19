@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "strict": true,
-        "target": "es2018",
+        "target": "es2019",
         "module": "commonjs",
         "outDir": "built",
         "jsx": "react",

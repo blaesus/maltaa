@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { Assortment, MattersEntityType } from "../../../../definitions/Assortment";
-import { hasIntersection } from "../../../../utils";
+import { assortmentEntityTypes, hasIntersection } from "../../../../utils";
 import { ClientState } from "../../states/reducer";
 import { ArticleId } from "../../../../definitions/Article";
 import { MaltaaDispatch } from "../../uiUtils";
@@ -25,19 +25,17 @@ export function AssortmentList(props: {
         Object.values(state.entities.assortments)
               .filter(a =>
                   !a.archived &&
-                  (a.contentType === "anthology" || a.contentType === "mixture") &&
+                  (assortmentEntityTypes[a.contentType].includes(entityType)) &&
                   addedAssortments.every(includedAssortment => includedAssortment.id !== a.id) &&
                   hasIntersection(a.editors, state.entities.me?.mattersIds),
               );
     return (
         <div className="AssortmentList">
-
             {
-                addedAssortments.length === 0 && `未有集合收錄本文`
+                addedAssortments.length === 0 && `未有集合收錄`
             }
-
             {
-                addedAssortments.length > 0 && `${addedAssortments.length}個集合收錄本文`
+                addedAssortments.length > 0 && `${addedAssortments.length}個集合收錄`
             }
             {
                 addedAssortments.map(assortment => (
@@ -56,7 +54,7 @@ export function AssortmentList(props: {
             }
             {
                 !addingToMyAssortments &&
-                <AnchorButton onClick={() => setAddingToMyAssortments(true)}>加入我的集合</AnchorButton>
+                <AnchorButton onClick={() => setAddingToMyAssortments(true)}>錄入我的集合</AnchorButton>
             }
             {
                 addingToMyAssortments &&
@@ -77,7 +75,7 @@ export function AssortmentList(props: {
                                         },
                                     });
                                 }}>
-                                    加入{assortment.title}
+                                    錄入{assortment.title}
                                 </AnchorButton>
                             </div>
                         );

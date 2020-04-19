@@ -1,4 +1,4 @@
-import { AssortmentContentType } from "./definitions/Assortment";
+import { AssortmentContentType, MattersEntityType } from "./definitions/Assortment";
 import { ObjectMap, ObjectWithId } from "./definitions/Objects";
 import { AccountSelf, MaltaaAccount } from "./definitions/MaltaaAccount";
 import { Preferences } from "./definitions/Preferences";
@@ -208,6 +208,12 @@ export const assortmentNames: { [key in AssortmentContentType]: string } = {
     anthology: "文選",
     roll: "名冊",
     mixture: "什錦",
+}
+
+export const assortmentEntityTypes: { [key in AssortmentContentType]: MattersEntityType[] } = {
+    anthology: ["article"],
+    roll: ["user"],
+    mixture: ["article", "user"],
 }
 
 export function hasIntersection<T>(a?: T[], b?: T[]): boolean {

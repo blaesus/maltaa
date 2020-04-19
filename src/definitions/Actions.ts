@@ -158,7 +158,7 @@ type ItemSpec = {
     source: "matters",
     entityType: MattersEntityType,
     id: ArticleId | UserId,
-    note: string,
+    review: string,
 }
 
 export interface UpdateAssortmentAddItem extends BaseAction {

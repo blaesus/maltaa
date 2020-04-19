@@ -80,7 +80,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 source: "matters",
                 entityType: request.item.entityType,
                 id: request.item.id,
-                review: request.item.note,
+                review: request.item.review,
                 collector: user,
                 collectionTime: now,
                 lastReviewer: user,

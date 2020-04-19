@@ -93,7 +93,12 @@ export function ArticlePage(props: {
                 hoverPreview={hoverPreview}
                 dispatch={dispatch}
             />
-            <AssortmentList state={state} article={article} dispatch={dispatch} />
+            <AssortmentList
+                state={state}
+                entityId={article.id}
+                entityType="article"
+                dispatch={dispatch}
+            />
             <footer className="Internals">
                 {
                     state.preferences.articles.showMattersLink &&

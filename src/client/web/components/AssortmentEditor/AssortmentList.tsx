@@ -3,22 +3,24 @@ import { useState } from "react";
 
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
-import { Assortment } from "../../../../definitions/Assortment";
+import { Assortment, MattersEntityType } from "../../../../definitions/Assortment";
 import { hasIntersection } from "../../../../utils";
 import { ClientState } from "../../states/reducer";
-import { Article } from "../../../../definitions/Article";
+import { ArticleId } from "../../../../definitions/Article";
 import { MaltaaDispatch } from "../../uiUtils";
+import { UserId } from "../../../../definitions/User";
 
 export function AssortmentList(props: {
+    entityId: ArticleId | UserId,
+    entityType: MattersEntityType,
     state: ClientState,
-    article: Article,
     dispatch: MaltaaDispatch,
 }) {
-    const {state, article, dispatch} = props;
+    const {state, entityId, entityType, dispatch} = props;
     const [addingToMyAssortments, setAddingToMyAssortments] = useState(false);
     const addedAssortments =
         Object.values(state.entities.assortments)
-              .filter(a => a.items.some(item => item.id === article.id));
+              .filter(a => a.items.some(item => item.id === entityId));
     const myAssortmentsForAdding: Assortment[] =
         Object.values(state.entities.assortments)
               .filter(a =>
@@ -69,9 +71,9 @@ export function AssortmentList(props: {
                                         target: assortment.id,
                                         item: {
                                             source: "matters",
-                                            entityType: "article",
-                                            id: article.id,
-                                            note: "",
+                                            entityType: entityType,
+                                            id: entityId,
+                                            review: "",
                                         },
                                     });
                                 }}>

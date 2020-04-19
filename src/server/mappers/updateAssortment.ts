@@ -1,7 +1,7 @@
 import { db } from "../db";
 
 import { MaltaaAction, UpdateAssortment } from "../../definitions/Actions";
-import { AssortmentIdentifier, MattersEntity } from "../../definitions/Assortment";
+import { AssortmentIdentifier, MattersEntityItem } from "../../definitions/Assortment";
 import { hasIntersection } from "../../utils";
 
 export async function updateAssortment(request: UpdateAssortment): Promise<MaltaaAction> {
@@ -76,7 +76,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 };
             }
             const now = Date.now();
-            const newItem: MattersEntity = {
+            const newItem: MattersEntityItem = {
                 source: "matters",
                 entityType: request.item.entityType,
                 id: request.item.id,

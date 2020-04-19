@@ -13,15 +13,15 @@ import { SubpathInput } from "./SubpathInput";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {
-        value: "article",
+        value: "anthology",
         label: "文選"
     },
     {
-        value: "user",
+        value: "roll",
         label: "名冊"
     },
     {
-        value: "mixed",
+        value: "mixture",
         label: "什錦"
     },
 ];

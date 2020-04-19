@@ -126,7 +126,7 @@ export function Study(props: {
                 dispatch={dispatch}
             />
             <AssortmentSection
-                contentType={"mixed"}
+                contentType={"mixture"}
                 myAssortments={myAssortments}
                 state={state}
                 dispatch={dispatch}

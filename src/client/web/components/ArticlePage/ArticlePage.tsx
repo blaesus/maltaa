@@ -67,7 +67,7 @@ export function ArticlePage(props: {
         Object.values(state.entities.assortments)
               .filter(a =>
                   !a.archived &&
-                  (a.contentType === "article" || a.contentType === "mixed") &&
+                  (a.contentType === "article" || a.contentType === "mixture") &&
                   addedAssortments.every(includedAssortment => includedAssortment.id !== a.id) &&
                   hasIntersection(a.editors, state.entities.me?.mattersIds)
               );

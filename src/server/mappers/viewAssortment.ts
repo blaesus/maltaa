@@ -37,17 +37,17 @@ export async function viewAssortment(request: ViewAssortment): Promise<MaltaaAct
     const assortments = [assortment, ...upstreams];
 
     const controllers = [assortment.owner, ...assortment.editors];
-    const releveantUsers = [...controllers, ...assortments.map(a => a.owner)].filter(dedupe);
+    const relevantUsers = [...controllers, ...assortments.map(a => a.owner)].filter(dedupe);
 
     let articles: Article[] = [];
-    let users: UserPublic[] = await db.user.findByIds(releveantUsers);
+    let users: UserPublic[] = await db.user.findByIds(relevantUsers);
     const ids = assortment.items.map(item => item.id);
-    if (assortment.contentType === "mixed" || assortment.contentType === "article") {
+    if (assortment.contentType === "mixture" || assortment.contentType === "anthology") {
         articles = [...articles, ...await db.article.findActiveByIds(ids)];
         const authors = articles.map(article => article.author);
         articles = [...articles, ...await db.article.findActiveByIds(authors)];
     }
-    if (assortment.contentType === "mixed" || assortment.contentType === "user") {
+    if (assortment.contentType === "mixture" || assortment.contentType === "roll") {
         users = [...users, ...await db.user.findByIds(ids)];
     }
     articles = dedupeById(articles);

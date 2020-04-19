@@ -188,9 +188,9 @@ export function newEmptyObject() {
 }
 
 export const assortmentSigil: { [key in AssortmentContentType]: string } = {
-    article: "an",
-    user: "rl",
-    mixed: "mx",
+    anthology: "an",
+    roll: "rl",
+    mixture: "mx",
 };
 
 function reverseMap<K extends string, V extends string>(data: { [key in K]: V }): { [key in V]: K } {
@@ -205,9 +205,9 @@ function reverseMap<K extends string, V extends string>(data: { [key in K]: V })
 export const assortmentTypes = reverseMap(assortmentSigil);
 
 export const assortmentNames: { [key in AssortmentContentType]: string } = {
-    article: "文選",
-    user: "名冊",
-    mixed: "什錦",
+    anthology: "文選",
+    roll: "名冊",
+    mixture: "什錦",
 }
 
 export function hasIntersection<T>(a?: T[], b?: T[]): boolean {

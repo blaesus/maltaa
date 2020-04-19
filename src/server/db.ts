@@ -616,7 +616,7 @@ const mongodb = {
                 owner: {$in: owners},
             }).toArray();
         },
-        async findByItemIds(ids: string[]): Promise<Assortment[]> {
+        async findByMattersItemIds(ids: string[]): Promise<Assortment[]> {
             if (mainDB) {
                 return mainDB.collection("assortments").find({
                     "items.id": {$in: ids},

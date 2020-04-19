@@ -3,12 +3,7 @@ import { UserId } from "./User";
 
 export type MattersEntityType = "article" | "user"
 
-export interface MattersEntity {
-    source: "matters",
-    entityType: MattersEntityType,
-    id: ArticleId | UserId,
-    review: string,
-
+export interface AssortmentBaseItem {
     collector: UserId,
     collectionTime: number,
 
@@ -16,11 +11,18 @@ export interface MattersEntity {
     lastReviewTime: number,
 }
 
-export type AssortmentItem = MattersEntity;
+export interface MattersEntityItem extends AssortmentBaseItem {
+    source: "matters",
+    entityType: MattersEntityType,
+    id: ArticleId | UserId,
+    review: string,
+}
+
+export type AssortmentItem = MattersEntityItem;
 
 export type AssortmentId = string;
 
-export type AssortmentContentType = MattersEntityType | "mixed";
+export type AssortmentContentType = "anthology" | "roll" | "mixture";
 
 export interface AssortmentIdentifier {
     owner: UserId,

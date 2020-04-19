@@ -82,6 +82,32 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                     }
                     return state;
                 }
+                case "CreateAssortment": {
+                    const assortments = action?.data?.assortments;
+                    if (assortments) {
+                        const created = assortments[0];
+                        if (created) {
+                            const owner = state.entities.users[created.owner];
+                            return {
+                                ...state,
+                                ui: {
+                                    ...state.ui,
+                                    pages: {
+                                        ...state.ui.pages,
+                                        assortment: {
+                                            identifier: {
+                                                ownerUsername: owner.userName,
+                                                contentType: created.contentType,
+                                                subpath: created.subpath,
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return state;
+                }
                 default: {
                     return state;
                 }

@@ -67,7 +67,9 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
     return {
         type: "ProvideEntities",
         data: {
-            assortments: [newAssortment],
+            assortments: [
+                newAssortment,
+            ],
         }
     }
 

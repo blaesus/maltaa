@@ -4,7 +4,7 @@ import { UserId } from "./User";
 export type MattersEntityType = "article" | "user"
 
 export interface AssortmentBaseItem {
-    id: ArticleId | UserId,
+    id: string,
 
     collector: UserId,
     collectionTime: number,
@@ -15,6 +15,7 @@ export interface AssortmentBaseItem {
 }
 
 export interface MattersEntityItem extends AssortmentBaseItem {
+    id: ArticleId | UserId,
     source: "matters",
     entityType: MattersEntityType,
 }
@@ -43,4 +44,7 @@ export interface Assortment {
     upstreams: AssortmentId[],
     contentType: AssortmentContentType,
     items: AssortmentItem[],
+    policies: {
+        allowForking: boolean
+    }
 }

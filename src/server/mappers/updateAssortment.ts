@@ -162,6 +162,22 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 },
             }
         }
+        case "EditUpstreams": {
+            target.upstreams = request.upstreams;
+            await db.assortment.upsert(target);
+            return {
+                type: "ProvideEntities",
+                data: {
+                    assortments: [target],
+                },
+            }
+        }
+        case "SyncFromUpstreams": {
+            const upstreams = await db.assortment.findByUpstreams(target.upstreams);
+            for (const upstream of upstreams) {
+                target.items = [...target.items, ...upstream.items]
+            }
+        }
         default: {
             return {
                 type: "GenericError",

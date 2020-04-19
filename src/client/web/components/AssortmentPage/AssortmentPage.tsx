@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dispatch, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./AssortmentPage.css";
 
@@ -109,7 +109,7 @@ function AssortmentItemCard(props: {
     );
 }
 
-export function Subpath(props: {
+export function SubpathSection(props: {
     assortmentId: AssortmentId,
     identifier: AssortmentUIIdentifier,
     canEdit: boolean,
@@ -193,6 +193,77 @@ export function ForkEditor(props: {
     );
 }
 
+export function UpstreamsSection(props: {
+    assortment: Assortment,
+    canEdit: boolean,
+    state: ClientState,
+    dispatch: MaltaaDispatch,
+}) {
+    const {assortment, state, dispatch} = props;
+    const [editing, setEditing] = useState(false);
+    if (!assortment.upstreams.length) {
+        return null;
+    }
+    return (
+        <section>
+            <div>
+                上游
+                <AnchorButton onClick={() => setEditing(editing => !editing)}>調整</AnchorButton>
+            </div>
+            {
+                editing &&
+                <div>
+                    {
+                        assortment.upstreams.map(id =>
+                            <div key={id}>
+                                {id}
+                                <AnchorButton onClick={() => {
+                                    dispatch({
+                                        type: "UpdateAssortment",
+                                        operation: "SyncFromUpstreams",
+                                        target: assortment.id,
+                                    })
+                                }}>
+                                    同步
+                                </AnchorButton>
+
+                                <AnchorButton onClick={() => {
+                                    dispatch({
+                                        type: "UpdateAssortment",
+                                        operation: "EditUpstreams",
+                                        target: assortment.id,
+                                        upstreams: assortment.upstreams.filter(upstream => upstream !== id),
+                                })
+                                }}>
+                                    刪除
+                                </AnchorButton>
+                            </div>
+                        )
+                    }
+                </div>
+            }
+            {!editing && assortment.upstreams.map(id => {
+                const upstream = state.entities.assortments[id];
+                if (upstream) {
+                    const owner = state.entities.users[upstream.owner];
+                    return (
+                        <AssortmentSummary
+                            key={id}
+                            assortment={upstream}
+                            owner={owner}
+                        />
+                    );
+                }
+                else {
+                    return id;
+                }
+            })}
+
+        </section>
+    );
+
+}
+
 export function AssortmentPage(props: {
     state: ClientState,
     dispatch: MaltaaDispatch,
@@ -236,28 +307,12 @@ export function AssortmentPage(props: {
                     }}
                 />
             </h1>
-            {
-                assortment.upstreams.length > 0 &&
-                <section>
-                    上游
-                    {assortment.upstreams.map(id => {
-                        const upstream = state.entities.assortments[id];
-                        if (upstream) {
-                            const owner = state.entities.users[upstream.owner];
-                            return (
-                                <AssortmentSummary
-                                    key={id}
-                                    assortment={upstream}
-                                    owner={owner}
-                                />
-                            )
-                        }
-                        else {
-                            return id;
-                        }
-                    })}
-                </section>
-            }
+            <UpstreamsSection
+                assortment={assortment}
+                canEdit={canEdit}
+                state={state}
+                dispatch={dispatch}
+            />
             <section>
                 <span>
                     {assortmentNames[assortment.contentType]}總編
@@ -276,7 +331,7 @@ export function AssortmentPage(props: {
                 }
             </section>
             <section>
-                <Subpath
+                <SubpathSection
                     assortmentId={assortment.id}
                     identifier={identifier}
                     canEdit={canEdit}
@@ -305,6 +360,7 @@ export function AssortmentPage(props: {
             <section>
                 {
                     assortment.items.map((item, index) => {
+                        const key = item.id + index;
                         switch (item.entityType) {
                             case "article": {
                                 const article = articles[item.id];
@@ -314,7 +370,7 @@ export function AssortmentPage(props: {
                                 const author = users[article.author];
                                 return (
                                     <AssortmentItemCard
-                                        key={item.id}
+                                        key={key}
                                         item={item}
                                         index={index}
                                         assortment={assortment}
@@ -334,7 +390,7 @@ export function AssortmentPage(props: {
                             }
                             default: {
                                 return (
-                                    <div key={item.id}>
+                                    <div key={key}>
                                         未實現：{item.id}
                                     </div>
                                 );

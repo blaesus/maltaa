@@ -204,6 +204,19 @@ export interface UpdateAssortmentEditSubpath extends BaseAction {
     subpath: string,
 }
 
+export interface UpdateAssortmentEditUpstreams extends BaseAction {
+    type: "UpdateAssortment",
+    operation: "EditUpstreams",
+    target: AssortmentId,
+    upstreams: AssortmentId[],
+}
+
+export interface UpdateAssortmentSyncFromUpstreams extends BaseAction {
+    type: "UpdateAssortment",
+    operation: "SyncFromUpstreams",
+    target: AssortmentId,
+}
+
 export type UpdateAssortment =
     UpdateAssortmentAddItem
     | UpdateAssortmentOrderItems
@@ -211,6 +224,8 @@ export type UpdateAssortment =
     | UpdateAssortmentArchive
     | UpdateAssortmentEditTitle
     | UpdateAssortmentEditSubpath
+    | UpdateAssortmentEditUpstreams
+    | UpdateAssortmentSyncFromUpstreams
 ;
 
 export interface Signout extends BaseAction {

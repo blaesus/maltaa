@@ -114,13 +114,13 @@ export function Study(props: {
     return (
         <div className="Study">
             <AssortmentSection
-                contentType={"article"}
+                contentType={"anthology"}
                 myAssortments={myAssortments}
                 state={state}
                 dispatch={dispatch}
             />
             <AssortmentSection
-                contentType={"user"}
+                contentType={"roll"}
                 myAssortments={myAssortments}
                 state={state}
                 dispatch={dispatch}

@@ -34,7 +34,7 @@ export function AssortmentCreator(props: {
 }) {
     const {state, dispatch, fixedContentType} = props;
     const me = state.entities.me;
-    const [contentType, setContentType] = useState<AssortmentContentType>(props.fixedContentType || "article");
+    const [contentType, setContentType] = useState<AssortmentContentType>(props.fixedContentType || "anthology");
     const owner: UserPublic | null = state.preferences.identity.operator ? state.entities.users[state.preferences.identity.operator] : null;
     const [title, setTitle] = useState("");
     const [subpath, setSubpath] = useState("");

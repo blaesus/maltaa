@@ -17,7 +17,6 @@ export async function getMyData(request: GetMyData): Promise<MaltaaAction> {
         };
     }
     const myUsers = await db.user.findByIds(me.mattersIds);
-    console.info(me);
     const myAssortments = await db.assortment.findByOwners(me.mattersIds);
     return {
         type: "ProvideEntities",

@@ -163,7 +163,6 @@ async function handleAction(context: Koa.Context, next: any) {
     }
 
     try {
-        console.info(context.request.body);
         const request = verifyActionForm(JSON.parse(context.request.body));
         const authenticatedRequest = await authenticateFromCookie(request, context);
         const response = await respond(authenticatedRequest);

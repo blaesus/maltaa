@@ -24,7 +24,7 @@ export function AssortmentList(props: {
     const myAssortmentsForAdding: Assortment[] =
         Object.values(state.entities.assortments)
               .filter(a =>
-                  !a.archived &&
+                  !a.policy.archived &&
                   (assortmentEntityTypes[a.contentType].includes(entityType)) &&
                   addedAssortments.every(includedAssortment => includedAssortment.id !== a.id) &&
                   hasIntersection(a.editors, state.entities.me?.mattersIds),

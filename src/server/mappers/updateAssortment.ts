@@ -39,11 +39,28 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             reason: "Can't find it",
         };
     }
-    if (request.operation === "Archive") {
+    if (request.operation === "SetPolicy") {
         if (!hasIntersection([target.owner], account.mattersIds)) {
             return {
                 type: "GenericError",
-                reason: "Not authorized to archive",
+                reason: "Not authorized to set archive",
+            };
+        }
+        target.policy = request.policy
+        target.archived = request.archived;
+        await db.assortment.upsert(target);
+        return {
+            type: "ProvideEntities",
+            data: {
+                assortments: [target],
+            },
+        };
+    }
+    if (request.operation === "SetAllowFork") {
+        if (!hasIntersection([target.owner], account.mattersIds)) {
+            return {
+                type: "GenericError",
+                reason: "Not authorized to set policy",
             };
         }
         target.archived = request.archived;

@@ -1,7 +1,14 @@
 import { ArticleSort } from "../sorts";
 import { PageName } from "../client/web/states/uiReducer";
 import { AuthToken } from "./AuthToken";
-import { Assortment, AssortmentContentType, AssortmentId, AssortmentItem, MattersEntityType } from "./Assortment";
+import {
+    Assortment,
+    AssortmentContentType,
+    AssortmentId,
+    AssortmentItem,
+    AssortmentPolicy,
+    MattersEntityType,
+} from "./Assortment";
 import { AssortmentUIIdentifier } from "../client/web/uiUtils";
 import { AccountId, AccountSelf } from "./MaltaaAccount";
 import { Article, ArticleId, Comment } from "./Article";
@@ -191,11 +198,11 @@ export interface UpdateAssortmentEditReview extends BaseAction {
     review: string,
 }
 
-export interface UpdateAssortmentArchive extends BaseAction {
+export interface UpdateAssortmentSetPolicy extends BaseAction {
     type: "UpdateAssortment",
-    operation: "Archive",
+    operation: "SetPolicy",
     target: AssortmentId,
-    archived: boolean
+    policy: AssortmentPolicy,
 }
 
 export interface UpdateAssortmentEditTitle extends BaseAction {
@@ -230,7 +237,7 @@ export type UpdateAssortment =
     | UpdateAssortmentDropItem
     | UpdateAssortmentOrderItems
     | UpdateAssortmentEditReview
-    | UpdateAssortmentArchive
+    | UpdateAssortmentSetPolicy
     | UpdateAssortmentEditTitle
     | UpdateAssortmentEditSubpath
     | UpdateAssortmentEditUpstreams

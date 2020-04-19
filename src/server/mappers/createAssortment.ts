@@ -2,7 +2,12 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "../db";
 
 import { CreateAssortment, MaltaaAction } from "../../definitions/Actions";
-import { Assortment, AssortmentItem } from "../../definitions/Assortment";
+import { Assortment, AssortmentItem, AssortmentPolicy } from "../../definitions/Assortment";
+
+const defaultPolicy: AssortmentPolicy = {
+    archived: false,
+    allowForking: true,
+}
 
 export async function createAssortment(request: CreateAssortment): Promise<MaltaaAction> {
     const accountId = request?.meta?.account;
@@ -54,16 +59,13 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         title: request.title,
         subpath: request.subpath,
         mattersArticleBaseId: null,
-        archived: false,
         owner,
         editors: [owner],
         upstreams: request.upstreams,
         contentType: request.contentType,
         description: "",
         items,
-        policies: {
-            allowForking: true,
-        }
+        policy: defaultPolicy,
     }
 
     await db.assortment.upsert(newAssortment);

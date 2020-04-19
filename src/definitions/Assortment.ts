@@ -32,19 +32,21 @@ export interface AssortmentIdentifier {
     subpath: string,
 }
 
+export interface AssortmentPolicy {
+    archived: boolean,
+    allowForking: boolean
+}
+
 export interface Assortment {
     id: AssortmentId,
     title: string,
     subpath: string,
     mattersArticleBaseId: ArticleId | null,
-    archived: boolean,
     description: string,
     owner: UserId,
     editors: UserId[],
     upstreams: AssortmentId[],
     contentType: AssortmentContentType,
     items: AssortmentItem[],
-    policies: {
-        allowForking: boolean
-    }
+    policy: AssortmentPolicy,
 }

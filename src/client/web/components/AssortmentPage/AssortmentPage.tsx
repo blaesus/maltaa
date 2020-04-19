@@ -180,20 +180,42 @@ export function SubpathSection(props: {
 
 export function ForkEditor(props: {
     baseAssortment: Assortment,
+    isOwner: boolean,
     state: ClientState,
     dispatch: MaltaaDispatch,
 }) {
-    const {state, dispatch, baseAssortment} = props;
+    const {state, dispatch, baseAssortment, isOwner} = props;
     const [forking, setForking] = useState(false);
     return (
         <div>
-            <AnchorButton
-                onClick={() => {
-                    setForking(true);
-                }}
-            >
-                分叉
-            </AnchorButton>
+            {
+                baseAssortment.policy.allowForking &&
+                <AnchorButton
+                    onClick={() => {
+                        setForking(true);
+                    }}
+                >
+                    分叉
+                </AnchorButton>
+            }
+            {
+                isOwner &&
+                <div>
+                    <AnchorButton
+                        onClick={() => dispatch({
+                            type: "UpdateAssortment",
+                            operation: "SetPolicy",
+                            target: baseAssortment.id,
+                            policy: {
+                                ...baseAssortment.policy,
+                                allowForking: !baseAssortment.policy.allowForking,
+                            }
+                        })}
+                    >
+                        {baseAssortment.policy.allowForking ? "禁止分叉" : "允許分叉"}
+                    </AnchorButton>
+                </div>
+            }
 
             {
                 forking &&
@@ -345,7 +367,7 @@ export function AssortmentPage(props: {
     if (!assortment) {
         return null;
     }
-    const canEdit = !assortment.archived && hasIntersection(me?.mattersIds, assortment.editors);
+    const canEdit = !assortment.policy.archived && hasIntersection(me?.mattersIds, assortment.editors);
     const isOwner = hasIntersection(me?.mattersIds, [assortment.owner]);
     return (
         <div className="AssortmentPage">
@@ -369,6 +391,15 @@ export function AssortmentPage(props: {
                 state={state}
                 dispatch={dispatch}
             />
+            {
+                me &&
+                <ForkEditor
+                    baseAssortment={assortment}
+                    isOwner={isOwner}
+                    state={state}
+                    dispatch={dispatch}
+                />
+            }
             <section>
                 <span>
                     {assortmentNames[assortment.contentType]}總編
@@ -394,7 +425,7 @@ export function AssortmentPage(props: {
                     dispatch={dispatch}
                 />
                 {
-                    assortment.archived &&
+                    assortment.policy.archived &&
                     <span>
                         已封存
                     </span>
@@ -404,12 +435,15 @@ export function AssortmentPage(props: {
                     <AnchorButton
                         onClick={() => dispatch({
                             type: "UpdateAssortment",
-                            operation: "Archive",
+                            operation: "SetPolicy",
                             target: assortment.id,
-                            archived: !assortment.archived,
+                            policy: {
+                                ...assortment.policy,
+                                archived: !assortment.policy.archived,
+                            }
                         })}
                     >
-                        {assortment.archived ? "撤銷封存" : "封存集合"}
+                        {assortment.policy.archived ? "撤銷封存" : "封存集合"}
                     </AnchorButton>
                 }
             </section>
@@ -437,14 +471,6 @@ export function AssortmentPage(props: {
                     })
                 }
             </section>
-            {
-                me &&
-                <ForkEditor
-                    baseAssortment={assortment}
-                    state={state}
-                    dispatch={dispatch}
-                />
-            }
         </div>
     );
 }

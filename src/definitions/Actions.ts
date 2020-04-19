@@ -168,6 +168,14 @@ export interface UpdateAssortmentAddItem extends BaseAction {
     item: ItemSpec,
 }
 
+export interface UpdateAssortmentDropItem extends BaseAction {
+    type: "UpdateAssortment",
+    operation: "DropItem",
+    target: AssortmentId,
+    itemId: string,
+}
+
+
 export interface UpdateAssortmentOrderItems extends BaseAction {
     type: "UpdateAssortment",
     operation: "OrderItems",
@@ -219,6 +227,7 @@ export interface UpdateAssortmentSyncFromUpstreams extends BaseAction {
 
 export type UpdateAssortment =
     UpdateAssortmentAddItem
+    | UpdateAssortmentDropItem
     | UpdateAssortmentOrderItems
     | UpdateAssortmentEditReview
     | UpdateAssortmentArchive

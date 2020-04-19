@@ -64,6 +64,19 @@ function AssortmentItemCard(props: {
             {
                 canEdit &&
                 <div>
+                    <AnchorButton
+                        onClick={() => {
+                            dispatch({
+                                type: "UpdateAssortment",
+                                operation: "DropItem",
+                                target: assortment.id,
+                                itemId: item.id,
+                                meta: {},
+                            });
+                        }}
+                    >
+                        刪除
+                    </AnchorButton>
                     {
                         index >= 1 &&
                         <AnchorButton

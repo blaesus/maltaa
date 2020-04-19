@@ -95,6 +95,16 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 },
             };
         }
+        case "DropItem": {
+            target.items = target.items.filter(item => item.id !== request.itemId);
+            await db.assortment.upsert(target);
+            return {
+                type: "ProvideEntities",
+                data: {
+                    assortments: [target],
+                },
+            }
+        }
         case "OrderItems": {
             target.items = target.items.sort(
                 (itemA, itemB) =>

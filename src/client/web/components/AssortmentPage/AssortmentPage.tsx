@@ -23,6 +23,7 @@ import {
 } from "../../uiUtils";
 import { AssortmentCreator } from "../AssortmentEditor/AssortmentCreator";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
+import { AssortmentSummaryConnected } from "../AssortmentSummary/AssortmentSummaryConnected";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,
@@ -216,7 +217,7 @@ export function UpstreamsSection(props: {
                     {
                         assortment.upstreams.map(id =>
                             <div key={id}>
-                                {id}
+                                <AssortmentSummaryConnected id={id} state={state} />
                                 <AnchorButton onClick={() => {
                                     dispatch({
                                         type: "UpdateAssortment",
@@ -224,7 +225,7 @@ export function UpstreamsSection(props: {
                                         target: assortment.id,
                                     })
                                 }}>
-                                    同步
+                                    合併上游內容
                                 </AnchorButton>
 
                                 <AnchorButton onClick={() => {

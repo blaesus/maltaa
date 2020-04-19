@@ -1,5 +1,5 @@
 .AssortmentSummary {
-    display: block;
+    display: inline-block;
     font-size: 1.5rem;
     margin: 0.5rem 0;
     text-decoration: none;

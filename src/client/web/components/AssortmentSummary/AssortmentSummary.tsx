@@ -11,13 +11,10 @@ import { UserPublic } from "../../../../definitions/User";
 
 export function AssortmentSummary(props: {
     assortment: Assortment,
-    owner?: UserPublic,
+    owner: UserPublic,
     onClick?(): void,
 }) {
     const {assortment, owner, onClick} = props;
-    if (!owner) {
-        return null;
-    }
     const url = assortmentPath({
         ownerUsername: owner.userName,
         contentType: assortment.contentType,

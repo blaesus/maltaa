@@ -1,27 +1,28 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 
 import "./AssortmentPage.css";
 
 import { ClientState } from "../../states/reducer";
+import { Assortment, AssortmentId, AssortmentItem } from "../../../../definitions/Assortment";
+import { UserPublic } from "../../../../definitions/User";
 
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { EditableText } from "../EditableText/EditableText";
+import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
+import { SubpathInput } from "../AssortmentEditor/SubpathInput";
 
 import { assortmentNames, hasIntersection, readableDateTime } from "../../../../utils";
 import {
-    AssortmentUIIdentifier,
     assortmentPath,
+    assortmentPathPrefix,
+    AssortmentUIIdentifier,
     findAssortmentFromState,
     MaltaaDispatch,
-    assortmentPathPrefix,
 } from "../../uiUtils";
-import { Assortment, AssortmentId, AssortmentIdentifier, AssortmentItem } from "../../../../definitions/Assortment";
-import { UserPublic } from "../../../../definitions/User";
-import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
-import { isDefinitionNode } from "graphql";
-import { SubpathInput } from "../AssortmentEditor/SubpathInput";
+import { AssortmentCreator } from "../AssortmentEditor/AssortmentCreator";
+import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,
@@ -105,7 +106,7 @@ function AssortmentItemCard(props: {
                 </div>
             }
         </div>
-    )
+    );
 }
 
 export function Subpath(props: {
@@ -145,8 +146,8 @@ export function Subpath(props: {
                                 type: "UpdateAssortment",
                                 operation: "EditSubpath",
                                 target: assortmentId,
-                                subpath
-                            })
+                                subpath,
+                            });
                         }}
                     >
                         確定
@@ -159,7 +160,37 @@ export function Subpath(props: {
                 </span>
             }
         </div>
-    )
+    );
+}
+
+export function ForkEditor(props: {
+    baseAssortment: Assortment,
+    state: ClientState,
+    dispatch: MaltaaDispatch,
+}) {
+    const {state, dispatch, baseAssortment} = props;
+    const [forking, setForking] = useState(false);
+    return (
+        <div>
+            <AnchorButton
+                onClick={() => {
+                    setForking(true);
+                }}
+            >
+                分叉
+            </AnchorButton>
+
+            {
+                forking &&
+                <AssortmentCreator
+                    state={state}
+                    dispatch={dispatch}
+                    fixedContentType={baseAssortment.contentType}
+                    upstreams={[baseAssortment.id]}
+                />
+            }
+        </div>
+    );
 }
 
 export function AssortmentPage(props: {
@@ -205,10 +236,32 @@ export function AssortmentPage(props: {
                     }}
                 />
             </h1>
-            <div>
+            {
+                assortment.upstreams.length > 0 &&
+                <section>
+                    上游
+                    {assortment.upstreams.map(id => {
+                        const upstream = state.entities.assortments[id];
+                        if (upstream) {
+                            const owner = state.entities.users[upstream.owner];
+                            return (
+                                <AssortmentSummary
+                                    key={id}
+                                    assortment={upstream}
+                                    owner={owner}
+                                />
+                            )
+                        }
+                        else {
+                            return id;
+                        }
+                    })}
+                </section>
+            }
+            <section>
                 <span>
                     {assortmentNames[assortment.contentType]}總編
-                    <AuthorLabel author={users[assortment.owner]} />
+                    <AuthorLabel author={users[assortment.owner]}/>
                 </span>
                 {
                     assortment.editors.length >= 2 &&
@@ -216,13 +269,13 @@ export function AssortmentPage(props: {
                         編輯
                         {
                             assortment.editors.map(id =>
-                                <AuthorLabel key={id} author={users[id]} />
+                                <AuthorLabel key={id} author={users[id]}/>,
                             )
                         }
                     </span>
                 }
-            </div>
-            <div>
+            </section>
+            <section>
                 <Subpath
                     assortmentId={assortment.id}
                     identifier={identifier}
@@ -242,14 +295,14 @@ export function AssortmentPage(props: {
                             type: "UpdateAssortment",
                             operation: "Archive",
                             target: assortment.id,
-                            archived: !assortment.archived
+                            archived: !assortment.archived,
                         })}
                     >
                         {assortment.archived ? "撤銷封存" : "封存集合"}
                     </AnchorButton>
                 }
-            </div>
-            <div>
+            </section>
+            <section>
                 {
                     assortment.items.map((item, index) => {
                         switch (item.entityType) {
@@ -289,9 +342,15 @@ export function AssortmentPage(props: {
                         }
                     })
                 }
-            </div>
-
-
+            </section>
+            {
+                me &&
+                <ForkEditor
+                    baseAssortment={assortment}
+                    state={state}
+                    dispatch={dispatch}
+                />
+            }
         </div>
     );
 }

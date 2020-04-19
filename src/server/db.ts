@@ -121,6 +121,7 @@ const mongodb = {
                 }, {unique: true});
                 await mainDB.createIndex("assortments", {
                     editors: 1,
+                    upstreams: 1,
                 });
                 await mainDB.createIndex("assortments", {
                     "items.id": 1,
@@ -625,7 +626,16 @@ const mongodb = {
                 return [];
             }
         },
-
+        async findByUpstreams(upstreams: AssortmentId[]): Promise<Assortment[]> {
+            if (mainDB) {
+                return mainDB.collection("assortments").find({
+                    "upstreams": {$in: upstreams},
+                }).toArray();
+            }
+            else {
+                return [];
+            }
+        },
     },
     activity: {
         async insert(activity: Activity) {

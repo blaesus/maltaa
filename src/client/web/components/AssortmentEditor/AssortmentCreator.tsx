@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 
 import { ClientState } from "../../states/reducer";
-import { AssortmentContentType } from "../../../../definitions/Assortment";
+import { AssortmentContentType, AssortmentId } from "../../../../definitions/Assortment";
 import { UserPublic } from "../../../../definitions/User";
 
 import { Chooser } from "../Chooser/Chooser";
@@ -29,7 +29,8 @@ const entityTypeOptions: OptionList<AssortmentContentType> = [
 export function AssortmentCreator(props: {
     state: ClientState,
     dispatch: MaltaaDispatch,
-    fixedContentType?: AssortmentContentType
+    fixedContentType?: AssortmentContentType,
+    upstreams?: AssortmentId[],
 }) {
     const {state, dispatch, fixedContentType} = props;
     const me = state.entities.me;
@@ -37,6 +38,7 @@ export function AssortmentCreator(props: {
     const owner: UserPublic | null = state.preferences.identity.operator ? state.entities.users[state.preferences.identity.operator] : null;
     const [title, setTitle] = useState("");
     const [subpath, setSubpath] = useState("");
+    const upstreams = props.upstreams || [];
 
     if (!owner) {
         return (
@@ -84,7 +86,7 @@ export function AssortmentCreator(props: {
                         subpath,
                         title,
                         contentType,
-                        upstreams: [],
+                        upstreams,
                         items: [],
                     })
                 }}

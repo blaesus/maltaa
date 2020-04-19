@@ -4,7 +4,7 @@ import { Article } from "../../definitions/Article";
 import { UserPublic } from "../../definitions/User";
 
 import { db } from "../db";
-import { dedupeById } from "../../utils";
+import { dedupe, dedupeById } from "../../utils";
 
 export async function viewAssortment(request: ViewAssortment): Promise<MaltaaAction> {
     let assortment: Assortment | null = null;
@@ -32,11 +32,15 @@ export async function viewAssortment(request: ViewAssortment): Promise<MaltaaAct
             reason: "Can't find assortment"
         }
     }
+    const upstreams = await db.assortment.findByUpstreams(assortment.upstreams);
+
+    const assortments = [assortment, ...upstreams];
 
     const controllers = [assortment.owner, ...assortment.editors];
+    const releveantUsers = [...controllers, ...assortments.map(a => a.owner)].filter(dedupe);
 
     let articles: Article[] = [];
-    let users: UserPublic[] = await db.user.findByIds(controllers);
+    let users: UserPublic[] = await db.user.findByIds(releveantUsers);
     const ids = assortment.items.map(item => item.id);
     if (assortment.contentType === "mixed" || assortment.contentType === "article") {
         articles = [...articles, ...await db.article.findActiveByIds(ids)];
@@ -52,7 +56,7 @@ export async function viewAssortment(request: ViewAssortment): Promise<MaltaaAct
     return {
         type: "ProvideEntities",
         data: {
-            assortments: [assortment],
+            assortments,
             articles,
             users,
         }

@@ -4,9 +4,12 @@ import { UserId } from "./User";
 export type MattersEntityType = "article" | "user"
 
 export interface AssortmentBaseItem {
+    id: ArticleId | UserId,
+
     collector: UserId,
     collectionTime: number,
 
+    review: string,
     lastReviewer: UserId,
     lastReviewTime: number,
 }
@@ -14,8 +17,6 @@ export interface AssortmentBaseItem {
 export interface MattersEntityItem extends AssortmentBaseItem {
     source: "matters",
     entityType: MattersEntityType,
-    id: ArticleId | UserId,
-    review: string,
 }
 
 export type AssortmentItem = MattersEntityItem;

@@ -600,6 +600,17 @@ const mongodb = {
                 id,
             });
         },
+        async findByIds(ids: AssortmentId[]): Promise<Assortment[]> {
+            if (mainDB) {
+                return mainDB.collection("assortments").find({
+                    id: {$in: ids}
+                }).toArray();
+            }
+            else {
+                return [];
+            }
+        },
+
         async findByIdentifier(identifier: AssortmentIdentifier): Promise<Assortment | null> {
             const {subpath, owner, contentType} = identifier;
             return mainDB && mainDB.collection("assortments").findOne({

@@ -45,7 +45,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
     }
     let items: AssortmentItem[] = [];
     if (request.upstreams.length) {
-        const upstreams = await db.assortment.findByUpstreams(request.upstreams);
+        const upstreams = await db.assortment.findByIds(request.upstreams);
         items = upstreams.map(upstream => upstream.items).flat();
     }
 

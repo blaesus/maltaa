@@ -1,6 +1,7 @@
 import { MaltaaAction } from "../../../definitions/Actions";
 import { ClientState } from "./reducer";
 import { AssortmentUIIdentifier } from "../uiUtils";
+import { AssortmentContentType } from "../../../definitions/Assortment";
 
 // Executed before all branched reducers
 export function crossPreReducer(state: ClientState, action: MaltaaAction): ClientState {
@@ -48,6 +49,42 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                 }
             } else {
                 return state;
+            }
+        }
+        case "ProvideEntities": {
+            const request = action?.meta?.request;
+            switch (request?.type) {
+                case "UpdateAssortment": {
+                    if (
+                        request.operation === "EditSubpath"
+                        && state.ui.pages.current === "assortment"
+                    ) {
+                        const target = state.entities.assortments[request.target];
+                        const owner = state.entities.users[target?.owner];
+                        if (target && owner) {
+                            return {
+                                ...state,
+                                ui: {
+                                    ...state.ui,
+                                    pages: {
+                                        ...state.ui.pages,
+                                        assortment: {
+                                            identifier: {
+                                                ownerUsername: owner.userName,
+                                                contentType: target.contentType,
+                                                subpath: target.subpath,
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return state;
+                }
+                default: {
+                    return state;
+                }
             }
         }
         default: {

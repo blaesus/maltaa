@@ -197,7 +197,7 @@ export interface UpdateAssortmentEditTitle extends BaseAction {
     title: string,
 }
 
-export interface UpdateAssortmentEdit extends BaseAction {
+export interface UpdateAssortmentEditSubpath extends BaseAction {
     type: "UpdateAssortment",
     operation: "EditSubpath",
     target: AssortmentId,
@@ -210,7 +210,7 @@ export type UpdateAssortment =
     | UpdateAssortmentEditReview
     | UpdateAssortmentArchive
     | UpdateAssortmentEditTitle
-    | UpdateAssortmentEdit
+    | UpdateAssortmentEditSubpath
 ;
 
 export interface Signout extends BaseAction {

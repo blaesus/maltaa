@@ -109,10 +109,12 @@ function AssortmentItemCard(props: {
 }
 
 export function Subpath(props: {
+    assortmentId: AssortmentId,
     identifier: AssortmentUIIdentifier,
     canEdit: boolean,
+    dispatch: MaltaaDispatch,
 }) {
-    const {identifier, canEdit} = props;
+    const {assortmentId, identifier, canEdit, dispatch} = props;
     const url = assortmentPath(identifier);
     const [editing, setEditing] = useState(false);
 
@@ -126,7 +128,7 @@ export function Subpath(props: {
             }
             {
                 canEdit && !editing &&
-                    <AnchorButton onClick={() => setEditing(true)}>變更路徑</AnchorButton>
+                <AnchorButton onClick={() => setEditing(true)}>變更路徑</AnchorButton>
             }
             {
                 editing &&
@@ -136,8 +138,24 @@ export function Subpath(props: {
                         subpath={subpath}
                         onChange={setSubpath}
                     />
-                    <AnchorButton>確定</AnchorButton>
-                    <AnchorButton onClick={() => setEditing(false)}>取消</AnchorButton>
+                    <AnchorButton
+                        onClick={() => {
+                            setEditing(false);
+                            dispatch({
+                                type: "UpdateAssortment",
+                                operation: "EditSubpath",
+                                target: assortmentId,
+                                subpath
+                            })
+                        }}
+                    >
+                        確定
+                    </AnchorButton>
+                    <AnchorButton
+                        onClick={() => setEditing(false)}
+                    >
+                        取消
+                    </AnchorButton>
                 </span>
             }
         </div>
@@ -206,8 +224,10 @@ export function AssortmentPage(props: {
             </div>
             <div>
                 <Subpath
+                    assortmentId={assortment.id}
                     identifier={identifier}
                     canEdit={canEdit}
+                    dispatch={dispatch}
                 />
                 {
                     assortment.archived &&

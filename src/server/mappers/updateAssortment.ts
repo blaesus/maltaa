@@ -133,6 +133,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
         }
         case "EditTitle": {
             target.title = request.title;
+            await db.assortment.upsert(target);
             return {
                 type: "ProvideEntities",
                 data: {

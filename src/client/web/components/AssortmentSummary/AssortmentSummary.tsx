@@ -28,6 +28,7 @@ export function AssortmentSummary(props: {
             onClick={getAnchorClickHandler(onClick)}
         >
             {assortment.title}
+            ({assortment.items.length})
         </AnchorButton>
     )
 }

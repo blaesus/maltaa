@@ -177,6 +177,13 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             for (const upstream of upstreams) {
                 target.items = [...target.items, ...upstream.items]
             }
+            await db.assortment.upsert(target);
+            return {
+                type: "ProvideEntities",
+                data: {
+                    assortments: [target],
+                },
+            }
         }
         default: {
             return {

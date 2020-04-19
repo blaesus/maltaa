@@ -47,7 +47,6 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             };
         }
         target.policy = request.policy
-        target.archived = request.archived;
         await db.assortment.upsert(target);
         return {
             type: "ProvideEntities",
@@ -56,23 +55,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             },
         };
     }
-    if (request.operation === "SetAllowFork") {
-        if (!hasIntersection([target.owner], account.mattersIds)) {
-            return {
-                type: "GenericError",
-                reason: "Not authorized to set policy",
-            };
-        }
-        target.archived = request.archived;
-        await db.assortment.upsert(target);
-        return {
-            type: "ProvideEntities",
-            data: {
-                assortments: [target],
-            },
-        };
-    }
-    if (target.archived) {
+    if (target.policy.archived) {
         return {
             type: "GenericError",
             reason: "Target is archived",

@@ -51,7 +51,7 @@ function AssortmentSection(props: {
     const [creating, setCreating] = useState(false);
     const [viewingArchived, setViewingArchived] = useState(false);
     const assortments = myAssortments.filter(a => a.contentType === contentType);
-    const {yes: activeAssortments, no: archivedAssortments} = splinter(assortments, a => !a.archived)
+    const {yes: activeAssortments, no: archivedAssortments} = splinter(assortments, a => !a.policy.archived)
     const assortmentName = assortmentNames[contentType];
     return (
         <section className="AssortmentSection">

@@ -219,7 +219,7 @@ async function main() {
        .use(router.allowedMethods());
 
     app.listen(API_PORT);
-    console.log(`Maltaa API server running at ${API_PORT}`);
+    console.log(`Maltaa REST API server running at ${API_PORT}`);
 }
 
 if (require.main === module) {

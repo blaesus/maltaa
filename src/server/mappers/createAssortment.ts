@@ -3,6 +3,7 @@ import { db } from "../db";
 
 import { CreateAssortment, MaltaaAction } from "../../definitions/Actions";
 import { Assortment, AssortmentItem, AssortmentPolicy } from "../../definitions/Assortment";
+import { isValidSubpath } from "../rules";
 
 const defaultPolicy: AssortmentPolicy = {
     archived: false,
@@ -35,6 +36,13 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         return {
             type: "GenericError",
             reason: "Doesn't control owner user"
+        }
+    }
+    const isSubpathValid = isValidSubpath(request.subpath);
+    if (!isSubpathValid) {
+        return {
+            type: "GenericError",
+            reason: "Path invalid",
         }
     }
     const existing = await db.assortment.findByIdentifier({

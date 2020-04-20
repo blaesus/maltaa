@@ -3,6 +3,7 @@ import { db } from "../db";
 import { MaltaaAction, UpdateAssortment } from "../../definitions/Actions";
 import { AssortmentIdentifier, MattersEntityItem } from "../../definitions/Assortment";
 import { hasIntersection } from "../../utils";
+import { isValidSubpath } from "../rules";
 
 export async function updateAssortment(request: UpdateAssortment): Promise<MaltaaAction> {
     const accountId = request?.meta?.account;
@@ -152,6 +153,12 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             }
         }
         case "EditSubpath": {
+            if (!isValidSubpath(request.subpath)) {
+                return {
+                    type: "GenericError",
+                    reason: "Path invalid",
+                }
+            }
             const newIdentifier: AssortmentIdentifier = {
                 owner: target.owner,
                 contentType: target.contentType,

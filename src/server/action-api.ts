@@ -1,5 +1,3 @@
-import * as URL from "url";
-
 import { db } from "./db";
 
 import { MaltaaAction } from "../definitions/Actions";
@@ -13,13 +11,12 @@ import { viewArticle } from "./mappers/viewArticle";
 import { updateAssortment } from "./mappers/updateAssortment";
 import { viewAssortment } from "./mappers/viewAssortment";
 import { signin } from "./mappers/signin";
-
-import { isMattersArticleUrl } from "../mattersSpecifics";
-import { daysAgoInEpoch, daysToMs, dedupe, last } from "../utils";
 import { setMyPreferences } from "./mappers/setMyPreferences";
 import { search } from "./mappers/search";
 import { getMyData } from "./mappers/getMyData";
 import { viewUser } from "./mappers/viewUser";
+
+import { daysAgoInEpoch, daysToMs, dedupe } from "../utils";
 
 async function getPodiumData(params: {
     sort: ArticleSort,

@@ -8,7 +8,7 @@ export function EditableText(props: {
     content: string,
     canEdit: boolean,
     onEdit(content: string): void
-    editButtonText?: boolean;
+    editButtonText?: string;
 }) {
     const {content, canEdit, onEdit} = props;
     const [editing, setEditing] = useState(false);

@@ -43,6 +43,7 @@ function AssortmentItemCard(props: {
             <EditableText
                 content={item.review}
                 canEdit={canEdit}
+                editButtonText="修改評語"
                 onEdit={content => {
                     dispatch({
                         type: "UpdateAssortment",

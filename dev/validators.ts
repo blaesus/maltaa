@@ -34,7 +34,7 @@ export function isLeveledCommentPreferences(data: any): boolean {
               
   return true;
 }
-        
+        export const isUserId = isstring;
 export function isUserPublic(data: any): boolean {
   
               if (!isUserId(data.id)) {
@@ -63,7 +63,7 @@ export function isUserPublic(data: any): boolean {
               
   return true;
 }
-        
+        export const isArticleId = isstring;export const isCommentId = isstring;
 export function isComment(data: any): boolean {
   
               if (!isCommentId(data.id)) {
@@ -153,11 +153,8 @@ export function isArticle(data: any): boolean {
 }
         
 export function isLicense(data: any): boolean {
-  return true;
-}
-        
-export function isArticleVersion(data: any): boolean {
-  return true;
+  return is(
+    "UNLICENSED")(data)&&is( "NOCLAIM")(data)&&is( "CC BY-SA")(data)&&is( "CC BY-ND")(data)&&is( "CC BY-NC")(data)&&is( "CC BY-NC-SA")(data)&&is( "CC BY-NC-ND")(data)&&is( "CC0")(data);
 }
         
 export function isArticleSupplement(data: any): boolean {
@@ -192,12 +189,8 @@ export function isRSAPublicKeyRecord(data: any): boolean {
   return true;
 }
         
-export function isPublicKeyRecord(data: any): boolean {
-  return true;
-}
-        
 export function isPrivileges(data: any): boolean {
-  return true;
+  return is( "admin")(data)&&is( "normal")(data);
 }
         
 export function isScryptRecord(data: any): boolean {
@@ -218,11 +211,7 @@ export function isScryptRecord(data: any): boolean {
               
   return true;
 }
-        
-export function isPasswordRecord(data: any): boolean {
-  return true;
-}
-        
+        export const isAccountId = isstring;
 export function isMaltaaAccount(data: any): boolean {
   
               if (!isAccountId(data.id)) {
@@ -244,10 +233,6 @@ export function isMaltaaAccount(data: any): boolean {
                 return false;
               }
               
-  return true;
-}
-        
-export function isAccountSelf(data: any): boolean {
   return true;
 }
         
@@ -289,16 +274,8 @@ export function isPathState(data: any): boolean {
   return true;
 }
         
-export function isMaltaaDispatch(data: any): boolean {
-  return true;
-}
-        
-export function isOptionList(data: any): boolean {
-  return true;
-}
-        
 export function isMattersEntityType(data: any): boolean {
-  return true;
+  return is( "article")(data)&&is( "user")(data);
 }
         
 export function isAssortmentBaseItem(data: any): boolean {
@@ -343,13 +320,9 @@ export function isMattersEntityItem(data: any): boolean {
               
   return true;
 }
-        
-export function isAssortmentItem(data: any): boolean {
-  return true;
-}
-        
+        export const isAssortmentId = isstring;
 export function isAssortmentContentType(data: any): boolean {
-  return true;
+  return is( "anthology")(data)&&is( "roll")(data)&&is( "mixture")(data);
 }
         
 export function isAssortmentIdentifier(data: any): boolean {
@@ -414,7 +387,7 @@ export function isAssortment(data: any): boolean {
               
   return true;
 }
-        
+        export const isAuthTokenId = isstring;
 export function isAuthToken(data: any): boolean {
   
               if (!isAuthTokenId(data.id)) {
@@ -488,7 +461,8 @@ export function isUserPageState(data: any): boolean {
 }
         
 export function isPageName(data: any): boolean {
-  return true;
+  return is(
+    "podium")(data)&&is( "study")(data)&&is( "article")(data)&&is( "user")(data)&&is( "assortment")(data);
 }
         
 export function isStudyPageState(data: any): boolean {
@@ -498,10 +472,6 @@ export function isStudyPageState(data: any): boolean {
         
 export function isAssortmentPageState(data: any): boolean {
   
-  return true;
-}
-        
-export function isPagesState(data: any): boolean {
   return true;
 }
         
@@ -515,11 +485,11 @@ export function isClientUIState(data: any): boolean {
 }
         
 export function isArticleSort(data: any): boolean {
-  return true;
+  return is( "comments")(data)&&is( "recent")(data)&&is( "appreciationAmount")(data);
 }
         
 export function isCommentSort(data: any): boolean {
-  return true;
+  return is( "recent")(data)&&is( "old")(data);
 }
         
 export function isBaseMeta(data: any): boolean {
@@ -762,10 +732,6 @@ export function isCreateAssortment(data: any): boolean {
   return true;
 }
         
-export function isItemSpec(data: any): boolean {
-  return true;
-}
-        
 export function isUpdateAssortmentAddItem(data: any): boolean {
   
               if (!isAssortmentId(data.target)) {
@@ -883,7 +849,8 @@ export function isUpdateAssortmentSyncFromUpstreams(data: any): boolean {
 }
         
 export function isUpdateAssortment(data: any): boolean {
-  return true;
+  return is(
+    UpdateAssortmentAddItem)(data)&&is( UpdateAssortmentDropItem)(data)&&is( UpdateAssortmentOrderItems)(data)&&is( UpdateAssortmentEditReview)(data)&&is( UpdateAssortmentSetPolicy)(data)&&is( UpdateAssortmentEditTitle)(data)&&is( UpdateAssortmentEditSubpath)(data)&&is( UpdateAssortmentEditUpstreams)(data)&&is( UpdateAssortmentSyncFromUpstreams)(data);
 }
         
 export function isSignout(data: any): boolean {
@@ -897,6 +864,7 @@ export function isViewAssortment(data: any): boolean {
 }
         
 export function isMaltaaAction(data: any): boolean {
-  return true;
+  return is(
+    ChangePathname)(data)&&is( ProvideEntities)(data)&&is( SetPodiumCursor)(data)&&is( ViewArticle)(data)&&is( ViewUser)(data)&&is( GoHome)(data)&&is( Search)(data)&&is( StartAuthenticationDialog)(data)&&is( LoadPodiumArticles)(data)&&is( SetMyPreferences)(data)&&is( GenericError)(data)&&is( LoadedStoredPreferences)(data)&&is( CancelDialog)(data)&&is( StartPreferencesDialog)(data)&&is( Register)(data)&&is( SearchResultArticleRedirect)(data)&&is( StartMeDialog)(data)&&is( GoToPage)(data)&&is( GetMyData)(data)&&is( CreateAssortment)(data)&&is( Signout)(data)&&is( GenericOk)(data)&&is( UpdateAssortment)(data)&&is( Signin)(data)&&is( ViewAssortment)(data);
 }
         

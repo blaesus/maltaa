@@ -133,7 +133,7 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                     name,
                     value: value,
                 })
-            } else {
+            } else if (conditions.length) {
                 definitions.push({
                     kind: "union",
                     name,
@@ -186,9 +186,24 @@ function compile(definitions: TypeDefinition[]): string {
             case "union": {
                 result += `
 export function is${definition.name}(data: any): boolean {
-  return true;
+  return ${definition.conditions.map(value => {
+      switch (value.kind) {
+          case "literal": {
+              return `is(${value.literal})(data)`
+          }
+          default: {
+              return true;
+          }
+      }
+                }).join("||")};
 }
         `
+                break;
+            }
+            case "alias": {
+                if (definition.value.kind === "primitive") {
+                    result += `export const is${definition.name} = is${definition.value.primitive};`
+                }
                 break;
             }
             case "interface": {

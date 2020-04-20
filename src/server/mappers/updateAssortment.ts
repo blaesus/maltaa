@@ -3,36 +3,17 @@ import { db } from "../db";
 import { MaltaaAction, UpdateAssortment } from "../../definitions/Actions";
 import { AssortmentIdentifier, MattersEntityItem } from "../../definitions/Assortment";
 import { hasIntersection } from "../../utils";
-import { isWellFormedAssortment } from "../../rules";
+import { authenticateOperator } from "../authenticateOperator";
 
 export async function updateAssortment(request: UpdateAssortment): Promise<MaltaaAction> {
-    const accountId = request?.meta?.account;
-    if (!accountId) {
+    const auth = await authenticateOperator(request);
+    if (!auth) {
         return {
             type: "GenericError",
-            reason: "Not authenticated",
+            reason: "Authorization failed",
         };
     }
-    const account = await db.account.findById(accountId);
-    if (!account) {
-        return {
-            type: "GenericError",
-            reason: "Don't know you",
-        };
-    }
-    const user = request.meta?.operator;
-    if (!user) {
-        return {
-            type: "GenericError",
-            reason: "No user claimed",
-        };
-    }
-    if (!account.mattersIds.includes(user)) {
-        return {
-            type: "GenericError",
-            reason: "Doesn't control owner user",
-        };
-    }
+    const {account, operator} = auth;
     const target = await db.assortment.findById(request.target);
     if (!target) {
         return {
@@ -82,9 +63,9 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 entityType: request.item.entityType,
                 id: request.item.id,
                 review: request.item.review,
-                collector: user,
+                collector: operator,
                 collectionTime: now,
-                lastReviewer: user,
+                lastReviewer: operator,
                 lastReviewTime: now,
             };
             target.items.push(newItem);
@@ -131,7 +112,7 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
             target.items[targetItemIndex] = {
                 ...originalItem,
                 review: request.review,
-                lastReviewer: user,
+                lastReviewer: operator,
                 lastReviewTime: Date.now(),
             };
             await db.assortment.upsert(target);
@@ -166,12 +147,6 @@ export async function updateAssortment(request: UpdateAssortment): Promise<Malta
                 }
             }
             target.subpath = request.subpath;
-            if (!isWellFormedAssortment(target)) {
-                return {
-                    type: "GenericError",
-                    reason: "Assortment became malformed",
-                }
-            }
             await db.assortment.upsert(target);
             return {
                 type: "ProvideEntities",

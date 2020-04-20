@@ -3,43 +3,30 @@ import { db } from "../db";
 
 import { CreateAssortment, MaltaaAction } from "../../definitions/Actions";
 import { Assortment, AssortmentItem, AssortmentPolicy } from "../../definitions/Assortment";
-import { isWellFormedAssortment } from "../../rules";
+import { authenticateOperator } from "../authenticateOperator";
 
 const defaultPolicy: AssortmentPolicy = {
     archived: false,
     allowForking: true,
-}
+};
 
 export async function createAssortment(request: CreateAssortment): Promise<MaltaaAction> {
-    const accountId = request?.meta?.account;
-    if (!accountId) {
+    const auth = await authenticateOperator(request);
+    if (!auth) {
         return {
             type: "GenericError",
-            reason: "Not authenticated"
-        }
+            reason: "Authorization failed",
+        };
     }
-    const account = await db.account.findById(accountId);
-    if (!account) {
+    const {account, operator} = auth;
+    if (!account.mattersIds.includes(operator)) {
         return {
             type: "GenericError",
-            reason: "Don't know you"
-        }
-    }
-    const owner = request.meta?.operator;
-    if (!owner) {
-        return {
-            type: "GenericError",
-            reason: "No user claimed"
-        }
-    }
-    if (!account.mattersIds.includes(owner)) {
-        return {
-            type: "GenericError",
-            reason: "Doesn't control owner user"
-        }
+            reason: "Doesn't control operator user",
+        };
     }
     const existing = await db.assortment.findByIdentifier({
-        owner,
+        owner: operator,
         subpath: request.subpath,
         contentType: request.contentType,
     });
@@ -47,35 +34,26 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         return {
             type: "GenericError",
             reason: "Path taken",
-        }
+        };
     }
     let items: AssortmentItem[] = [];
     if (request.upstreams.length) {
         const upstreams = await db.assortment.findByIds(request.upstreams);
         items = upstreams.map(upstream => upstream.items).flat();
     }
-
     const newAssortment: Assortment = {
         id: uuidv4(),
         title: request.title,
         subpath: request.subpath,
         mattersArticleBaseId: null,
-        owner,
-        editors: [owner],
+        owner: operator,
+        editors: [operator],
         upstreams: request.upstreams,
         contentType: request.contentType,
         description: "",
         items,
         policy: defaultPolicy,
-    }
-
-    if (!isWellFormedAssortment(newAssortment)) {
-        return {
-            type: "GenericError",
-            reason: "Assortment became malformed",
-        }
-    }
-
+    };
     await db.assortment.upsert(newAssortment);
     return {
         type: "ProvideEntities",
@@ -83,7 +61,7 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             assortments: [
                 newAssortment,
             ],
-        }
-    }
+        },
+    };
 
 }

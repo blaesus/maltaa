@@ -119,15 +119,9 @@ const mongodb = {
                     owner: 1,
                     contentType: 1,
                 }, {unique: true});
-                await mainDB.createIndex("assortments", {
-                    editors: 1,
-                });
-                await mainDB.createIndex("assortments", {
-                    upstreams: 1,
-                });
-                await mainDB.createIndex("assortments", {
-                    "items.id": 1,
-                });
+                await mainDB.createIndex("assortments", {editors: 1});
+                await mainDB.createIndex("assortments", {upstreams: 1});
+                await mainDB.createIndex("assortments", {"items.id": 1});
             }
         }
         if (mattersSyncDB) {

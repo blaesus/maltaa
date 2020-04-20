@@ -3,7 +3,7 @@ import { db } from "../db";
 
 import { CreateAssortment, MaltaaAction } from "../../definitions/Actions";
 import { Assortment, AssortmentItem, AssortmentPolicy } from "../../definitions/Assortment";
-import { isValidSubpath } from "../rules";
+import { isWellFormedAssortment } from "../../rules";
 
 const defaultPolicy: AssortmentPolicy = {
     archived: false,
@@ -38,13 +38,6 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             reason: "Doesn't control owner user"
         }
     }
-    const isSubpathValid = isValidSubpath(request.subpath);
-    if (!isSubpathValid) {
-        return {
-            type: "GenericError",
-            reason: "Path invalid",
-        }
-    }
     const existing = await db.assortment.findByIdentifier({
         owner,
         subpath: request.subpath,
@@ -74,6 +67,13 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
         description: "",
         items,
         policy: defaultPolicy,
+    }
+
+    if (!isWellFormedAssortment(newAssortment)) {
+        return {
+            type: "GenericError",
+            reason: "Assortment became malformed",
+        }
     }
 
     await db.assortment.upsert(newAssortment);

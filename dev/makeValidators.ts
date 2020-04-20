@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path"
 import * as ts from "typescript";
 
 type PrimitiveDefinition = "string" | "number";
@@ -16,15 +17,38 @@ interface InterfaceDefinition {
     }
 }
 
-function extractDefinitions(code: string): InterfaceDefinition[] {
-    const source = ts.createSourceFile("test.ts", code, ts.ScriptTarget.ES2019)
+function prepropcess(entryFileName: string): {entrySourceText: string, combinedSourceText: string} {
+    const entrySourceText = fs.readFileSync(entryFileName).toString();
+    const entrySource = ts.createSourceFile("root.ts", entrySourceText, ts.ScriptTarget.ES2019)
+
+    let combinedSourceText: string = entrySourceText;
+    entrySource.forEachChild(node => {
+        if (node.kind === ts.SyntaxKind.ImportDeclaration) {
+            node.forEachChild(child => {
+                if (child.kind === ts.SyntaxKind.StringLiteral) {
+                    const pathReference = child.getText(entrySource).replace(/"/g, "");
+                    const newPath = path.join(path.dirname(entryFileName), pathReference) + ".ts"
+                    const newText = fs.readFileSync(newPath).toString();
+                    console.info("ADD", newText.length)
+                    combinedSourceText = `${newText}\n${combinedSourceText}`;
+                }
+            })
+        }
+    })
+    return {entrySourceText, combinedSourceText};
+}
+
+function extractDefinitions(entryFileName: string): InterfaceDefinition[] {
+    const {entrySourceText, combinedSourceText} = prepropcess(entryFileName);
+    const source = ts.createSourceFile("test.ts", entrySourceText, ts.ScriptTarget.ES2019)
+    const combinedSource = ts.createSourceFile("combined.ts", combinedSourceText, ts.ScriptTarget.ES2019)
     const definitions: InterfaceDefinition[] = [];
-    source.forEachChild(node => {
+    combinedSource.forEachChild(node => {
         if (node.kind === ts.SyntaxKind.InterfaceDeclaration) {
             const definition: InterfaceDefinition = {name: "", keyvalues: {}};
             node.forEachChild(child => {
                 if (child.kind === ts.SyntaxKind.Identifier) {
-                    definition.name = child.getText(source);
+                    definition.name = child.getText(combinedSource);
                 }
                 else if (child.kind === ts.SyntaxKind.PropertySignature) {
                     let key: string = "";
@@ -44,7 +68,7 @@ function extractDefinitions(code: string): InterfaceDefinition[] {
                             }
                             case ts.SyntaxKind.TypeReference: {
                                 definition.keyvalues[key] = {
-                                    name: grandchild.getText(source)
+                                    name: grandchild.getText(combinedSource)
                                 };
                                 break;
                             }
@@ -60,10 +84,10 @@ function extractDefinitions(code: string): InterfaceDefinition[] {
 }
 
 const primitiveValidators = `
-function isstring(data: any): boolean {
+export function isstring(data: any): boolean {
     return typeof data === "string";
 }
-function isnumber(data: any): boolean {
+export function isnumber(data: any): boolean {
     return typeof data === "number";
 }
 `
@@ -85,7 +109,7 @@ function compile(definitions: InterfaceDefinition[]): string {
 
     for (const definition of definitions) {
         result += `
-function is${definition.name}(data: any): boolean {
+export function is${definition.name}(data: any): boolean {
   ${
     Object.entries(definition.keyvalues)
           .map(entry => {
@@ -95,7 +119,7 @@ function is${definition.name}(data: any): boolean {
                 return false;
               }
               `
-          })
+          }).join("\n")
   }
   return true;
 }
@@ -105,9 +129,9 @@ function is${definition.name}(data: any): boolean {
 }
 
 async function make() {
-    const content = fs.readFileSync("../src/definitions/Actions.ts").toString();
-    const definitions = extractDefinitions(content);
-    console.info(compile(definitions));
+    const definitions = extractDefinitions("../src/definitions/Actions.ts");
+    const validators = compile(definitions);
+    fs.writeFileSync("./validators.ts", validators);
 }
 
 make();

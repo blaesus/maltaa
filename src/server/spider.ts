@@ -96,16 +96,25 @@ function supplyIds<IdType extends string>(ids: IdType[], entityState: EntityStat
             }
         }
     }
+}
 
+async function asyncLoop(backoff: number, f: () => Promise<any>) {
+    while (true) {
+        await sleep(backoff);
+        try {
+            await f();
+        }
+        catch (error) {
+            console.error(error)
+        }
+    }
 }
 
 async function newestArticleIndexer() {
     console.info(`Newest article indexer launched`);
     const mode: ArticleQueryMode = "newest";
     const listLength = 10;
-    while (true) {
-        await sleep(NEWEST_ARTICLE_INDEXER_INTERVAL);
-        console.log("newestArticleIndexer looping");
+    await asyncLoop(NEWEST_ARTICLE_INDEXER_INTERVAL, async () => {
         let result = await fetchArticleIds(listLength, mode, state.articles.cursor);
         console.info(`Newest article indexer: found ${result.ids.length} new ids after cursor ${state.articles.cursor} - the first is ${result.ids[0]}`);
         state.articles.cursor = result.lastCursor;
@@ -119,21 +128,20 @@ async function newestArticleIndexer() {
         else {
             supplyIds(result.ids, state.articles, true);
         }
-    }
+    })
 }
+
 
 function makeRecentArticleReindexer(props: {
     name: string,
-    interval: number,
+    backoff: number,
     newestRange: number,
     staleLimit: number,
 }) {
-    const {name, interval, newestRange, staleLimit} = props;
+    const {name, backoff, newestRange, staleLimit} = props;
     return async function reIndexer() {
         console.info(`${name} re-indexer launched`);
-        while (true) {
-            await sleep(interval);
-            console.log("makeRecentArticleReindexer looping");
+        await asyncLoop(backoff, async () => {
             const now = Date.now();
             const cutoff = now - newestRange;
             const articles = await db.article.internal.findCreatedAfter(cutoff);
@@ -146,20 +154,20 @@ function makeRecentArticleReindexer(props: {
                     }
                 }
             }
-        }
+        })
     }
 }
 
 const dailyRecentArticleReindexer = makeRecentArticleReindexer({
     name: "daily",
-    interval: DAILY_INDEXER_INTERVAL,
+    backoff: DAILY_INDEXER_INTERVAL,
     newestRange: DAILY_NEWEST_RANGE,
     staleLimit: DAILY_NEW_ARTICLE_STALE_LIMIT,
 })
 
 const weeklyRecentArticleReindexer = makeRecentArticleReindexer({
     name: "weekly",
-    interval: WEEKLY_INDEXER_INTERVAL,
+    backoff: WEEKLY_INDEXER_INTERVAL,
     newestRange: WEEKLY_NEWEST_RANGE,
     staleLimit: WEEKLY_NEW_ARTICLE_STALE_LIMIT,
 })
@@ -175,15 +183,13 @@ function makeSerialIndexer<IdType extends string>(props: {
     const interval = props.interval || SERIAL_INDEXER_INTERVAL;
     return async function serialArticleIndexer() {
         console.info(`Serial ${props.entityName} indexer launched`);
-        while (true) {
-            await sleep(interval);
-            console.log(`${props.entityName} makeSerialIndexer looping`);
+        await asyncLoop(interval, async () => {
             const currentIds = await props.getIds();
             const currentSerials = currentIds.map(id => props.idToSerial(id, atob));
             const max = currentSerials.sort((a, b) => b - a)[0];
             const min = props.entityState.lastCheckedSerial + 1;
             if (max <= min) {
-                continue;
+                return;
             }
             const allSerialsInRange = range({min, max});
             let idsToDownload = [];
@@ -204,7 +210,7 @@ function makeSerialIndexer<IdType extends string>(props: {
                 ...idsToDownload,
             ];
             props.entityState.lastCheckedSerial = max;
-        }
+        })
     }
 }
 
@@ -234,9 +240,7 @@ const serialTagIndexer = makeSerialIndexer({
 
 async function obsoleteIndexer() {
     console.info("Obsolete indexer launched");
-    while (true) {
-        await sleep(OBSOLETE_INDEXER_CHECK_INTERVAL);
-        console.log("obsoleteIndexer looping")
+    await asyncLoop(OBSOLETE_INDEXER_CHECK_INTERVAL, async () => {
         const latestAllowed = Date.now() - ITEM_VALIDITY;
         const records = await db.spiderRecord.findBefore(latestAllowed);
 
@@ -251,7 +255,7 @@ async function obsoleteIndexer() {
         supplyIds(articleIds, state.articles);
         supplyIds(tagIds, state.tags);
         supplyIds(userIds, state.users);
-    }
+    });
 }
 
 async function downloadArticle(
@@ -295,13 +299,11 @@ function makeFetcher(props: {
     const {entityName, entityState, download, downloadMentioned} = props;
     return async function fetcher(fetcherName: string) {
         console.info(`${entityName} fetcher ${fetcherName} launched`);
-        while (true) {
-            await sleep(FETCHER_INTERVAL);
-            console.log(`${props.entityName} fetcher ${fetcherName} looping`);
+        await asyncLoop(FETCHER_INTERVAL, async () => {
             const nextId = entityState.toFetch[0];
             entityState.toFetch.splice(0, 1);
             if (!nextId) {
-                continue
+                return;
             }
             console.info(`${entityName} fetcher ${fetcherName} fetching`, nextId);
             entityState.fetching.push(nextId);
@@ -315,9 +317,8 @@ function makeFetcher(props: {
                 entityState.fetching = entityState.fetching.filter(id => id !== nextId);
                 supplyIds([nextId], entityState);
             }
-        }
+        })
     }
-
 }
 
 const articleFetcher = makeFetcher({

@@ -121,6 +121,8 @@ const mongodb = {
                 }, {unique: true});
                 await mainDB.createIndex("assortments", {
                     editors: 1,
+                });
+                await mainDB.createIndex("assortments", {
                     upstreams: 1,
                 });
                 await mainDB.createIndex("assortments", {

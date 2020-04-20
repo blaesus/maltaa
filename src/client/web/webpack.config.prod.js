@@ -77,7 +77,7 @@ module.exports = {
             template: path.join(__dirname, "index.html"),
             filename: "index.html",
             inject: "body",
-            // inlineSource: ".css$",
+            inlineSource: ".css$",
         }),
         new HtmlWebpackInlineSourcePlugin(),
     ]

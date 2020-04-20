@@ -116,7 +116,7 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                     child.forEachChild(grandChild => {
                         conditions.push({
                             kind: "literal",
-                            literal: grandChild.getFullText(combinedSource)
+                            literal: grandChild.getText(combinedSource)
                         })
                     })
                 }
@@ -124,6 +124,12 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                     value = {
                         kind: "primitive",
                         primitive: "string",
+                    }
+                }
+                else if (child.kind === ts.SyntaxKind.TypeReference) {
+                    value = {
+                        kind: "reference",
+                        reference: child.getText(combinedSource),
                     }
                 }
             })
@@ -203,6 +209,9 @@ export function is${definition.name}(data: any): boolean {
             case "alias": {
                 if (definition.value.kind === "primitive") {
                     result += `export const is${definition.name} = is${definition.value.primitive};`
+                }
+                else if (definition.value.kind === "reference") {
+                    result += `export const is${definition.name} = is${definition.value.reference};`
                 }
                 break;
             }

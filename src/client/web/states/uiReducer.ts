@@ -50,7 +50,7 @@ export interface AssortmentPageState {
     identifier: AssortmentUIIdentifier | null,
 }
 
-export type PagesState = {
+export interface PagesState {
     current: PageName,
     podium: PodiumPageState,
     article: ArticlePageState,

@@ -105,6 +105,7 @@ async function newestArticleIndexer() {
     const listLength = 10;
     while (true) {
         await sleep(NEWEST_ARTICLE_INDEXER_INTERVAL);
+        console.log("newestArticleIndexer looping");
         let result = await fetchArticleIds(listLength, mode, state.articles.cursor);
         console.info(`Newest article indexer: found ${result.ids.length} new ids after cursor ${state.articles.cursor} - the first is ${result.ids[0]}`);
         state.articles.cursor = result.lastCursor;
@@ -132,6 +133,7 @@ function makeRecentArticleReindexer(props: {
         console.info(`${name} re-indexer launched`);
         while (true) {
             await sleep(interval);
+            console.log("makeRecentArticleReindexer looping");
             const now = Date.now();
             const cutoff = now - newestRange;
             const articles = await db.article.internal.findCreatedAfter(cutoff);
@@ -175,6 +177,7 @@ function makeSerialIndexer<IdType extends string>(props: {
         console.info(`Serial ${props.entityName} indexer launched`);
         while (true) {
             await sleep(interval);
+            console.log(`${props.entityName} makeSerialIndexer looping`);
             const currentIds = await props.getIds();
             const currentSerials = currentIds.map(id => props.idToSerial(id, atob));
             const max = currentSerials.sort((a, b) => b - a)[0];
@@ -233,6 +236,7 @@ async function obsoleteIndexer() {
     console.info("Obsolete indexer launched");
     while (true) {
         await sleep(OBSOLETE_INDEXER_CHECK_INTERVAL);
+        console.log("obsoleteIndexer looping")
         const latestAllowed = Date.now() - ITEM_VALIDITY;
         const records = await db.spiderRecord.findBefore(latestAllowed);
 
@@ -293,6 +297,7 @@ function makeFetcher(props: {
         console.info(`${entityName} fetcher ${fetcherName} launched`);
         while (true) {
             await sleep(FETCHER_INTERVAL);
+            console.log(`${props.entityName} fetcher looping`);
             const nextId = entityState.toFetch[0];
             entityState.toFetch.splice(0, 1);
             if (!nextId) {

@@ -30,11 +30,14 @@
     }
 }
 
-
 .ArticleSummary .Title {
     display: inline-block;
     margin: 0;
     flex-grow: 1;
+    /* if a title is alphabetical without spaces, it wouldn't wrap */
+    max-width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 .ArticleSummary .Title .AuthorLine {

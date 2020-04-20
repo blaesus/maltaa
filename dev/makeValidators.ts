@@ -2,20 +2,45 @@ import * as fs from "fs";
 import * as path from "path"
 import * as ts from "typescript";
 
-type PrimitiveDefinition = "string" | "number";
+type PrimitiveDefinition = {
+    kind: "primitive",
+    primitive: "string" | "number"
+};
 
-type ReferenceDefinition = {
-    name: string,
+type StringLiteralDefinition = {
+    kind: "literal",
+    literal: string,
 }
 
-type ValueDefinition = PrimitiveDefinition | ReferenceDefinition;
+type ReferenceDefinition = {
+    kind: "reference",
+    reference: string,
+}
+
+type ValueDefinition = PrimitiveDefinition | ReferenceDefinition | StringLiteralDefinition;
 
 interface InterfaceDefinition {
+    kind: "interface",
     name: string,
     keyvalues: {
         [key in string]: ValueDefinition
     }
 }
+
+interface UnionTypeDefinition {
+    kind: "union",
+    name: string,
+    conditions: ValueDefinition[],
+}
+
+interface AliasTypeDefinition {
+    kind: "alias",
+    name: string,
+    value: ValueDefinition;
+}
+
+
+type TypeDefinition = UnionTypeDefinition | InterfaceDefinition | AliasTypeDefinition;
 
 function prepropcess(entryFileName: string): {entrySourceText: string, combinedSourceText: string} {
     const entrySourceText = fs.readFileSync(entryFileName).toString();
@@ -29,7 +54,6 @@ function prepropcess(entryFileName: string): {entrySourceText: string, combinedS
                     const pathReference = child.getText(entrySource).replace(/"/g, "");
                     const newPath = path.join(path.dirname(entryFileName), pathReference) + ".ts"
                     const newText = fs.readFileSync(newPath).toString();
-                    console.info("ADD", newText.length)
                     combinedSourceText = `${newText}\n${combinedSourceText}`;
                 }
             })
@@ -38,14 +62,14 @@ function prepropcess(entryFileName: string): {entrySourceText: string, combinedS
     return {entrySourceText, combinedSourceText};
 }
 
-function extractDefinitions(entryFileName: string): InterfaceDefinition[] {
+function extractDefinitions(entryFileName: string): TypeDefinition[] {
     const {entrySourceText, combinedSourceText} = prepropcess(entryFileName);
     const source = ts.createSourceFile("test.ts", entrySourceText, ts.ScriptTarget.ES2019)
     const combinedSource = ts.createSourceFile("combined.ts", combinedSourceText, ts.ScriptTarget.ES2019)
-    const definitions: InterfaceDefinition[] = [];
+    const definitions: TypeDefinition[] = [];
     combinedSource.forEachChild(node => {
         if (node.kind === ts.SyntaxKind.InterfaceDeclaration) {
-            const definition: InterfaceDefinition = {name: "", keyvalues: {}};
+            const definition: TypeDefinition = {kind: "interface", name: "", keyvalues: {}};
             node.forEachChild(child => {
                 if (child.kind === ts.SyntaxKind.Identifier) {
                     definition.name = child.getText(combinedSource);
@@ -59,16 +83,17 @@ function extractDefinitions(entryFileName: string): InterfaceDefinition[] {
                                 break;
                             }
                             case ts.SyntaxKind.StringKeyword: {
-                                definition.keyvalues[key] = "string";
+                                definition.keyvalues[key] = {kind: "primitive", primitive: "string"};
                                 break;
                             }
                             case ts.SyntaxKind.NumberKeyword: {
-                                definition.keyvalues[key] = "number";
+                                definition.keyvalues[key] = {kind: "primitive", primitive: "number"};
                                 break;
                             }
                             case ts.SyntaxKind.TypeReference: {
                                 definition.keyvalues[key] = {
-                                    name: grandchild.getText(combinedSource)
+                                    kind: "reference",
+                                    reference: grandchild.getText(combinedSource)
                                 };
                                 break;
                             }
@@ -79,9 +104,55 @@ function extractDefinitions(entryFileName: string): InterfaceDefinition[] {
             })
             definitions.push(definition);
         }
+        else if (node.kind === ts.SyntaxKind.TypeAliasDeclaration) {
+            let name: string = "";
+            let conditions: ValueDefinition[] = [];
+            let value: ValueDefinition | null = null;
+            node.forEachChild(child => {
+                if (child.kind === ts.SyntaxKind.Identifier) {
+                    name = child.getText(combinedSource);
+                }
+                else if (child.kind === ts.SyntaxKind.UnionType) {
+                    child.forEachChild(grandChild => {
+                        conditions.push({
+                            kind: "literal",
+                            literal: grandChild.getFullText(combinedSource)
+                        })
+                    })
+                }
+                else if (child.kind === ts.SyntaxKind.StringKeyword) {
+                    value = {
+                        kind: "primitive",
+                        primitive: "string",
+                    }
+                }
+            })
+            if (value) {
+                definitions.push({
+                    kind: "alias",
+                    name,
+                    value: value,
+                })
+            } else {
+                definitions.push({
+                    kind: "union",
+                    name,
+                    conditions,
+                });
+            }
+
+        }
     });
     return definitions;
 }
+
+const literalValiator = `
+function is(valueA: any): any {
+  return function(valueB: any): boolean {
+    return valueB === valueA;
+  }
+}
+`
 
 const primitiveValidators = `
 export function isstring(data: any): boolean {
@@ -92,38 +163,54 @@ export function isnumber(data: any): boolean {
 }
 `
 
-function compile(definitions: InterfaceDefinition[]): string {
-    let result = primitiveValidators;
+function compile(definitions: TypeDefinition[]): string {
+    let result = `${literalValiator}${primitiveValidators}`;
 
     function getValidatorFnName(value: ValueDefinition): string {
-        if (typeof value === "string") {
-            return `is${value}`;
+        if (value.kind === "primitive") {
+            return `is${value.primitive}`;
         }
-        else if (value.name) {
-            return `is${value.name}`
+        else if (value.kind === "reference") {
+            return `is${value.reference}`;
+        }
+        else if (value.kind === "literal") {
+            return `is(${value.literal})`;
         }
         else {
-            return 'is'
+            return `is`
         }
     }
 
     for (const definition of definitions) {
-        result += `
+        switch (definition.kind) {
+            case "union": {
+                result += `
+export function is${definition.name}(data: any): boolean {
+  return true;
+}
+        `
+                break;
+            }
+            case "interface": {
+                result += `
 export function is${definition.name}(data: any): boolean {
   ${
-    Object.entries(definition.keyvalues)
-          .map(entry => {
-              const [key, value] = entry;
-              return `
+                    Object.entries(definition.keyvalues)
+                          .map(entry => {
+                              const [key, value] = entry;
+                              return `
               if (!${getValidatorFnName(value)}(data.${key})) {
                 return false;
               }
               `
-          }).join("\n")
-  }
+                          }).join("\n")
+                }
   return true;
 }
         `
+            }
+
+        }
     }
     return result;
 }

@@ -1,4 +1,10 @@
 
+function is(valueA: any): any {
+  return function(valueB: any): boolean {
+    return valueB === valueA;
+  }
+}
+
 export function isstring(data: any): boolean {
     return typeof data === "string";
 }
@@ -146,6 +152,14 @@ export function isArticle(data: any): boolean {
   return true;
 }
         
+export function isLicense(data: any): boolean {
+  return true;
+}
+        
+export function isArticleVersion(data: any): boolean {
+  return true;
+}
+        
 export function isArticleSupplement(data: any): boolean {
   
               if (!isLicense(data.license)) {
@@ -178,6 +192,14 @@ export function isRSAPublicKeyRecord(data: any): boolean {
   return true;
 }
         
+export function isPublicKeyRecord(data: any): boolean {
+  return true;
+}
+        
+export function isPrivileges(data: any): boolean {
+  return true;
+}
+        
 export function isScryptRecord(data: any): boolean {
   
               if (!isstring(data.hash)) {
@@ -194,6 +216,10 @@ export function isScryptRecord(data: any): boolean {
                 return false;
               }
               
+  return true;
+}
+        
+export function isPasswordRecord(data: any): boolean {
   return true;
 }
         
@@ -218,6 +244,10 @@ export function isMaltaaAccount(data: any): boolean {
                 return false;
               }
               
+  return true;
+}
+        
+export function isAccountSelf(data: any): boolean {
   return true;
 }
         
@@ -256,6 +286,18 @@ export function isPathState(data: any): boolean {
                 return false;
               }
               
+  return true;
+}
+        
+export function isMaltaaDispatch(data: any): boolean {
+  return true;
+}
+        
+export function isOptionList(data: any): boolean {
+  return true;
+}
+        
+export function isMattersEntityType(data: any): boolean {
   return true;
 }
         
@@ -299,6 +341,14 @@ export function isMattersEntityItem(data: any): boolean {
                 return false;
               }
               
+  return true;
+}
+        
+export function isAssortmentItem(data: any): boolean {
+  return true;
+}
+        
+export function isAssortmentContentType(data: any): boolean {
   return true;
 }
         
@@ -437,6 +487,10 @@ export function isUserPageState(data: any): boolean {
   return true;
 }
         
+export function isPageName(data: any): boolean {
+  return true;
+}
+        
 export function isStudyPageState(data: any): boolean {
   
   return true;
@@ -447,12 +501,24 @@ export function isAssortmentPageState(data: any): boolean {
   return true;
 }
         
+export function isPagesState(data: any): boolean {
+  return true;
+}
+        
 export function isClientUIState(data: any): boolean {
   
               if (!isPagesState(data.pages)) {
                 return false;
               }
               
+  return true;
+}
+        
+export function isArticleSort(data: any): boolean {
+  return true;
+}
+        
+export function isCommentSort(data: any): boolean {
   return true;
 }
         
@@ -696,6 +762,10 @@ export function isCreateAssortment(data: any): boolean {
   return true;
 }
         
+export function isItemSpec(data: any): boolean {
+  return true;
+}
+        
 export function isUpdateAssortmentAddItem(data: any): boolean {
   
               if (!isAssortmentId(data.target)) {
@@ -812,6 +882,10 @@ export function isUpdateAssortmentSyncFromUpstreams(data: any): boolean {
   return true;
 }
         
+export function isUpdateAssortment(data: any): boolean {
+  return true;
+}
+        
 export function isSignout(data: any): boolean {
   
   return true;
@@ -819,6 +893,10 @@ export function isSignout(data: any): boolean {
         
 export function isViewAssortment(data: any): boolean {
   
+  return true;
+}
+        
+export function isMaltaaAction(data: any): boolean {
   return true;
 }
         

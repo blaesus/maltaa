@@ -154,7 +154,7 @@ export function isArticle(data: any): boolean {
         
 export function isLicense(data: any): boolean {
   return is(
-    "UNLICENSED")(data)&&is( "NOCLAIM")(data)&&is( "CC BY-SA")(data)&&is( "CC BY-ND")(data)&&is( "CC BY-NC")(data)&&is( "CC BY-NC-SA")(data)&&is( "CC BY-NC-ND")(data)&&is( "CC0")(data);
+    "UNLICENSED")(data)||is( "NOCLAIM")(data)||is( "CC BY-SA")(data)||is( "CC BY-ND")(data)||is( "CC BY-NC")(data)||is( "CC BY-NC-SA")(data)||is( "CC BY-NC-ND")(data)||is( "CC0")(data);
 }
         
 export function isArticleSupplement(data: any): boolean {
@@ -190,7 +190,7 @@ export function isRSAPublicKeyRecord(data: any): boolean {
 }
         
 export function isPrivileges(data: any): boolean {
-  return is( "admin")(data)&&is( "normal")(data);
+  return is( "admin")(data)||is( "normal")(data);
 }
         
 export function isScryptRecord(data: any): boolean {
@@ -275,7 +275,7 @@ export function isPathState(data: any): boolean {
 }
         
 export function isMattersEntityType(data: any): boolean {
-  return is( "article")(data)&&is( "user")(data);
+  return is( "article")(data)||is( "user")(data);
 }
         
 export function isAssortmentBaseItem(data: any): boolean {
@@ -322,7 +322,7 @@ export function isMattersEntityItem(data: any): boolean {
 }
         export const isAssortmentId = isstring;
 export function isAssortmentContentType(data: any): boolean {
-  return is( "anthology")(data)&&is( "roll")(data)&&is( "mixture")(data);
+  return is( "anthology")(data)||is( "roll")(data)||is( "mixture")(data);
 }
         
 export function isAssortmentIdentifier(data: any): boolean {
@@ -462,7 +462,7 @@ export function isUserPageState(data: any): boolean {
         
 export function isPageName(data: any): boolean {
   return is(
-    "podium")(data)&&is( "study")(data)&&is( "article")(data)&&is( "user")(data)&&is( "assortment")(data);
+    "podium")(data)||is( "study")(data)||is( "article")(data)||is( "user")(data)||is( "assortment")(data);
 }
         
 export function isStudyPageState(data: any): boolean {
@@ -485,11 +485,11 @@ export function isClientUIState(data: any): boolean {
 }
         
 export function isArticleSort(data: any): boolean {
-  return is( "comments")(data)&&is( "recent")(data)&&is( "appreciationAmount")(data);
+  return is( "comments")(data)||is( "recent")(data)||is( "appreciationAmount")(data);
 }
         
 export function isCommentSort(data: any): boolean {
-  return is( "recent")(data)&&is( "old")(data);
+  return is( "recent")(data)||is( "old")(data);
 }
         
 export function isBaseMeta(data: any): boolean {
@@ -850,7 +850,7 @@ export function isUpdateAssortmentSyncFromUpstreams(data: any): boolean {
         
 export function isUpdateAssortment(data: any): boolean {
   return is(
-    UpdateAssortmentAddItem)(data)&&is( UpdateAssortmentDropItem)(data)&&is( UpdateAssortmentOrderItems)(data)&&is( UpdateAssortmentEditReview)(data)&&is( UpdateAssortmentSetPolicy)(data)&&is( UpdateAssortmentEditTitle)(data)&&is( UpdateAssortmentEditSubpath)(data)&&is( UpdateAssortmentEditUpstreams)(data)&&is( UpdateAssortmentSyncFromUpstreams)(data);
+    UpdateAssortmentAddItem)(data)||is( UpdateAssortmentDropItem)(data)||is( UpdateAssortmentOrderItems)(data)||is( UpdateAssortmentEditReview)(data)||is( UpdateAssortmentSetPolicy)(data)||is( UpdateAssortmentEditTitle)(data)||is( UpdateAssortmentEditSubpath)(data)||is( UpdateAssortmentEditUpstreams)(data)||is( UpdateAssortmentSyncFromUpstreams)(data);
 }
         
 export function isSignout(data: any): boolean {
@@ -865,6 +865,6 @@ export function isViewAssortment(data: any): boolean {
         
 export function isMaltaaAction(data: any): boolean {
   return is(
-    ChangePathname)(data)&&is( ProvideEntities)(data)&&is( SetPodiumCursor)(data)&&is( ViewArticle)(data)&&is( ViewUser)(data)&&is( GoHome)(data)&&is( Search)(data)&&is( StartAuthenticationDialog)(data)&&is( LoadPodiumArticles)(data)&&is( SetMyPreferences)(data)&&is( GenericError)(data)&&is( LoadedStoredPreferences)(data)&&is( CancelDialog)(data)&&is( StartPreferencesDialog)(data)&&is( Register)(data)&&is( SearchResultArticleRedirect)(data)&&is( StartMeDialog)(data)&&is( GoToPage)(data)&&is( GetMyData)(data)&&is( CreateAssortment)(data)&&is( Signout)(data)&&is( GenericOk)(data)&&is( UpdateAssortment)(data)&&is( Signin)(data)&&is( ViewAssortment)(data);
+    ChangePathname)(data)||is( ProvideEntities)(data)||is( SetPodiumCursor)(data)||is( ViewArticle)(data)||is( ViewUser)(data)||is( GoHome)(data)||is( Search)(data)||is( StartAuthenticationDialog)(data)||is( LoadPodiumArticles)(data)||is( SetMyPreferences)(data)||is( GenericError)(data)||is( LoadedStoredPreferences)(data)||is( CancelDialog)(data)||is( StartPreferencesDialog)(data)||is( Register)(data)||is( SearchResultArticleRedirect)(data)||is( StartMeDialog)(data)||is( GoToPage)(data)||is( GetMyData)(data)||is( CreateAssortment)(data)||is( Signout)(data)||is( GenericOk)(data)||is( UpdateAssortment)(data)||is( Signin)(data)||is( ViewAssortment)(data);
 }
         

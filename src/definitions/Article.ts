@@ -39,8 +39,7 @@ export interface Article {
     remark: string,
 
     // "Selected by author"
-    // Newly added, to await data sync
-    pinnedComments?: CommentId[],
+    pinnedComments: CommentId[],
 
     derived: {
         comments: number,
@@ -49,8 +48,7 @@ export interface Article {
         appreciationAmount: number,
 
         // "Selected by community"
-        // Newly added, to await data sync
-        featuredComments?: CommentId[],
+        featuredComments: CommentId[],
     }
 }
 

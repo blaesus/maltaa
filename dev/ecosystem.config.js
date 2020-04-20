@@ -30,7 +30,7 @@ module.exports = {
       cwd: 'built',
 
       autorestart: true,
-      watch: `${__dirname}/../built/server`,
+      watch: `${process.cwd()}`,
       max_memory_restart: '1G',
     },
     {
@@ -46,3 +46,5 @@ module.exports = {
 
   ],
 };
+
+console.info(module.exports)

@@ -27,6 +27,7 @@
 
 .HtmlRender a:link {
     word-break: break-all;
+    border-bottom: 1px solid black;
 }
 
 .HtmlRender p > br:only-child {

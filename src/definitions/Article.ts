@@ -29,7 +29,7 @@ export interface Article {
     live: boolean,
     cover: string | null,
     summary: string,
-    author: string,
+    author: UserId,
     dataHash: string,
     sticky: boolean,
     content: string,

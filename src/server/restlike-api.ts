@@ -184,7 +184,7 @@ async function handleAction(context: Koa.Context, next: any) {
         context.status = 500;
         context.body = {
             type: "Error",
-            error,
+            error: error.message,
         };
     }
     return next();

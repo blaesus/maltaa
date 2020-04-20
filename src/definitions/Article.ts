@@ -12,9 +12,7 @@ export interface Comment {
     author: string,
     parent: string,
     replyTarget: string | null,
-
-    // Newly added, to await data sync
-    derived?: {
+    derived: {
         upvotes: number,
         downvotes: number,
     }

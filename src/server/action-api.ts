@@ -13,7 +13,6 @@ import { getMyData } from "./mappers/getMyData";
 import { viewUser } from "./mappers/viewUser";
 import { loadPodiumArticles } from "./mappers/loadPodiumArticles";
 
-
 export async function routeRequest(request: MaltaaAction): Promise<MaltaaAction> {
     switch (request.type) {
         case "LoadPodiumArticles": {

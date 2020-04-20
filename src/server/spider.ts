@@ -297,7 +297,7 @@ function makeFetcher(props: {
         console.info(`${entityName} fetcher ${fetcherName} launched`);
         while (true) {
             await sleep(FETCHER_INTERVAL);
-            console.log(`${props.entityName} fetcher looping`);
+            console.log(`${props.entityName} fetcher ${fetcherName} looping`);
             const nextId = entityState.toFetch[0];
             entityState.toFetch.splice(0, 1);
             if (!nextId) {

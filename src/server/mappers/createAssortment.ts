@@ -63,5 +63,4 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
             ],
         },
     };
-
 }

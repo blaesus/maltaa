@@ -507,7 +507,7 @@ function launchCommandServer() {
 
 async function launchSpider() {
     await db.connect();
-    await db.ensureIndices();
+    await db.setupCollections();
     await restoreSpiderState();
     reportState(state);
     launchCommandServer();

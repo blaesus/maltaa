@@ -101,7 +101,7 @@ const mongodb = {
         activityDB = client.db(activityDBName);
         mattersSyncDB = client.db(mattersSyncDBName);
     },
-    async ensureIndices() {
+    async setupCollections() {
         if (mainDB) {
             {
                 await mainDB.createIndex("accounts", {id: 1}, {unique: true});
@@ -122,6 +122,13 @@ const mongodb = {
                 await mainDB.createIndex("assortments", {editors: 1});
                 await mainDB.createIndex("assortments", {upstreams: 1});
                 await mainDB.createIndex("assortments", {"items.id": 1});
+            }
+            {
+                await mainDB.createCollection("siteConfig", {
+                    capped: true,
+                    size: 1024 * 1024,
+                    max: 1,
+                })
             }
         }
         if (mattersSyncDB) {

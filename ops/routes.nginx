@@ -23,17 +23,20 @@ server {
     root /var/maltaa/web;
 
     location / {
+        include /etc/nginx/web_headers.nginx;
         expires off;
         limit_req zone=static burst=5 nodelay;
         try_files $uri $uri/ /index.html;
     }
     location /api {
+        include /etc/nginx/headers.nginx;
         expires off;
         limit_req zone=api burst=10 delay=5;
         proxy_pass http://localhost:2000;
     }
 
     location ~ \.(js|css)$ {
+        include /etc/nginx/headers.nginx;
         expires 1000d;
         add_header Pragma public;
         limit_req zone=static burst=5 nodelay;

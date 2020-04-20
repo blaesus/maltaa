@@ -210,16 +210,16 @@ export function is${definition.name}(data: any): boolean {
                 result += `
 export function is${definition.name}(data: any): boolean {
   ${
-                    Object.entries(definition.keyvalues)
-                          .map(entry => {
-                              const [key, value] = entry;
-                              return `
-              if (!${getValidatorFnName(value)}(data.${key})) {
-                return false;
-              }
+    Object.entries(definition.keyvalues)
+          .map(entry => {
+              const [key, value] = entry;
+              return `
+                  if (!${getValidatorFnName(value)}(data.${key})) {
+                    return false;
+                  }
               `
-                          }).join("\n")
-                }
+          }).join("\n")
+  }
   return true;
 }
         `

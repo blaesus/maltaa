@@ -1,6 +1,7 @@
 import * as React from "react";
 import "./Chooser.css";
-import {OptionList} from "../../uiUtils";
+
+export type OptionList<Value = string> = { value: Value, label: string }[]
 
 export function Chooser<Value>(props: {
     options?: OptionList<Value>,

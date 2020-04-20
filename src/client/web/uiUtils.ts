@@ -131,7 +131,6 @@ export function getViewportWidth() {
 
 export type MaltaaDispatch = (action: MaltaaAction) => void;
 
-export type OptionList<Value = string> = { value: Value, label: string }[]
 
 export function findAssortmentFromState(state: ClientState, identifier: AssortmentUIIdentifier): Assortment | null {
     const owner = Object.values(state.entities.users).find(u => u.userName === identifier.ownerUsername);

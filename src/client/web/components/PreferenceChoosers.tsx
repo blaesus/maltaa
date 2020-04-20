@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Chooser } from "./Chooser/Chooser";
+import { Chooser, OptionList } from "./Chooser/Chooser";
 import { ArticleSort } from "../../../sorts";
-import {OptionList} from "../uiUtils";
 
 const DECADE = 10 * 365;
 

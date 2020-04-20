@@ -1,12 +1,12 @@
 import * as React from "react";
 import "./PreferencesDialog.css";
 import { ObjectMap } from "../../../../definitions/Objects";
-import { PodiumSortChooser, PodiumPeriodChooser } from "../PreferenceChoosers";
-import {MaltaaDispatch, OptionList} from "../../uiUtils";
-import { Chooser } from "../Chooser/Chooser";
+import { PodiumPeriodChooser, PodiumSortChooser } from "../PreferenceChoosers";
+import { MaltaaDispatch } from "../../uiUtils";
+import { Chooser, OptionList } from "../Chooser/Chooser";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
-import {CommentSort} from "../../../../sorts";
-import {INFINITY_JSON} from "../../../../utils";
+import { CommentSort } from "../../../../sorts";
+import { INFINITY_JSON } from "../../../../utils";
 import { Preferences } from "../../../../definitions/Preferences";
 import { UserPublic } from "../../../../definitions/User";
 
@@ -18,7 +18,7 @@ const booleanOptions = [
     {
         label: "隱藏",
         value: false,
-    }
+    },
 ];
 
 const commentSortOptions: OptionList<CommentSort> = [
@@ -29,13 +29,13 @@ const commentSortOptions: OptionList<CommentSort> = [
     {
         label: "從新到舊",
         value: "recent",
-    }
+    },
 ];
 
 const displayModeOptions = [
     {
         label: "摺疊全部",
-        value: 0
+        value: 0,
     },
     {
         label: "展開全部",
@@ -43,9 +43,9 @@ const displayModeOptions = [
     },
     {
         label: "展開2條",
-        value: 2
+        value: 2,
     },
-]
+];
 
 function CommentSection(props: {
     label: string,
@@ -74,7 +74,7 @@ function CommentSection(props: {
                 />
             </section>
         </section>
-    )
+    );
 }
 
 export function PreferencesDialog(props: {
@@ -104,15 +104,15 @@ export function PreferencesDialog(props: {
                                         preferencesPatch: {
                                             data: {
                                                 ...preferences.data,
-                                                screenedUsers:  preferences.data.screenedUsers.filter(u => u !== userId)
-                                            }
+                                                screenedUsers: preferences.data.screenedUsers.filter(u => u !== userId),
+                                            },
                                         },
-                                    })
+                                    });
                                 }}>
                                     取消屏蔽
                                 </AnchorButton>
                             </div>
-                        )
+                        );
                     })
                 }
             </section>
@@ -126,8 +126,8 @@ export function PreferencesDialog(props: {
                             podium: {
                                 ...preferences.podium,
                                 defaultSort: sort,
-                            }
-                        }
+                            },
+                        },
                     })}
                 />
             </section>
@@ -141,8 +141,8 @@ export function PreferencesDialog(props: {
                             podium: {
                                 ...preferences.podium,
                                 defaultPeriod: period,
-                            }
-                        }
+                            },
+                        },
                     })}
                 />
             </section>
@@ -159,8 +159,8 @@ export function PreferencesDialog(props: {
                                     ...preferences.podium,
                                     hoverPreview: shouldHover,
                                 },
-                            }
-                        })
+                            },
+                        });
                     }}
                 />
             </section>
@@ -176,9 +176,9 @@ export function PreferencesDialog(props: {
                                 articles: {
                                     ...preferences.articles,
                                     showArticleDevInfo: value,
-                                }
-                            }
-                        })
+                                },
+                            },
+                        });
                     }}
                 />
             </section>
@@ -194,9 +194,9 @@ export function PreferencesDialog(props: {
                                 articles: {
                                     ...preferences.articles,
                                     showMattersLink: value,
-                                }
-                            }
-                        })
+                                },
+                            },
+                        });
                     }}
                 />
             </section>
@@ -211,9 +211,9 @@ export function PreferencesDialog(props: {
                                 styles: {
                                     ...preferences.styles,
                                     customCSS: event.target.value,
-                                }
-                            }
-                        })
+                                },
+                            },
+                        });
 
                     }}
                     value={preferences.styles.customCSS}
@@ -230,11 +230,11 @@ export function PreferencesDialog(props: {
                                 ...preferences.comments,
                                 firstLevel: {
                                     ...preferences.comments.firstLevel,
-                                    sort
+                                    sort,
                                 },
-                            }
-                        }
-                    })
+                            },
+                        },
+                    });
                 }}
                 threshold={preferences.comments.firstLevel.displayThreshold}
                 onChooseThreshold={displayThreshold => {
@@ -247,9 +247,9 @@ export function PreferencesDialog(props: {
                                     ...preferences.comments.firstLevel,
                                     displayThreshold,
                                 },
-                            }
-                        }
-                    })
+                            },
+                        },
+                    });
                 }}
             />
             <CommentSection
@@ -263,11 +263,11 @@ export function PreferencesDialog(props: {
                                 ...preferences.comments,
                                 secondLevel: {
                                     ...preferences.comments.secondLevel,
-                                    sort
+                                    sort,
                                 },
-                            }
-                        }
-                    })
+                            },
+                        },
+                    });
                 }}
                 threshold={preferences.comments.secondLevel.displayThreshold}
                 onChooseThreshold={displayThreshold => {
@@ -280,11 +280,11 @@ export function PreferencesDialog(props: {
                                     ...preferences.comments.secondLevel,
                                     displayThreshold,
                                 },
-                            }
-                        }
-                    })
+                            },
+                        },
+                    });
                 }}
             />
         </form>
-    )
+    );
 }

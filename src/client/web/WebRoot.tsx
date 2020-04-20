@@ -16,13 +16,13 @@ import { NavBar } from "./components/NavBar/NavBar";
 import { UserPage } from "./components/UserPage/UserPage";
 import { Podium } from "./components/Podium/Podium";
 import { Dialogs } from "./components/Dialogs/Dialogs";
-import { Chooser } from "./components/Chooser/Chooser";
+import { Chooser, OptionList } from "./components/Chooser/Chooser";
 import { Study } from "./components/Study/Study";
 import { AssortmentPage } from "./components/AssortmentPage/AssortmentPage";
 
 import { maltaaApi } from "./maltaaApiClient";
 import { USER_URL_SIGIL } from "../../settings";
-import { loadStoredPreference, MaltaaDispatch, OptionList, serializeToPathName, storePreference } from "./uiUtils";
+import { loadStoredPreference, MaltaaDispatch, serializeToPathName, storePreference } from "./uiUtils";
 
 const remoteActions: MaltaaAction["type"][] = [
     "LoadPodiumArticles",

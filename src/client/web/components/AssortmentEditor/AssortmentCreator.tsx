@@ -5,11 +5,11 @@ import { ClientState } from "../../states/reducer";
 import { AssortmentContentType, AssortmentId } from "../../../../definitions/Assortment";
 import { UserPublic } from "../../../../definitions/User";
 
-import { Chooser } from "../Chooser/Chooser";
-
-import { assortmentPath, MaltaaDispatch, OptionList } from "../../uiUtils";
 import { OperatorSelector } from "../OperatorSelector";
 import { SubpathInput } from "./SubpathInput";
+import { Chooser, OptionList } from "../Chooser/Chooser";
+
+import { assortmentPath, MaltaaDispatch } from "../../uiUtils";
 
 const entityTypeOptions: OptionList<AssortmentContentType> = [
     {

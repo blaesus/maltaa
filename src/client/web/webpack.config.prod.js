@@ -39,7 +39,9 @@ module.exports = {
                     test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
                 }
             }
-        }
+        },
+        moduleIds: "hashed",
+        chunkIds: "named",
     },
 
     resolve: {

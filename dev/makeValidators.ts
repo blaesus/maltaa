@@ -230,7 +230,7 @@ export function is${definition.name}(data: any): boolean {
     return result;
 }
 
-async function make() {
+function make() {
     const definitions = extractDefinitions("../src/definitions/Actions.ts");
     const validators = compile(definitions);
     fs.writeFileSync("./validators.ts", validators);

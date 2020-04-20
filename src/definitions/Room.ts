@@ -2,6 +2,10 @@ import { UserId } from "./User";
 
 export type RoomId = string;
 
+export interface RoomPolicy {
+
+}
+
 interface Room {
     id: RoomId,
     description: string;
@@ -10,7 +14,6 @@ interface Room {
     owner: UserId,
     admins: UserId[],
     name: string,
-    openForSubmission: boolean,
-    adultOnly: boolean,
+    policy: RoomPolicy,
 }
 

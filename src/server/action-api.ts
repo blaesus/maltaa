@@ -61,7 +61,16 @@ export async function routeRequest(request: MaltaaAction): Promise<MaltaaAction>
 }
 
 export async function respond(request: MaltaaAction): Promise<MaltaaAction> {
-    const response = await routeRequest(request);
+    let response: MaltaaAction;
+    try {
+        response = await routeRequest(request);
+    }
+    catch (error) {
+        response = {
+            type: "GenericError",
+            reason: error.message,
+        }
+    }
     response.meta = {
         ...response.meta,
         request,

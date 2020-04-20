@@ -183,7 +183,7 @@ async function handleAction(context: Koa.Context, next: any) {
     } catch (error) {
         context.status = 500;
         context.body = {
-            type: "Error",
+            type: "UnhandledError",
             error: error.message,
         };
     }

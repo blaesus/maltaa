@@ -1,5 +1,5 @@
 
-function is(valueA: any): any {
+function is(valueA: any): (value: any) => boolean {
   return function(valueB: any): boolean {
     return valueB === valueA;
   }

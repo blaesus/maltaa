@@ -280,7 +280,7 @@ function is${definition.name}(data: any): boolean {
               return true;
           }
       }
-                }).join("||")};
+                }).join("\n||")};
 }
         `
                 break;

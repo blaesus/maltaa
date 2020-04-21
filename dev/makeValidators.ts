@@ -4,7 +4,7 @@ import * as ts from "typescript";
 
 type PrimitiveDefinition = {
     kind: "primitive",
-    primitive: "string" | "number"
+    primitive: "string" | "number" | "boolean"
 };
 
 type StringLiteralDefinition = {
@@ -87,6 +87,9 @@ function extractPropertySignatureValue(
         case ts.SyntaxKind.NumberKeyword: {
             return {kind: "primitive", primitive: "number"};
         }
+        case ts.SyntaxKind.BooleanKeyword: {
+            return {kind: "primitive", primitive: "boolean"};
+        }
         case ts.SyntaxKind.TypeReference: {
             return {
                 kind: "reference",
@@ -158,7 +161,6 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                             ...definition.keyvalues,
                             ...keyvalues
                         };
-                        console.info(definition)
                     }
                 });
                 definitions.push(definition);
@@ -237,6 +239,9 @@ function isstring(data: any): boolean {
 }
 function isnumber(data: any): boolean {
     return typeof data === "number";
+}
+function isboolean(data: any): boolean {
+    return typeof data === "boolean";
 }
 `
 

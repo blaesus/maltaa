@@ -7,6 +7,9 @@
     text-decoration: none;
     border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
+
+    /* Tone down emoticons */
+    filter: grayscale(1);
 }
 
 @media only screen and (min-width: 769px) {

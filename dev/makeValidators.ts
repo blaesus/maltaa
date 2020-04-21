@@ -303,7 +303,7 @@ function is${definition.name}(data: any): boolean {
     if (!data) {
         return false;
     }
-  ${
+    ${
     Object.entries(definition.keyvalues)
           .map(entry => {
               const [key, value] = entry;
@@ -313,8 +313,8 @@ function is${definition.name}(data: any): boolean {
     }
               `
           }).join("\n")
-  }
-  return true;
+    }
+    return true;
 }
         `
             }

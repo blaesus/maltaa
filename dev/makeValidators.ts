@@ -17,14 +17,26 @@ type ReferenceDefinition = {
     reference: string,
 }
 
-type ValueDefinition = PrimitiveDefinition | ReferenceDefinition | StringLiteralDefinition;
+type ArrayModifier = {
+    kind: "array",
+    element: ValueDefinition,
+}
+
+type ValueDefinition =
+    PrimitiveDefinition
+    | ReferenceDefinition
+    | StringLiteralDefinition
+    | ArrayModifier
+;
+
+type InterfaceData = {
+    [key in string]: ValueDefinition
+}
 
 interface InterfaceDefinition {
     kind: "interface",
     name: string,
-    keyvalues: {
-        [key in string]: ValueDefinition
-    }
+    keyvalues: InterfaceData
 }
 
 interface UnionTypeDefinition {
@@ -62,6 +74,71 @@ function prepropcess(entryFileName: string): {entrySourceText: string, combinedS
     return {entrySourceText, combinedSourceText};
 }
 
+function extractPropertySignatureValue(
+    node: ts.Node, source: ts.SourceFile
+): string | ValueDefinition | null {
+    switch (node.kind) {
+        case ts.SyntaxKind.Identifier: {
+            return node.getText(source);
+        }
+        case ts.SyntaxKind.StringKeyword: {
+            return {kind: "primitive", primitive: "string"};
+        }
+        case ts.SyntaxKind.NumberKeyword: {
+            return {kind: "primitive", primitive: "number"};
+        }
+        case ts.SyntaxKind.TypeReference: {
+            return {
+                kind: "reference",
+                reference: node.getText(source),
+            };
+        }
+        case ts.SyntaxKind.LiteralType: {
+            return {
+                kind: "literal",
+                literal: node.getText(source),
+            };
+        }
+        case ts.SyntaxKind.ArrayType: {
+            let grandChild
+            node.forEachChild(candidate => {
+                grandChild = candidate;
+            })
+            if (grandChild) {
+                const value = extractPropertySignatureValue(grandChild, source);
+                if (value && typeof value === "object") {
+                    return {
+                        kind: "array",
+                        element: value,
+                    };
+                }
+            }
+            return null;
+        }
+        default: {
+            return null;
+        }
+    }
+}
+
+function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): InterfaceData {
+    let key: string = "";
+    const keyvalues: InterfaceData = {}
+    rootNode.forEachChild(nextLevelNode => {
+        const value = extractPropertySignatureValue(nextLevelNode, source);
+        if (typeof value === "string") {
+            key = value;
+        }
+        else if (value) {
+            keyvalues[key] = value;
+        }
+        else {
+            return;
+        }
+    });
+    return keyvalues;
+}
+
 function extractDefinitions(entryFileName: string): TypeDefinition[] {
     const {entrySourceText, combinedSourceText} = prepropcess(entryFileName);
     const source = ts.createSourceFile("test.ts", entrySourceText, ts.ScriptTarget.ES2019)
@@ -76,39 +153,12 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                         definition.name = secondLevelNode.getText(combinedSource);
                     }
                     else if (secondLevelNode.kind === ts.SyntaxKind.PropertySignature) {
-                        let key: string = "";
-                        secondLevelNode.forEachChild(thirdLevelNode => {
-                            switch (thirdLevelNode.kind) {
-                                case ts.SyntaxKind.Identifier: {
-                                    key = thirdLevelNode.getText(combinedSource);
-                                    break;
-                                }
-                                case ts.SyntaxKind.StringKeyword: {
-                                    definition.keyvalues[key] = {kind: "primitive", primitive: "string"};
-                                    break;
-                                }
-                                case ts.SyntaxKind.NumberKeyword: {
-                                    definition.keyvalues[key] = {kind: "primitive", primitive: "number"};
-                                    break;
-                                }
-                                case ts.SyntaxKind.TypeReference: {
-                                    definition.keyvalues[key] = {
-                                        kind: "reference",
-                                        reference: thirdLevelNode.getText(combinedSource),
-                                    };
-                                    break;
-                                }
-                                case ts.SyntaxKind.LiteralType: {
-                                    definition.keyvalues[key] = {
-                                        kind: "literal",
-                                        literal: thirdLevelNode.getText(combinedSource),
-                                    };
-                                    break;
-                                }
-                                default: {
-                                }
-                            }
-                        });
+                        const keyvalues = extractPropertySignature(secondLevelNode, combinedSource);
+                        definition.keyvalues = {
+                            ...definition.keyvalues,
+                            ...keyvalues
+                        };
+                        console.info(definition)
                     }
                 });
                 definitions.push(definition);
@@ -171,6 +221,14 @@ function is(valueA: any): (value: any) => boolean {
     return valueB === valueA;
   }
 }
+function isArray(filter: (data: any) => boolean): (value: any) => boolean {
+  return function(value: any): boolean {
+      if (!Array.isArray(value)) {
+        return false;
+      }
+      return value.every(filter);
+  }
+}
 `
 
 const primitiveValidators = `
@@ -194,6 +252,9 @@ function compile(definitions: TypeDefinition[]): string {
         }
         else if (value.kind === "literal") {
             return `is(${value.literal})`;
+        }
+        else if (value.kind === "array") {
+            return `isArray(${getValidatorFnName(value.element)})`
         }
         else {
             return `is`

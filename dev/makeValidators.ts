@@ -68,85 +68,91 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
     const combinedSource = ts.createSourceFile("combined.ts", combinedSourceText, ts.ScriptTarget.ES2019)
     const definitions: TypeDefinition[] = [];
     combinedSource.forEachChild(node => {
-        if (node.kind === ts.SyntaxKind.InterfaceDeclaration) {
-            const definition: TypeDefinition = {kind: "interface", name: "", keyvalues: {}};
-            node.forEachChild(child => {
-                if (child.kind === ts.SyntaxKind.Identifier) {
-                    definition.name = child.getText(combinedSource);
-                }
-                else if (child.kind === ts.SyntaxKind.PropertySignature) {
-                    let key: string = "";
-                    child.forEachChild(grandchild => {
-                        switch (grandchild.kind) {
-                            case ts.SyntaxKind.Identifier: {
-                                key = (grandchild as any)["escapedText"];
-                                break;
-                            }
-                            case ts.SyntaxKind.StringKeyword: {
-                                definition.keyvalues[key] = {kind: "primitive", primitive: "string"};
-                                break;
-                            }
-                            case ts.SyntaxKind.NumberKeyword: {
-                                definition.keyvalues[key] = {kind: "primitive", primitive: "number"};
-                                break;
-                            }
-                            case ts.SyntaxKind.TypeReference: {
-                                definition.keyvalues[key] = {
-                                    kind: "reference",
-                                    reference: grandchild.getText(combinedSource)
-                                };
-                                break;
-                            }
-                            default: {}
-                        }
-                    })
-                }
-            })
-            definitions.push(definition);
-        }
-        else if (node.kind === ts.SyntaxKind.TypeAliasDeclaration) {
-            let name: string = "";
-            let conditions: ValueDefinition[] = [];
-            let value: ValueDefinition | null = null;
-            node.forEachChild(child => {
-                if (child.kind === ts.SyntaxKind.Identifier) {
-                    name = child.getText(combinedSource);
-                }
-                else if (child.kind === ts.SyntaxKind.UnionType) {
-                    child.forEachChild(grandChild => {
-                        conditions.push({
-                            kind: "literal",
-                            literal: grandChild.getText(combinedSource)
-                        })
-                    })
-                }
-                else if (child.kind === ts.SyntaxKind.StringKeyword) {
-                    value = {
-                        kind: "primitive",
-                        primitive: "string",
+        switch (node.kind) {
+            case ts.SyntaxKind.InterfaceDeclaration: {
+                const definition: TypeDefinition = {kind: "interface", name: "", keyvalues: {}};
+                node.forEachChild(child => {
+                    if (child.kind === ts.SyntaxKind.Identifier) {
+                        definition.name = child.getText(combinedSource);
                     }
-                }
-                else if (child.kind === ts.SyntaxKind.TypeReference) {
-                    value = {
-                        kind: "reference",
-                        reference: child.getText(combinedSource),
+                    else if (child.kind === ts.SyntaxKind.PropertySignature) {
+                        let key: string = "";
+                        child.forEachChild(grandchild => {
+                            switch (grandchild.kind) {
+                                case ts.SyntaxKind.Identifier: {
+                                    key = (grandchild as any)["escapedText"];
+                                    break;
+                                }
+                                case ts.SyntaxKind.StringKeyword: {
+                                    definition.keyvalues[key] = {kind: "primitive", primitive: "string"};
+                                    break;
+                                }
+                                case ts.SyntaxKind.NumberKeyword: {
+                                    definition.keyvalues[key] = {kind: "primitive", primitive: "number"};
+                                    break;
+                                }
+                                case ts.SyntaxKind.TypeReference: {
+                                    definition.keyvalues[key] = {
+                                        kind: "reference",
+                                        reference: grandchild.getText(combinedSource),
+                                    };
+                                    break;
+                                }
+                                default: {
+                                }
+                            }
+                        });
                     }
-                }
-            })
-            if (value) {
-                definitions.push({
-                    kind: "alias",
-                    name,
-                    value: value,
-                })
-            } else if (conditions.length) {
-                definitions.push({
-                    kind: "union",
-                    name,
-                    conditions,
                 });
+                definitions.push(definition);
+                break;
             }
+            case ts.SyntaxKind.TypeAliasDeclaration: {
+                let name: string = "";
+                let conditions: ValueDefinition[] = [];
+                let value: ValueDefinition | null = null;
+                node.forEachChild(child => {
+                    if (child.kind === ts.SyntaxKind.Identifier) {
+                        name = child.getText(combinedSource);
+                    }
+                    else if (child.kind === ts.SyntaxKind.UnionType) {
+                        child.forEachChild(grandChild => {
+                            conditions.push({
+                                kind: "literal",
+                                literal: grandChild.getText(combinedSource),
+                            });
+                        });
+                    }
+                    else if (child.kind === ts.SyntaxKind.StringKeyword) {
+                        value = {
+                            kind: "primitive",
+                            primitive: "string",
+                        };
+                    }
+                    else if (child.kind === ts.SyntaxKind.TypeReference) {
+                        value = {
+                            kind: "reference",
+                            reference: child.getText(combinedSource),
+                        };
+                    }
+                });
+                if (value) {
+                    definitions.push({
+                        kind: "alias",
+                        name,
+                        value: value,
+                    });
+                }
+                else if (conditions.length) {
+                    definitions.push({
+                        kind: "union",
+                        name,
+                        conditions,
+                    });
+                }
+                break;
 
+            }
         }
     });
     return definitions;

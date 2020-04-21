@@ -161,7 +161,7 @@ export interface CreateAssortment extends BaseAction {
     items: AssortmentItem[],
 }
 
-type ItemSpec = {
+interface ItemSpec {
     source: "matters",
     entityType: MattersEntityType,
     id: ArticleId | UserId,

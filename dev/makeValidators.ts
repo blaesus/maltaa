@@ -297,20 +297,20 @@ function is${definition.name}(data: any): boolean {
             case "interface": {
                 result += `
 function is${definition.name}(data: any): boolean {
-  if (typeof data !== "object") {
-      return false;
-  }
-  if (!data) {
-      return false;
-  }
+    if (typeof data !== "object") {
+        return false;
+    }
+    if (!data) {
+        return false;
+    }
   ${
     Object.entries(definition.keyvalues)
           .map(entry => {
               const [key, value] = entry;
               return `
-                  if (!${getValidatorFnName(value)}(data.${key})) {
-                    return false;
-                  }
+    if (!${getValidatorFnName(value)}(data.${key})) {
+        return false;
+    }
               `
           }).join("\n")
   }
@@ -326,8 +326,8 @@ function is${definition.name}(data: any): boolean {
 
 function make() {
     const definitions = extractDefinitions("../src/definitions/Actions.ts");
-    const validators = compile(definitions);
-    fs.writeFileSync("./validators.ts", validators);
+    const validatorSource = compile(definitions);
+    fs.writeFileSync("./validators.ts", validatorSource);
 }
 
 make();

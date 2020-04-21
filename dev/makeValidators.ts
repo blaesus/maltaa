@@ -67,20 +67,20 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
     const source = ts.createSourceFile("test.ts", entrySourceText, ts.ScriptTarget.ES2019)
     const combinedSource = ts.createSourceFile("combined.ts", combinedSourceText, ts.ScriptTarget.ES2019)
     const definitions: TypeDefinition[] = [];
-    combinedSource.forEachChild(node => {
-        switch (node.kind) {
+    combinedSource.forEachChild(firstLevelNode => {
+        switch (firstLevelNode.kind) {
             case ts.SyntaxKind.InterfaceDeclaration: {
                 const definition: TypeDefinition = {kind: "interface", name: "", keyvalues: {}};
-                node.forEachChild(child => {
-                    if (child.kind === ts.SyntaxKind.Identifier) {
-                        definition.name = child.getText(combinedSource);
+                firstLevelNode.forEachChild(secondLevelNode => {
+                    if (secondLevelNode.kind === ts.SyntaxKind.Identifier) {
+                        definition.name = secondLevelNode.getText(combinedSource);
                     }
-                    else if (child.kind === ts.SyntaxKind.PropertySignature) {
+                    else if (secondLevelNode.kind === ts.SyntaxKind.PropertySignature) {
                         let key: string = "";
-                        child.forEachChild(grandchild => {
-                            switch (grandchild.kind) {
+                        secondLevelNode.forEachChild(thirdLevelNode => {
+                            switch (thirdLevelNode.kind) {
                                 case ts.SyntaxKind.Identifier: {
-                                    key = (grandchild as any)["escapedText"];
+                                    key = thirdLevelNode.getText(combinedSource);
                                     break;
                                 }
                                 case ts.SyntaxKind.StringKeyword: {
@@ -94,7 +94,14 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                                 case ts.SyntaxKind.TypeReference: {
                                     definition.keyvalues[key] = {
                                         kind: "reference",
-                                        reference: grandchild.getText(combinedSource),
+                                        reference: thirdLevelNode.getText(combinedSource),
+                                    };
+                                    break;
+                                }
+                                case ts.SyntaxKind.LiteralType: {
+                                    definition.keyvalues[key] = {
+                                        kind: "literal",
+                                        literal: thirdLevelNode.getText(combinedSource),
                                     };
                                     break;
                                 }
@@ -111,7 +118,7 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                 let name: string = "";
                 let conditions: ValueDefinition[] = [];
                 let value: ValueDefinition | null = null;
-                node.forEachChild(child => {
+                firstLevelNode.forEachChild(child => {
                     if (child.kind === ts.SyntaxKind.Identifier) {
                         name = child.getText(combinedSource);
                     }
@@ -224,6 +231,12 @@ export function is${definition.name}(data: any): boolean {
             case "interface": {
                 result += `
 export function is${definition.name}(data: any): boolean {
+  if (typeof data !== "object") {
+      return false;
+  }
+  if (!data) {
+      return false;
+  }
   ${
     Object.entries(definition.keyvalues)
           .map(entry => {

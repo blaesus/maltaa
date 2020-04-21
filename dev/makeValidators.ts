@@ -269,7 +269,12 @@ function is${definition.name}(data: any): boolean {
   return ${definition.conditions.map(value => {
       switch (value.kind) {
           case "literal": {
-              return `is(${value.literal})(data)`
+              if (value.literal.startsWith(`"`)) {
+                  return `is(${value.literal})(data)`
+              }
+              else {
+                  return `is${value.literal}(data)`
+              }
           }
           default: {
               return true;

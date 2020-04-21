@@ -63,7 +63,7 @@ type License =
     | "CC0"
     ;
 
-type ArticleVersion = {
+interface ArticleVersion {
     time: number,
     content: string,
     mediaHash: string,

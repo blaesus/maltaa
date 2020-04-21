@@ -74,13 +74,10 @@ function prepropcess(entryFileName: string): {entrySourceText: string, combinedS
     return {entrySourceText, combinedSourceText};
 }
 
-function extractPropertySignatureValue(
+function extractValue(
     node: ts.Node, source: ts.SourceFile
-): string | ValueDefinition | null {
+): ValueDefinition | null {
     switch (node.kind) {
-        case ts.SyntaxKind.Identifier: {
-            return node.getText(source);
-        }
         case ts.SyntaxKind.StringKeyword: {
             return {kind: "primitive", primitive: "string"};
         }
@@ -108,7 +105,7 @@ function extractPropertySignatureValue(
                 grandChild = candidate;
             })
             if (grandChild) {
-                const value = extractPropertySignatureValue(grandChild, source);
+                const value = extractValue(grandChild, source);
                 if (value && typeof value === "object") {
                     return {
                         kind: "array",
@@ -124,15 +121,30 @@ function extractPropertySignatureValue(
     }
 }
 
+
+function extractKey(
+    node: ts.Node, source: ts.SourceFile
+): string | null {
+    switch (node.kind) {
+        case ts.SyntaxKind.Identifier: {
+            return node.getText(source)
+        }
+        default: {
+            return null;
+        }
+    }
+}
+
 function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): InterfaceData {
     let key: string = "";
     const keyvalues: InterfaceData = {}
     rootNode.forEachChild(nextLevelNode => {
-        const value = extractPropertySignatureValue(nextLevelNode, source);
-        if (typeof value === "string") {
-            key = value;
+        const possibleKey = extractKey(nextLevelNode, source);
+        if (possibleKey) {
+            key = possibleKey;
         }
-        else if (value) {
+        const value = extractValue(nextLevelNode, source);
+        if (value) {
             keyvalues[key] = value;
         }
         else {
@@ -189,10 +201,7 @@ function extractDefinitions(entryFileName: string): TypeDefinition[] {
                         };
                     }
                     else if (child.kind === ts.SyntaxKind.TypeReference) {
-                        value = {
-                            kind: "reference",
-                            reference: child.getText(combinedSource),
-                        };
+                        value = extractValue(child, combinedSource);
                     }
                 });
                 if (value) {

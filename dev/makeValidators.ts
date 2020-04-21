@@ -232,10 +232,10 @@ function isArray(filter: (data: any) => boolean): (value: any) => boolean {
 `
 
 const primitiveValidators = `
-export function isstring(data: any): boolean {
+function isstring(data: any): boolean {
     return typeof data === "string";
 }
-export function isnumber(data: any): boolean {
+function isnumber(data: any): boolean {
     return typeof data === "number";
 }
 `
@@ -265,7 +265,7 @@ function compile(definitions: TypeDefinition[]): string {
         switch (definition.kind) {
             case "union": {
                 result += `
-export function is${definition.name}(data: any): boolean {
+function is${definition.name}(data: any): boolean {
   return ${definition.conditions.map(value => {
       switch (value.kind) {
           case "literal": {
@@ -282,16 +282,16 @@ export function is${definition.name}(data: any): boolean {
             }
             case "alias": {
                 if (definition.value.kind === "primitive") {
-                    result += `export const is${definition.name} = is${definition.value.primitive};`
+                    result += `const is${definition.name} = is${definition.value.primitive};`
                 }
                 else if (definition.value.kind === "reference") {
-                    result += `export const is${definition.name} = is${definition.value.reference};`
+                    result += `const is${definition.name} = is${definition.value.reference};`
                 }
                 break;
             }
             case "interface": {
                 result += `
-export function is${definition.name}(data: any): boolean {
+function is${definition.name}(data: any): boolean {
   if (typeof data !== "object") {
       return false;
   }

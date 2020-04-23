@@ -304,6 +304,43 @@ function isboolean(data: any): boolean {
 }
 `
 
+function InlineGenerics(declarations: Declaration[]): Declaration[] {
+    const result = [];
+    for (const d of declarations) {
+        if (d.kind === "interface") {
+            for (const field of Object.entries(d.fields)) {
+                const [key, value] = field;
+                if (value.kind === "generic") {
+                    const baseIdentifier = value.baseType.reference.identifier;
+                    switch (baseIdentifier) {
+                        case "Partial": {
+                            const firstParameter = value.parameters[0];
+                            if (firstParameter && firstParameter.kind === "reference") {
+                                const targetType = declarations.find(d => d.name === firstParameter.reference.identifier)
+                                console.info(targetType)
+                            }
+                        }
+                    }
+
+                }
+                else {
+                    result.push(d);
+                }
+            }
+        }
+        else if (d.kind === "alias") {
+            if (d.meaning.kind === "generic") {
+
+            }
+            else {
+                result.push(d);
+            }
+        }
+    }
+    return declarations;
+
+}
+
 function compile(declarations: Declaration[]): string {
     let result = `${literalValidator}${primitiveValidators}`;
 
@@ -337,7 +374,7 @@ function compile(declarations: Declaration[]): string {
                 }
             `
         }
-        return `FAILED`
+        return `FAILED ${type.kind}`
     }
 
     for (const declaration of declarations) {
@@ -399,10 +436,8 @@ function is${declaration.name}(data: any): boolean {
 
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
-    console.info(JSON.stringify(
-        declarations.filter(d => d.name === "SetMyPreferences"), null, 4)
-    );
-    const validatorSource = compile(declarations);
+    const extendedDeclarations = InlineGenerics(declarations);
+    const validatorSource = compile(extendedDeclarations);
     fs.writeFileSync("./validators.ts", validatorSource);
 }
 

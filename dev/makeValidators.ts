@@ -447,9 +447,9 @@ function compile(declarations: Declaration[]): string {
                 }
                 else if (declaration.meaning.kind === "union") {
                     result += `
-    function is${declaration.name}(data: any): boolean {
-      return ${getUnionClause(declaration.meaning)}
-    }
+function is${declaration.name}(data: any): boolean {
+  return ${getUnionClause(declaration.meaning)}
+}
 `
                 }
                 break;

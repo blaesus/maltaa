@@ -8,7 +8,8 @@
     "make": "sh dev/make.sh",
     "push": "sh ops/push.sh",
     "deploy": "sh ops/deploy.sh",
-    "deploy_nginx": "sh ops/deploy_nginx.sh"
+    "deploy_nginx": "sh ops/deploy_nginx.sh",
+    "make_checkers": "sh dev/makeCheckers.sh"
   },
   "author": "",
   "license": "MIT",

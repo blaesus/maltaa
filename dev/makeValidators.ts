@@ -393,24 +393,23 @@ function compile(declarations: Declaration[]): string {
     function getTypeValidateClause(key: string, type: TypeLike): string {
         if (type.kind === "primitive" || type.kind === "reference" || type.kind === "array") {
             return `
-                if (!${getValidatorFnName(type)}(data.${key})) {
-                    return false;
-                }
+    if (!${getValidatorFnName(type)}(data.${key})) {
+        return false;
+    }
             `
         }
         else if (type.kind === "string-literal") {
             return `
-                if (data.${key} !== ${type.value}) {
-                    return false;
-                }
+    if (data.${key} !== ${type.value}) {
+        return false;
+    }
             `
         }
         else if (type.kind === "union") {
-            console.info(type)
             return `
-                if (!(${getUnionClause(type)})) {
-                    return false;
-                }
+    if (!(${getUnionClause(type)})) {
+        return false;
+    }
             `
         }
         return `FAILED ${type.kind}`
@@ -448,9 +447,9 @@ function compile(declarations: Declaration[]): string {
                 }
                 else if (declaration.meaning.kind === "union") {
                     result += `
-function is${declaration.name}(data: any): boolean {
-  return ${getUnionClause(declaration.meaning)}
-}
+    function is${declaration.name}(data: any): boolean {
+      return ${getUnionClause(declaration.meaning)}
+    }
 `
                 }
                 break;

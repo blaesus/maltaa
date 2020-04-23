@@ -464,7 +464,7 @@ async function restoreSpiderState() {
         state.articles.toFetch = [...loadedState.articles.toFetch,...loadedState.articles.fetching].filter(dedupe).filter(Boolean);
         state.users.toFetch = [...loadedState.users.toFetch, ...loadedState.users.fetching].filter(dedupe).filter(Boolean);
         state.tags.toFetch = [...loadedState.tags.toFetch, ...loadedState.tags.fetching].filter(dedupe).filter(Boolean);
-        state.comments.toFetch = [...loadedState.comments.toFetch, ...loadedState.comments?.fetching].filter(dedupe).filter(Boolean);
+        state.comments.toFetch = [...loadedState.comments?.toFetch, ...loadedState.comments?.fetching].filter(dedupe).filter(Boolean);
 
         state.articles.missingOnRemote = loadedState.articles.missingOnRemote.filter(dedupe).filter(Boolean);
         state.users.missingOnRemote = loadedState.users.missingOnRemote.filter(dedupe).filter(Boolean);

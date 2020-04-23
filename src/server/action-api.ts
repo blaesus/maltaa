@@ -11,12 +11,12 @@ import { setMyPreferences } from "./mappers/setMyPreferences";
 import { search } from "./mappers/search";
 import { getMyData } from "./mappers/getMyData";
 import { viewUser } from "./mappers/viewUser";
-import { loadPodiumArticles } from "./mappers/loadPodiumArticles";
+import { loadArticles } from "./mappers/loadArticles";
 
 export async function routeRequest(request: ClientRequest): Promise<MaltaaAction> {
     switch (request.type) {
         case "LoadArticles": {
-            return loadPodiumArticles(request);
+            return loadArticles(request);
         }
         case "ViewUser": {
             return viewUser(request);

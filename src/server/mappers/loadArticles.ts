@@ -3,15 +3,17 @@ import { ArticleSort } from "../../sorts";
 import { daysAgoInEpoch, daysToMs, dedupe } from "../../utils";
 import { Article } from "../../definitions/Article";
 import { db } from "../db";
+import { UserId } from "../../definitions/User";
 
-async function getPodiumData(params: {
+async function queryArticles(params: {
     sort: ArticleSort,
     periodInDays?: number,
     backtrackInDays?: number,
     pageNumber?: number,
+    author?: UserId | null,
 }) {
     const pageNumber = params.pageNumber || 0;
-    const {sort, periodInDays, backtrackInDays} = params;
+    const {sort, periodInDays, backtrackInDays, author} = params;
 
     let earliest: number | undefined = undefined;
     let latest: number | undefined = undefined;
@@ -33,6 +35,7 @@ async function getPodiumData(params: {
                 pageNumber,
                 earliest,
                 latest,
+                author,
             });
             break;
         }
@@ -41,6 +44,7 @@ async function getPodiumData(params: {
                 pageNumber,
                 earliest,
                 latest,
+                author,
             });
             break;
         }
@@ -49,6 +53,7 @@ async function getPodiumData(params: {
                 pageNumber,
                 earliest,
                 latest,
+                author,
             });
             break;
         }
@@ -61,15 +66,10 @@ async function getPodiumData(params: {
     };
 }
 
-export async function loadPodiumArticles(request: LoadArticles): Promise<MaltaaAction> {
+export async function loadArticles(request: LoadArticles): Promise<MaltaaAction> {
     return {
         type: "ProvideEntities",
-        data: await getPodiumData({
-            sort: request.sort,
-            periodInDays: request.periodInDays,
-            backtrackInDays: request.backtrackInDays,
-            pageNumber: request.pageNumber,
-        }),
+        data: await queryArticles(request),
     };
 
 }

@@ -11,7 +11,7 @@ import { readableDateTime } from "../../../../utils";
 import { AssortmentList } from "../AssortmentEditor/AssortmentList";
 import { ClientState } from "../../states/reducer";
 import { MaltaaDispatch } from "../../uiUtils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArticleList } from "../ArticleList/ArticleList";
 
 type UserPageTab = "articles" | "comments";
@@ -69,7 +69,7 @@ export function UserPage(props: {
             
             {
                 tab === "articles" && state.ui.pages.user.articles &&
-                <ArticleList state={state} page={state.ui.pages.user.articles} dispatch={dispatch} />
+                <ArticleList state={state} mode="user" dispatch={dispatch} />
             }
 
             <AssortmentList

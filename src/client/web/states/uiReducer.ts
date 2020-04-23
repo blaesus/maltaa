@@ -46,7 +46,7 @@ export interface ArticlePageState {
 
 export interface UserPageState {
     name: string | null,
-    articles: ArticleListState | null,
+    articles: ArticleListState,
 }
 
 export type PageName =
@@ -93,7 +93,7 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             },
             user: {
                 name: "",
-                articles: null,
+                articles: getEmptyArticleListState(),
             },
             study: {},
             assortment: {
@@ -113,21 +113,45 @@ function handleProvideEntities(
     const nextUi = {...ui};
     switch (request.type) {
         case "LoadArticles": {
-            const pageExpected = ui.pages.podium.pagination.nextPage === request.pageNumber;
-            if (pageExpected) {
-                const articleCount = response.data?.articles ? response.data?.articles.length : 0;
-                nextUi.pages = {
-                    ...ui.pages,
-                    podium: {
-                        ...ui.pages.podium,
-                        pagination: {
-                            loading: false,
-                            exhausted: articleCount === 0,
-                            nextPage: ui.pages.podium.pagination.nextPage + 1,
-                            receivedItems: ui.pages.podium.pagination.receivedItems + articleCount
+            if (request.author) {
+                const pageExpected = ui.pages.user.articles.pagination.nextPage === request.pageNumber;
+                if (pageExpected) {
+                    const articleCount = response.data?.articles ? response.data?.articles.length : 0;
+                    nextUi.pages = {
+                        ...ui.pages,
+                        user: {
+                            ...ui.pages.user,
+                            articles: {
+                                ...ui.pages.user.articles,
+                                pagination: {
+                                    ...ui.pages.user.articles.pagination,
+                                    loading: false,
+                                    exhausted: articleCount === 0,
+                                    nextPage: ui.pages.user.articles.pagination.nextPage + 1,
+                                    receivedItems: ui.pages.user.articles.pagination.receivedItems + articleCount
+                                }
+                            }
                         }
                     }
-                };
+                }
+            }
+            else {
+                const pageExpected = ui.pages.podium.pagination.nextPage === request.pageNumber;
+                if (pageExpected) {
+                    const articleCount = response.data?.articles ? response.data?.articles.length : 0;
+                    nextUi.pages = {
+                        ...ui.pages,
+                        podium: {
+                            ...ui.pages.podium,
+                            pagination: {
+                                loading: false,
+                                exhausted: articleCount === 0,
+                                nextPage: ui.pages.podium.pagination.nextPage + 1,
+                                receivedItems: ui.pages.podium.pagination.receivedItems + articleCount
+                            }
+                        }
+                    };
+                }
             }
             return nextUi;
         }
@@ -246,6 +270,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
         }
         case "ProvideEntities": {
             const request = action.meta?.request;
+
             if (request) {
                 return handleProvideEntities(ui, action, request);
             }

@@ -31,6 +31,7 @@ interface ArticleQueryInternalParams {
     pageSize: number,
     earliest?: number,
     latest?: number,
+    author?: UserId | null,
 }
 
 const fallbackParams: SortedArticleQueryParams = {
@@ -38,7 +39,7 @@ const fallbackParams: SortedArticleQueryParams = {
 }
 
 async function findActiveArticles(params: ArticleQueryInternalParams): Promise<Article[]> {
-    const {sortConditions, pageNumber, pageSize, earliest, latest} = params;
+    const {sortConditions, pageNumber, pageSize, earliest, latest, author} = params;
     if (mattersSyncDB) {
         const activeQuery = {state: "active"};
         const earliestCondition = {$gt: earliest};
@@ -62,6 +63,10 @@ async function findActiveArticles(params: ArticleQueryInternalParams): Promise<A
             query.createdAt = latestCondition;
         }
 
+        if (author) {
+            query.author = author;
+        }
+
         return mattersSyncDB.collection("articles")
                             .find(query)
                             .sort(sortConditions)
@@ -79,6 +84,7 @@ export interface SortedArticleQueryParams {
     earliest?: number,
     latest?: number,
     pageSize?: number,
+    author?: UserId | null,
 }
 
 function paramsConvert(sortConditions: {}, params: SortedArticleQueryParams): ArticleQueryInternalParams {
@@ -88,6 +94,7 @@ function paramsConvert(sortConditions: {}, params: SortedArticleQueryParams): Ar
         pageSize: Math.min(params.pageSize || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE),
         earliest: params.earliest,
         latest: params.latest,
+        author: params.author,
     };
 }
 
@@ -178,8 +185,6 @@ const mongodb = {
                 await activityDB.createIndex("activities", {id: 1}, {unique: true});
             }
         }
-
-
     },
     article: {
         async upsert(article: Article) {

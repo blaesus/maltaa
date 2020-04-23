@@ -13,14 +13,6 @@ import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 import { DAY, readableDateTime } from "../../../../utils";
 
-function usePrevious<T>(value: T) {
-    const ref = React.useRef<T>();
-    useEffect(() => {
-        ref.current = value;
-    });
-    return ref.current;
-}
-
 export function BacktrackDisplay(props: {
     backtrack: number
 }) {
@@ -48,36 +40,6 @@ export function Podium(props: {
     const {dispatch, page, state} = props;
     const {sort, period, backtrack} = state.ui.pages.podium;
 
-    const currentPage = state.ui.pages.current;
-    const prevCurrentPage = usePrevious(currentPage);
-    const prevSort = usePrevious(sort);
-    const prevStart = usePrevious(period);
-    const prevEnd = usePrevious(backtrack);
-
-    function updatePodium() {
-        const switchToEmptyPodium =
-            prevCurrentPage !== "podium"
-            && currentPage === "podium"
-            && state.ui.pages.podium.pagination.receivedItems === 0;
-
-        const shouldLoad =
-            prevSort !== sort
-            || prevStart !== period
-            || prevEnd !== backtrack
-            || switchToEmptyPodium;
-
-        if (shouldLoad) {
-            dispatch({
-                type: "LoadArticles",
-                sort: sort,
-                periodInDays: period,
-                pageNumber: page.pagination.nextPage,
-                backtrackInDays: backtrack || undefined,
-            });
-        }
-    }
-
-    useEffect(updatePodium, [sort, period, backtrack, currentPage]);
 
     if (state.ui.pages.current !== "podium") {
         return null;
@@ -166,7 +128,7 @@ export function Podium(props: {
                 </span>
             </nav>
             <ArticleList
-                page={page}
+                mode="podium"
                 state={props.state}
                 dispatch={dispatch}
             />

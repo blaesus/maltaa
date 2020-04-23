@@ -68,6 +68,7 @@ export interface LoadArticles extends BaseAction {
     periodInDays: number,
     backtrackInDays?: number,
     pageNumber: number,
+    author?: UserId | null,
 }
 
 export interface ViewArticle extends BaseAction {

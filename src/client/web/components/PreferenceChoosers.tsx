@@ -42,7 +42,7 @@ const periodOptions: OptionList<number> = [
     },
 ];
 
-export function PodiumSortChooser(props: {
+export function ArticleSortChooser(props: {
     chosen: ArticleSort,
     onChange(value: ArticleSort): void
 }) {
@@ -60,7 +60,7 @@ export function PodiumSortChooser(props: {
     )
 }
 
-export function PodiumPeriodChooser(props: {
+export function ArticlePeriodChooser(props: {
     chosen: number,
     onChange(newStart: number): void
 }) {

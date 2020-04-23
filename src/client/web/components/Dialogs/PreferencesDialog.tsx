@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./PreferencesDialog.css";
 import { ObjectMap } from "../../../../definitions/Objects";
-import { PodiumPeriodChooser, PodiumSortChooser } from "../PreferenceChoosers";
+import { ArticlePeriodChooser, ArticleSortChooser } from "../PreferenceChoosers";
 import { MaltaaDispatch } from "../../uiUtils";
 import { Chooser, OptionList } from "../Chooser/Chooser";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
@@ -118,7 +118,7 @@ export function PreferencesDialog(props: {
             </section>
             <section>
                 <h2>廣場排序</h2>
-                <PodiumSortChooser
+                <ArticleSortChooser
                     chosen={preferences.podium.defaultSort}
                     onChange={sort => dispatch({
                         type: "SetMyPreferences",
@@ -133,7 +133,7 @@ export function PreferencesDialog(props: {
             </section>
             <section>
                 <h2>廣場週期</h2>
-                <PodiumPeriodChooser
+                <ArticlePeriodChooser
                     chosen={preferences.podium.defaultPeriod}
                     onChange={period => dispatch({
                         type: "SetMyPreferences",

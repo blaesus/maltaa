@@ -23,7 +23,13 @@ interface UnionType {
     types: TypeLike[],
 }
 
-type Type = PrimitiveType | StringLiteralType | ArrayType | UnionType;
+type GenericType = {
+    kind: "generic",
+    baseType: TypeReference,
+    parameters: TypeLike[],
+}
+
+type Type = PrimitiveType | StringLiteralType | ArrayType | UnionType | GenericType;
 
 type TypeReference = {
     kind: "reference",
@@ -86,12 +92,44 @@ function extractValueType(
             return {kind: "primitive", primitive: "boolean"};
         }
         case ts.SyntaxKind.TypeReference: {
-            return {
-                kind: "reference",
-                reference: {
-                    identifier: node.getText(source)
-                },
-            };
+            let identifier = "";
+            let baseType: TypeReference | null = null;
+            let parameters: Type[] = [];
+            node.forEachChild(child => {
+                switch (child.kind) {
+                    case ts.SyntaxKind.Identifier: {
+                        identifier = child.getText(source);
+                        break;
+                    }
+                    case ts.SyntaxKind.TypeReference: {
+                        baseType = {
+                            kind: "reference",
+                            reference: {
+                                identifier: child.getText(source)
+                            }
+                        };
+                        break;
+                    }
+                    case ts.SyntaxKind.UnionType: {
+                        parameters.push(extractUnion(node, source, Math.random().toString(36)))
+                    }
+                }
+            })
+            if (!baseType) {
+                return {
+                    kind: "reference",
+                    reference: {
+                        identifier,
+                    },
+                };
+            }
+            else {
+                return {
+                    kind: "generic",
+                    baseType,
+                    parameters,
+                };
+            }
         }
         case ts.SyntaxKind.LiteralType: {
             return {
@@ -137,7 +175,7 @@ function extractKey(
 
 function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): InterfaceFields {
     let key: string = "";
-    const keyvalues: InterfaceFields = {}
+    const fields: InterfaceFields = {}
     rootNode.forEachChild(nextLevelNode => {
         const possibleKey = extractKey(nextLevelNode, source);
         if (possibleKey) {
@@ -145,13 +183,28 @@ function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): Int
         }
         const value = extractValueType(nextLevelNode, source);
         if (value) {
-            keyvalues[key] = value;
+            fields[key] = value;
         }
         else {
             return;
         }
     });
-    return keyvalues;
+    return fields;
+}
+
+function extractUnion(node: ts.Node, source: ts.SourceFile, name: string): UnionType {
+    let types: Type[] = [];
+    node.forEachChild(child => {
+        types.push({
+            kind: "string-literal",
+            value: child.getText(source),
+        });
+    });
+    return {
+        kind: "union",
+        name,
+        types,
+    }
 }
 
 function extractDeclarations(entryFileName: string): Declaration[] {
@@ -186,18 +239,11 @@ function extractDeclarations(entryFileName: string): Declaration[] {
                         name = child.getText(combinedSource);
                     }
                     else if (child.kind === ts.SyntaxKind.UnionType) {
-                        let types: Type[] = [];
-                        child.forEachChild(grandChild => {
-                            types.push({
-                                kind: "string-literal",
-                                value: grandChild.getText(combinedSource),
-                            });
-                        });
-                        meaning = {
-                            kind: "union",
+                        meaning = extractUnion(
+                            child,
+                            combinedSource,
                             name,
-                            types,
-                        }
+                        );
                     }
                     else if (child.kind === ts.SyntaxKind.StringKeyword) {
                         meaning = {
@@ -270,8 +316,11 @@ function compile(declarations: Declaration[]): string {
         else if (type.kind === "array") {
             return `isArray(${getValidatorFnName(type.element)})`
         }
+        else if (type.kind === "generic") {
+            break;
+        }
         else {
-            return `is`
+            return `?`
         }
     }
 
@@ -339,7 +388,7 @@ function is${declaration.name}(data: any): boolean {
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     console.info(JSON.stringify(
-        declarations.filter(d => d.name === "PublicKeyRecord"), null, 4)
+        declarations.filter(d => d.name === "AccountSelf"), null, 4)
     );
     const validatorSource = compile(declarations);
     fs.writeFileSync("./validators.ts", validatorSource);

@@ -222,6 +222,19 @@ const mongodb = {
                 return [];
             }
         },
+        async findRandomActive(count: number): Promise<Article[]> {
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("articles")
+                                    .aggregate([
+                                        { $match: { state : "active" } },
+                                        { $sample: {size: count}},
+                                    ])
+                                    .toArray();
+            }
+            else {
+                return [];
+            }
+        },
         async findActiveByUpstreams(id: string): Promise<Article[]> {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("articles").find({upstreams: id, state: "active"}).toArray();

@@ -4,6 +4,7 @@ import { isMattersArticleUrl } from "../../mattersSpecifics";
 import { last } from "../../utils";
 import { db } from "../db";
 import { MaltaaAction, Search } from "../../definitions/Actions";
+import { COMMAND_PREFIX } from "../../settings";
 
 export async function search(request: Search): Promise<MaltaaAction> {
     const {keyword} = request;
@@ -42,6 +43,33 @@ export async function search(request: Search): Promise<MaltaaAction> {
                         id: article.id,
                     };
                 }
+            }
+        }
+    }
+    else if (keyword.startsWith(COMMAND_PREFIX)) {
+        const command = keyword.slice(1);
+        switch (command) {
+            case "r": {
+                const articles = await db.article.findRandomActive(1);
+                if (articles[0]) {
+                    return {
+                        type: "SearchResult",
+                        subtype: "ArticleRedirect",
+                        id: articles[0].id,
+                    }
+                }
+                else {
+                    return {
+                        type: "GenericError",
+                        reason: "No suitable random candidate",
+                    };
+                }
+            }
+            default: {
+                return {
+                    type: "GenericError",
+                    reason: "Unknown command",
+                };
             }
         }
     }

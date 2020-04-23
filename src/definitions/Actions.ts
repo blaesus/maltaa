@@ -300,6 +300,4 @@ export type MaltaaAction =
     | UpdateAssortment
     | Signin
     | ViewAssortment
-    ;
-
-
+;

@@ -2,8 +2,10 @@ import { Article, ArticleId, CommentId } from "./definitions/Article";
 import { UserId, UserPublic } from "./definitions/User";
 import { TagId } from "./definitions/Tag";
 
+const ArticleIdPrefix = `Article:`;
+
 export function articleSerialToId(serial: number, btoa: (s: string) => string): ArticleId {
-    return btoa(`Article:${serial}`).replace(/=/g, "");
+    return btoa(`${ArticleIdPrefix}${serial}`).replace(/=/g, "");
 }
 
 export function userSerialToId(serial: number, btoa: (s: string) => string): UserId {
@@ -23,7 +25,7 @@ export function userIdToSerial(id: UserId, atob: (s: string) => string): number 
 }
 
 export function articleIdToSerial(id: ArticleId, atob: (s: string) => string): number {
-    return Number.parseInt(atob(id).replace("Article:", ""));
+    return Number.parseInt(atob(id).replace(ArticleIdPrefix, ""));
 }
 
 export function commentIdToSerial(id: CommentId, atob: (s: string) => string): number {
@@ -32,6 +34,15 @@ export function commentIdToSerial(id: CommentId, atob: (s: string) => string): n
 
 export function commentSerialToId(serial: number, btoa: (s: string) => string): TagId {
     return btoa(`Comment:${serial}`).replace(/=/g, "");
+}
+
+export function isArticleId(s: string, atob: (s: string) => string): boolean {
+    try {
+        const decoded = atob(s)
+        return decoded.startsWith(ArticleIdPrefix);
+    } catch {
+        return false;
+    }
 }
 
 export function isMattersArticleUrl(url: string): boolean {

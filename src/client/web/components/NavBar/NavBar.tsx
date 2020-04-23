@@ -3,6 +3,8 @@ import "./NavBar.css";
 import { MaltaaDispatch } from "../../uiUtils";
 import {ClientState} from "../../states/reducer";
 import {AnchorButton} from "../AnchorButton/AnchorButton";
+import { isArticleId } from "../../../../mattersSpecifics";
+import { isThreadSubpath, threadSubpathToMattersArticleId } from "../../../../maltaaSpecifics";
 
 function MenuItem(props: {
     title: string,
@@ -58,8 +60,23 @@ export function NavBar(props: {
                             }}
                             onKeyDown={event => {
                                 if (event.key === "Enter") {
+                                    if (isArticleId(input, atob)) {
+                                        dispatch({
+                                            type: "ViewArticle",
+                                            article: input,
+                                        })
+                                    }
+                                    else if (isThreadSubpath(input)) {
+                                        const id = threadSubpathToMattersArticleId(input, btoa);
+                                        dispatch({
+                                            type: "ViewArticle",
+                                            article: id,
+                                        })
+                                    }
+                                    else {
+                                        dispatch({type: "Search", keyword: input});
+                                    }
                                     setInput("");
-                                    dispatch({type: "Search", keyword: input});
                                 }
                             }}
                         />

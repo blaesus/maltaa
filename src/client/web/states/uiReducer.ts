@@ -306,15 +306,22 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                 dialog: null,
             }
         }
-        case "SearchResultArticleRedirect": {
-            return {
-                ...ui,
-                pages: {
-                    ...ui.pages,
-                    current: "article",
-                    article: {
-                        id: action.id
-                    },
+        case "SearchResult": {
+            switch (action.subtype) {
+                case "ArticleRedirect": {
+                    return {
+                        ...ui,
+                        pages: {
+                            ...ui.pages,
+                            current: "article",
+                            article: {
+                                id: action.id
+                            },
+                        }
+                    }
+                }
+                default: {
+                    return ui;
                 }
             }
         }

@@ -142,9 +142,12 @@ export interface Signin extends BaseAction {
 }
 
 export interface SearchResultArticleRedirect extends BaseAction {
-    type: "SearchResultArticleRedirect",
+    type: "SearchResult"
+    subtype: "ArticleRedirect",
     id: ArticleId,
 }
+
+export type SearchResult = SearchResultArticleRedirect
 
 export interface GoToPage extends BaseAction {
     type: "GoToPage",
@@ -287,7 +290,7 @@ export type MaltaaAction =
     | CancelDialog
     | StartPreferencesDialog
     | Register
-    | SearchResultArticleRedirect
+    | SearchResult
     | StartMeDialog
     | GoToPage
     | GetMyData

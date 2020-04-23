@@ -1,5 +1,6 @@
-import { isMattersArticleUrl } from "../../mattersSpecifics";
 import * as URL from "url";
+
+import { isMattersArticleUrl } from "../../mattersSpecifics";
 import { last } from "../../utils";
 import { db } from "../db";
 import { MaltaaAction, Search } from "../../definitions/Actions";
@@ -36,7 +37,8 @@ export async function search(request: Search): Promise<MaltaaAction> {
                 }
                 else {
                     return {
-                        type: "SearchResultArticleRedirect",
+                        type: "SearchResult",
+                        subtype: "ArticleRedirect",
                         id: article.id,
                     };
                 }
@@ -47,6 +49,6 @@ export async function search(request: Search): Promise<MaltaaAction> {
         return {
             type: "GenericError",
             reason: "Can't find a thing",
-        }
+        };
     }
 }

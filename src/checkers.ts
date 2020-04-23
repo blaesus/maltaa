@@ -148,7 +148,7 @@ function isSetPodiumCursor(data: any): boolean {
     return true;
 }
         
-function isLoadPodiumArticles(data: any): boolean {
+function isLoadArticles(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -157,7 +157,7 @@ function isLoadPodiumArticles(data: any): boolean {
         return false;
     }
                 
-    if (!(data.type === "LoadPodiumArticles")) {
+    if (!(data.type === "LoadArticles")) {
         return false;
     }
 
@@ -889,7 +889,7 @@ function isViewAssortment(data: any): boolean {
         
 export 
 function isClientRequest(data: any): boolean {
-    return isLoadPodiumArticles(data)
+    return isLoadArticles(data)
     || isViewUser(data)
     || isViewArticle(data)
     || isRegister(data)
@@ -912,7 +912,7 @@ function isMaltaaAction(data: any): boolean {
     || isGoHome(data)
     || isSearch(data)
     || isStartAuthenticationDialog(data)
-    || isLoadPodiumArticles(data)
+    || isLoadArticles(data)
     || isSetMyPreferences(data)
     || isGenericError(data)
     || isLoadedStoredPreferences(data)
@@ -972,7 +972,7 @@ function isComment(data: any): boolean {
         return false;
     }
 
-    if (!(isstring(data.parent))) {
+    if (!(isstring(data.parent) || isnull(data.parent))) {
         return false;
     }
 
@@ -1270,7 +1270,7 @@ function isPaginationStatus(data: any): boolean {
     return true;
 }
         
-function isPodiumPageState(data: any): boolean {
+function isArticleListState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1294,6 +1294,19 @@ function isPodiumPageState(data: any): boolean {
     if (!(isPaginationStatus(data.pagination))) {
         return false;
     }
+    
+    return true;
+}
+        
+function isPodiumPageState(data: any): boolean {
+    if (typeof data !== "object") {
+        return false;
+    }
+    
+    if (!data) {
+        return false;
+    }
+                
     
     return true;
 }
@@ -1324,6 +1337,10 @@ function isUserPageState(data: any): boolean {
     }
                 
     if (!(isstring(data.name) || isnull(data.name))) {
+        return false;
+    }
+
+    if (!(isArticleListState(data.articles) || isnull(data.articles))) {
         return false;
     }
     

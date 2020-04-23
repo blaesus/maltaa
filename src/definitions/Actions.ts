@@ -62,8 +62,8 @@ export interface SetPodiumCursor extends BaseAction {
     backtrack?: number,
 }
 
-export interface LoadPodiumArticles extends BaseAction {
-    type: "LoadPodiumArticles",
+export interface LoadArticles extends BaseAction {
+    type: "LoadArticles",
     sort: ArticleSort,
     periodInDays: number,
     backtrackInDays?: number,
@@ -254,7 +254,7 @@ export interface ViewAssortment extends BaseAction {
 }
 
 export type ClientRequest =
-    LoadPodiumArticles
+    LoadArticles
     | ViewUser
     | ViewArticle
     | Register
@@ -277,7 +277,7 @@ export type MaltaaAction =
     | GoHome
     | Search
     | StartAuthenticationDialog
-    | LoadPodiumArticles
+    | LoadArticles
     | SetMyPreferences
     | GenericError
     | LoadedStoredPreferences

@@ -1,4 +1,4 @@
-import { LoadPodiumArticles, MaltaaAction } from "../../definitions/Actions";
+import { LoadArticles, MaltaaAction } from "../../definitions/Actions";
 import { ArticleSort } from "../../sorts";
 import { daysAgoInEpoch, daysToMs, dedupe } from "../../utils";
 import { Article } from "../../definitions/Article";
@@ -61,7 +61,7 @@ async function getPodiumData(params: {
     };
 }
 
-export async function loadPodiumArticles(request: LoadPodiumArticles): Promise<MaltaaAction> {
+export async function loadPodiumArticles(request: LoadArticles): Promise<MaltaaAction> {
     return {
         type: "ProvideEntities",
         data: await getPodiumData({

@@ -68,7 +68,7 @@ export function Podium(props: {
 
         if (shouldLoad) {
             dispatch({
-                type: "LoadPodiumArticles",
+                type: "LoadArticles",
                 sort: sort,
                 periodInDays: period,
                 pageNumber: page.pagination.nextPage,

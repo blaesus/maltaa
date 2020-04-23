@@ -3,6 +3,7 @@ import { ArticleSort } from "../../../sorts";
 import { AssortmentUIIdentifier, parsePathName } from "../uiUtils";
 import { ArticleId } from "../../../definitions/Article";
 import { Preferences } from "../../../definitions/Preferences";
+import { INFINITY_JSON } from "../../../utils";
 
 export interface PaginationStatus {
     nextPage: number,
@@ -20,11 +21,23 @@ export function getEmptyPaginationStatus(): PaginationStatus {
     }
 }
 
-export interface PodiumPageState {
+export interface ArticleListState {
     sort: ArticleSort,
     period: number,
     backtrack: number,
     pagination: PaginationStatus
+}
+
+export function getEmptyArticleListState(): ArticleListState {
+    return {
+        sort: "recent",
+        period: INFINITY_JSON,
+        backtrack: 0,
+        pagination: getEmptyPaginationStatus(),
+    }
+}
+
+export interface PodiumPageState extends ArticleListState {
 }
 
 export interface ArticlePageState {
@@ -33,6 +46,7 @@ export interface ArticlePageState {
 
 export interface UserPageState {
     name: string | null,
+    articles: ArticleListState | null,
 }
 
 export type PageName =
@@ -79,6 +93,7 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             },
             user: {
                 name: "",
+                articles: null,
             },
             study: {},
             assortment: {
@@ -97,7 +112,7 @@ function handleProvideEntities(
 ): ClientUIState {
     const nextUi = {...ui};
     switch (request.type) {
-        case "LoadPodiumArticles": {
+        case "LoadArticles": {
             const pageExpected = ui.pages.podium.pagination.nextPage === request.pageNumber;
             if (pageExpected) {
                 const articleCount = response.data?.articles ? response.data?.articles.length : 0;
@@ -179,7 +194,8 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                             ...ui.pages,
                             current: "user",
                             user: {
-                                name: pathState.username
+                                name: pathState.username,
+                                articles: getEmptyArticleListState(),
                             }
                         }
                     }
@@ -223,6 +239,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                     current: "user",
                     user: {
                         name: action.username,
+                        articles: getEmptyArticleListState(),
                     },
                 }
             };
@@ -234,7 +251,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
             }
             return ui;
         }
-        case "LoadPodiumArticles": {
+        case "LoadArticles": {
             const page = ui.pages;
             if (page.current !== "podium") {
                 return ui;

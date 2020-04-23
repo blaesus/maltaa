@@ -25,7 +25,7 @@ import { USER_URL_SIGIL } from "../../settings";
 import { loadStoredPreference, MaltaaDispatch, serializeToPathName, storePreference } from "./uiUtils";
 
 const clientRequestRecords: {[key in ClientRequest["type"]]: boolean} = {
-    "LoadPodiumArticles": true,
+    "LoadArticles": true,
     "ViewUser": true,
     "ViewArticle": true,
     "Register": true,

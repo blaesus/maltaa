@@ -5,11 +5,11 @@ import { MaltaaAction } from "../../../../definitions/Actions";
 import { daysAgoInEpoch } from "../../../../utils";
 import { articleSorts } from "../../../../sorts";
 import {ClientState} from "../../states/reducer";
-import {PodiumPageState} from "../../states/uiReducer";
+import { ArticleListState, PodiumPageState } from "../../states/uiReducer";
 
 export function ArticleList(props: {
+    page: ArticleListState,
     state: ClientState,
-    page: PodiumPageState,
     dispatch(action: MaltaaAction): void;
 }) {
     const {page, dispatch, state} = props;
@@ -42,7 +42,7 @@ export function ArticleList(props: {
             <a
                 className="More"
                 onClick={() => dispatch({
-                    type: "LoadPodiumArticles",
+                    type: "LoadArticles",
                     sort,
                     periodInDays: period,
                     backtrackInDays: backtrack || undefined,

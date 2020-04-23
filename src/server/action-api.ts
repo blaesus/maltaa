@@ -15,7 +15,7 @@ import { loadPodiumArticles } from "./mappers/loadPodiumArticles";
 
 export async function routeRequest(request: ClientRequest): Promise<MaltaaAction> {
     switch (request.type) {
-        case "LoadPodiumArticles": {
+        case "LoadArticles": {
             return loadPodiumArticles(request);
         }
         case "ViewUser": {

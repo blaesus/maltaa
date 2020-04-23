@@ -464,17 +464,17 @@ async function restoreSpiderState() {
         state.articles.toFetch = [...loadedState.articles.toFetch,...loadedState.articles.fetching].filter(dedupe).filter(Boolean);
         state.users.toFetch = [...loadedState.users.toFetch, ...loadedState.users.fetching].filter(dedupe).filter(Boolean);
         state.tags.toFetch = [...loadedState.tags.toFetch, ...loadedState.tags.fetching].filter(dedupe).filter(Boolean);
-        state.comments.toFetch = [...loadedState.comments?.toFetch, ...loadedState.comments?.fetching].filter(dedupe).filter(Boolean);
+        state.comments.toFetch = [...loadedState.comments.toFetch, ...loadedState.comments.fetching].filter(dedupe).filter(Boolean);
 
         state.articles.missingOnRemote = loadedState.articles.missingOnRemote.filter(dedupe).filter(Boolean);
         state.users.missingOnRemote = loadedState.users.missingOnRemote.filter(dedupe).filter(Boolean);
         state.tags.missingOnRemote = loadedState.tags.missingOnRemote.filter(dedupe).filter(Boolean);
-        state.comments.missingOnRemote = loadedState.comments?.missingOnRemote.filter(dedupe).filter(Boolean);
+        state.comments.missingOnRemote = loadedState.comments.missingOnRemote.filter(dedupe).filter(Boolean);
 
         state.articles.lastCheckedSerial = loadedState.articles.lastCheckedSerial || 0;
         state.users.lastCheckedSerial = loadedState.users.lastCheckedSerial || 0;
         state.tags.lastCheckedSerial = loadedState.tags.lastCheckedSerial || 0;
-        state.comments.lastCheckedSerial = loadedState.comments?.lastCheckedSerial || 0;
+        state.comments.lastCheckedSerial = loadedState.comments.lastCheckedSerial || 0;
 
         state.articles.cursor = loadedState.articles.cursor;
     }

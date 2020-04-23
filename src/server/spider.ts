@@ -203,10 +203,7 @@ function makeSerialIndexer<IdType extends string>(props: {
                 }
             }
             console.info(`Serial ${props.entityName} indexer: adding`, idsToDownload);
-            props.entityState.toFetch = [
-                ...props.entityState.toFetch,
-                ...idsToDownload,
-            ];
+            supplyIds(idsToDownload, props.entityState);
             props.entityState.lastCheckedSerial = max;
         })
     }

@@ -32,8 +32,8 @@ export function ArticleListCursorControl(props: {
     backtrack: number,
     onChooseSort(sort: ArticleSort): void,
     onChoosePeriod(period: number): void,
-    onSetBacktrackDifference(delta: number): void,
-    onResetBacktrack(): void
+    onSetBacktrackDifference?(delta: number): void,
+    onResetBacktrack?(): void
     children?: React.ReactNode,
 }) {
     const {sort, period, backtrack} = props;
@@ -50,28 +50,28 @@ export function ArticleListCursorControl(props: {
                 />
                 <span className="TimeMachineDate">
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference(daysInMonth(backtrack, -1));
+                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(daysInMonth(backtrack, -1));
                     }}>
                         {"<<"}
                     </AnchorButton>
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference(-1);
+                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(-1);
                     }}>
                         {"<"}
                     </AnchorButton>
                     <BacktrackDisplay backtrack={backtrack}/>
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference(1);
+                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(1);
                     }}>
                         {">"}
                     </AnchorButton>
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference(daysInMonth(backtrack, +1));
+                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(daysInMonth(backtrack, +1));
                     }}>
                         {">>"}
                     </AnchorButton>
                     <AnchorButton onClick={() => {
-                        props.onResetBacktrack();
+                        props.onResetBacktrack && props.onResetBacktrack();
                     }}>
                         {"0"}
                     </AnchorButton>

@@ -10,7 +10,7 @@ import { SpiderRecord, SpiderRecordEntity, SpiderState } from "../definitions/Sp
 import { SiteConfig } from "../definitions/SiteConfig";
 import { Tag, TagId } from "../definitions/Tag";
 import { AccountId, MaltaaAccount } from "../definitions/MaltaaAccount";
-import { isWellFormedAssortment } from "../rules";
+import { isLegalAssortment } from "../rules";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -593,7 +593,7 @@ const mongodb = {
     },
     assortment: {
         async upsert(assortment: Assortment) {
-            if (!isWellFormedAssortment(assortment)) {
+            if (!isLegalAssortment(assortment)) {
                 throw new Error("Malformed assortment");
             }
             return mainDB && await mainDB.collection("assortments").replaceOne(

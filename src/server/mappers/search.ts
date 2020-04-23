@@ -48,7 +48,7 @@ export async function search(request: Search): Promise<MaltaaAction> {
     }
     else if (keyword.startsWith(COMMAND_PREFIX)) {
         const command = keyword.slice(1);
-        switch (command) {
+        switch (command.toLowerCase()) {
             case "r": {
                 const articles = await db.article.findRandomActive(1);
                 if (articles[0]) {

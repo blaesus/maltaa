@@ -547,8 +547,7 @@ function compile(declarations: Declaration[]): string {
         return `
     if (!(${getTypeCheckCondition(type, `data.${key}`)})) {
         return false;
-    }
-        `
+    }`
     }
 
     function getUnionClause(union: UnionType, dataReference = "data") {
@@ -569,8 +568,7 @@ function compile(declarations: Declaration[]): string {
                     declarationValidator = `
 function is${declaration.name}(data: any): boolean {
     return ${getUnionClause(declaration.meaning)}
-}
-`
+}`
                 }
                 break;
             }
@@ -591,6 +589,7 @@ function is${declaration.name}(data: any): boolean {
                               return getTypeValidateClause(key, value)
                           }).join("\n")
                 }
+    
     return true;
 }
         `

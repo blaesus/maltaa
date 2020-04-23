@@ -10,7 +10,7 @@ import { UserPublic } from "../../../../definitions/User";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { EditableText } from "../EditableText/EditableText";
-import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
+import { UserLabel } from "../AuthorLabel/UserLabel";
 import { SubpathInput } from "../AssortmentEditor/SubpathInput";
 
 import { assortmentNames, hasIntersection, readableDateTime } from "../../../../utils";
@@ -329,7 +329,7 @@ function AssortmentItemSummary(props: {
             }
             return (
                 <div>
-                    <AuthorLabel author={user} />
+                    <UserLabel user={user} />
                 </div>
             );
         }
@@ -404,7 +404,7 @@ export function AssortmentPage(props: {
             <section>
                 <span>
                     {assortmentNames[assortment.contentType]}總編
-                    <AuthorLabel author={users[assortment.owner]}/>
+                    <UserLabel user={users[assortment.owner]}/>
                 </span>
                 {
                     assortment.editors.length >= 2 &&
@@ -412,7 +412,7 @@ export function AssortmentPage(props: {
                         編輯
                         {
                             assortment.editors.map(id =>
-                                <AuthorLabel key={id} author={users[id]}/>,
+                                <UserLabel key={id} user={users[id]}/>,
                             )
                         }
                     </span>

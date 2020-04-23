@@ -2,7 +2,7 @@ import * as React from "react";
 import "./Byline.css";
 
 import { UserPublic } from "../../../../definitions/User";
-import { AuthorLabel } from "../AuthorLabel/AuthorLabel";
+import { UserLabel } from "../AuthorLabel/UserLabel";
 import { TimeTag } from "../TimeTag/TimeTag";
 
 
@@ -14,7 +14,7 @@ export function Byline(props: {
 }) {
     return (
         <span className="Byline">
-            <AuthorLabel author={props.author} onClick={props.onAuthorClick}/>
+            <UserLabel user={props.author} onClick={props.onAuthorClick}/>
             {" "}
             <TimeTag time={props.publishTime}/>
         </span>

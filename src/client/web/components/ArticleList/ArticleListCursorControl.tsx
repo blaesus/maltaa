@@ -75,7 +75,7 @@ export function ArticleListCursorControl(props: {
                     }}
                 />
                 {
-                    backtrack &&
+                    typeof backtrack === "number" &&
                     <span className="TimeMachineDate">
                     <AnchorButton onClick={() => {
                         onSetBacktrackDifference(daysInMonth(backtrack, -1));

@@ -58,6 +58,10 @@ type TypeAliasDeclaration = {
 
 type Declaration = InterfaceDeclaration | TypeAliasDeclaration;
 
+function removeQuotations(s: string): string {
+    return s.replace(/"/g, "").replace(/'/g, "");
+}
+
 function findAllImports(rootPath: string): string[] {
 
     let found = [rootPath];
@@ -68,7 +72,7 @@ function findAllImports(rootPath: string): string[] {
             if (node.kind === ts.SyntaxKind.ImportDeclaration) {
                 node.forEachChild(child => {
                     if (child.kind === ts.SyntaxKind.StringLiteral) {
-                        const pathReference = child.getText(source).replace(/"/g, "");
+                        const pathReference = removeQuotations(child.getText(source));
                         const newPath = path.normalize(path.join(path.dirname(source.fileName), pathReference) + ".ts")
                         imports.push(newPath);
                     }
@@ -224,7 +228,7 @@ function extractKey(
     }
 }
 
-function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): InterfaceFields {
+function extractPropertySignatures(rootNode: ts.Node, source: ts.SourceFile): InterfaceFields {
     let key: string = "";
     const fields: InterfaceFields = {}
     rootNode.forEachChild(nextLevelNode => {
@@ -272,10 +276,10 @@ function extractDeclarations(entryFileName: string): Declaration[] {
                         declaration.name = secondLevelNode.getText(combinedSource);
                     }
                     else if (secondLevelNode.kind === ts.SyntaxKind.PropertySignature) {
-                        const keyvalues = extractPropertySignature(secondLevelNode, combinedSource);
+                        const fields = extractPropertySignatures(secondLevelNode, combinedSource);
                         declaration.fields = {
                             ...declaration.fields,
-                            ...keyvalues
+                            ...fields
                         };
                     }
                 });
@@ -357,69 +361,116 @@ function isnull(data: any): boolean {
 }
 `
 
-function InlineGenerics(declarations: Declaration[]): Declaration[] {
-    const result = [];
-    for (const d of declarations) {
-        let canPass = true;
-        if (d.kind === "interface") {
-            for (const field of Object.entries(d.fields)) {
-                const [key, value] = field;
-                if (value.kind === "generic") {
-                    const baseIdentifier = value.baseType.reference.identifier;
-                    switch (baseIdentifier) {
-                        case "Partial": {
-                            const firstParameter = value.parameters[0];
-                            if (firstParameter && firstParameter.kind === "reference") {
-                                const targetType = declarations.find(d => d.name === firstParameter.reference.identifier)
-                                if (targetType && targetType.kind === "interface") {
-                                    const replacement: InterfaceDeclaration = JSON.parse(JSON.stringify(d));
-                                    canPass = false;
-                                    const partialDeclaration: InterfaceDeclaration = {
-                                        kind: "interface",
-                                        name: "Partial" + targetType.name,
-                                        fields: {}
-                                    };
-                                    for (const entry of Object.entries(targetType.fields)) {
-                                        const [key, value] = entry;
-                                        partialDeclaration.fields[key] = {
-                                            kind: "union",
-                                            name: "",
-                                            types: [
-                                                {
-                                                    kind: "primitive",
-                                                    primitive: "undefined",
-                                                },
-                                                value
-                                            ],
-                                        };
-                                    }
-                                    replacement.fields[key] = {
-                                        kind: "reference",
-                                        reference: {
-                                            identifier: partialDeclaration.name,
-                                        }
-                                    }
-                                    result.push(replacement);
-                                    result.push(partialDeclaration);
-                                }
-                            }
-                            break;
-                        }
-                        default: {
-                            console.warn("Generic not implemented")
+function extractGenericValueTypeToDeclaration(
+    valueType: GenericType,
+    allDeclarations: Declaration[]
+): Declaration | null {
+    const baseIdentifier = valueType.baseType.reference.identifier;
+    switch (baseIdentifier) {
+        case "Partial": {
+            const firstParameter = valueType.parameters[0];
+            if (firstParameter && firstParameter.kind === "reference") {
+                const targetType = allDeclarations.find(d => d.name === firstParameter.reference.identifier)
+                if (targetType && targetType.kind === "interface") {
+                    const partialDeclaration: InterfaceDeclaration = {
+                        kind: "interface",
+                        name: "__Partial" + targetType.name,
+                        fields: {}
+                    };
+                    for (const entry of Object.entries(targetType.fields)) {
+                        const [key, value] = entry;
+                        partialDeclaration.fields[key] = {
+                            kind: "union",
+                            name: "",
+                            types: [
+                                {
+                                    kind: "primitive",
+                                    primitive: "undefined",
+                                },
+                                value
+                            ],
+                        };
+                    }
+                    return partialDeclaration;
+                }
+            }
+            return null;
+        }
+        case "Pick": {
+            const [firstParameter, secondParameter, _] = valueType.parameters;
+            if (firstParameter && secondParameter && firstParameter.kind === "reference" && secondParameter.kind === "union") {
+                const pickDeclaration: InterfaceDeclaration = {
+                    kind: "interface",
+                    name: "__Pick" + firstParameter.reference.identifier,
+                    fields: {},
+                };
+                const target = allDeclarations.find(d => d.name === firstParameter.reference.identifier);
+                if (target && target.kind === "interface") {
+                    for (const entry of Object.entries(target.fields)) {
+                        const [key, value] = entry;
+                        if (secondParameter.types.some(t =>
+                            t.kind === "string-literal" && removeQuotations(t.value) === key
+                        )) {
+                            pickDeclaration.fields[key] = value;
                         }
                     }
-
                 }
-                else {
+                return pickDeclaration;
+            }
+            return null;
+        }
+        default: {
+            console.warn("Generic not implemented", baseIdentifier);
+            return null;
+        }
+    }
+}
+
+function InlineGenerics(declarations: Declaration[]): Declaration[] {
+    const result = [];
+
+    for (const declaration of declarations) {
+        let passDirectly = true;
+        if (declaration.kind === "interface") {
+            for (const field of Object.entries(declaration.fields)) {
+                const [key, value] = field;
+                if (value.kind === "generic") {
+                    const partialInterfaceDeclaration = extractGenericValueTypeToDeclaration(value, declarations);
+                    if (partialInterfaceDeclaration) {
+                        passDirectly = false;
+                        result.push(partialInterfaceDeclaration);
+                        const replacement: InterfaceDeclaration = JSON.parse(JSON.stringify(declaration));
+                        replacement.fields[key] = {
+                            kind: "reference",
+                            reference: {
+                                identifier: partialInterfaceDeclaration.name,
+                            }
+                        }
+                        result.push(replacement);
+                    }
                 }
             }
         }
-        else if (d.kind === "alias") {
-            // NOT_IMPLEMENTED
+        else if (declaration.kind === "alias") {
+            if (declaration.meaning.kind === "generic") {
+                const value = declaration.meaning;
+                const partialInterfaceDeclaration = extractGenericValueTypeToDeclaration(value, declarations);
+                if (partialInterfaceDeclaration) {
+                    passDirectly = false;
+                    result.push(partialInterfaceDeclaration);
+                    const replacement: TypeAliasDeclaration = JSON.parse(JSON.stringify(declaration));
+                    replacement.meaning = {
+                        kind: "reference",
+                        reference: {
+                            identifier: partialInterfaceDeclaration.name,
+                        }
+                    }
+                    result.push(replacement);
+                }
+            }
         }
-        if (canPass) {
-            result.push(d);
+        if (passDirectly) {
+            result.push(declaration);
         }
     }
     return result;
@@ -455,7 +506,8 @@ function compile(declarations: Declaration[]): string {
             return type.types.map(condition => getTypeCheckCondition(condition, dataReference)).join("||")
         }
         else {
-            return `unimplemented type ${type.kind}`;
+            console.warn(`unimplemented_condition ${type.kind}`);
+            return `true`;
         }
     }
 
@@ -518,7 +570,6 @@ function is${declaration.name}(data: any): boolean {
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     const extendedDeclarations = InlineGenerics(declarations);
-    console.info(JSON.stringify(extendedDeclarations.filter(d => d.name === "AccountSelf"), null, 4));
     const validatorSource = compile(extendedDeclarations);
     fs.writeFileSync("./validators.ts", validatorSource);
 }

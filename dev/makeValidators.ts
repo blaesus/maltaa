@@ -93,8 +93,7 @@ function extractValueType(
         }
         case ts.SyntaxKind.TypeReference: {
             let identifier = "";
-            let baseType: TypeReference | null = null;
-            let parameters: Type[] = [];
+            let parameters: TypeLike[] = [];
             node.forEachChild(child => {
                 switch (child.kind) {
                     case ts.SyntaxKind.Identifier: {
@@ -102,20 +101,20 @@ function extractValueType(
                         break;
                     }
                     case ts.SyntaxKind.TypeReference: {
-                        baseType = {
+                        parameters.push({
                             kind: "reference",
                             reference: {
                                 identifier: child.getText(source)
                             }
-                        };
+                        })
                         break;
                     }
                     case ts.SyntaxKind.UnionType: {
-                        parameters.push(extractUnion(node, source, Math.random().toString(36)))
+                        parameters.push(extractUnion(child, source, Math.random().toString(36)))
                     }
                 }
             })
-            if (!baseType) {
+            if (!parameters.length) {
                 return {
                     kind: "reference",
                     reference: {
@@ -126,7 +125,12 @@ function extractValueType(
             else {
                 return {
                     kind: "generic",
-                    baseType,
+                    baseType: {
+                        kind: "reference",
+                        reference: {
+                            identifier,
+                        }
+                    },
                     parameters,
                 };
             }
@@ -310,17 +314,31 @@ function compile(declarations: Declaration[]): string {
         else if (type.kind === "reference") {
             return `is${type.reference.identifier}`;
         }
-        else if (type.kind === "string-literal") {
-            return `is(${type.value})`;
-        }
         else if (type.kind === "array") {
             return `isArray(${getValidatorFnName(type.element)})`
         }
-        else if (type.kind === "generic") {
-            break;
-        }
         else {
-            return `?`
+            return `__UNIMPLEMENTED`
+        }
+    }
+
+    function getTypeValidateClause(key: string, type: TypeLike): string {
+        if (type.kind === "primitive" || type.kind === "reference" || type.kind === "array") {
+            return `
+                if (!${getValidatorFnName(type)}(data.${key})) {
+                    return false;
+                }
+            `
+        }
+        else if (type.kind === "string-literal") {
+            return `
+                if (data.${key} !== ${type.value}) {
+                    return false;
+                }
+            `
+        }
+        else if (type.kind === "generic") {
+            return `FAILED`
         }
     }
 
@@ -368,11 +386,7 @@ function is${declaration.name}(data: any): boolean {
     Object.entries(declaration.fields)
           .map(entry => {
               const [key, value] = entry;
-              return `
-    if (!${getValidatorFnName(value)}(data.${key})) {
-        return false;
-    }
-              `
+              return getTypeValidateClause(key, value)
           }).join("\n")
     }
     return true;
@@ -388,7 +402,7 @@ function is${declaration.name}(data: any): boolean {
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     console.info(JSON.stringify(
-        declarations.filter(d => d.name === "AccountSelf"), null, 4)
+        declarations.filter(d => d.name === "SetMyPreferences"), null, 4)
     );
     const validatorSource = compile(declarations);
     fs.writeFileSync("./validators.ts", validatorSource);

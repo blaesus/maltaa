@@ -40,5 +40,5 @@ export interface MaltaaAccount {
 
 export type AccountSelf = Pick<MaltaaAccount,
     "id" | "username" | "privileges" | "mattersIds" | "preferences"
-    >;
+>;
 

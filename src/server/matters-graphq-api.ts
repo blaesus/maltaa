@@ -181,6 +181,9 @@ const commentNodeGql = `
   createdAt,
   state,
   content,
+  article {
+    id,
+  }
   author {
     id,
   },
@@ -357,6 +360,9 @@ query($id: ID!) {
 }
 
 interface CommentResponseNode extends Omit<Comment, "author" | "replyTarget" | "parent" | "rootPost" | "derived"> {
+    article: {
+        id: string,
+    }
     author: {
         id: string
     },
@@ -436,12 +442,12 @@ interface ArticleFetchData {
     mentionedUsers: UserId[],
 }
 
-function processCommentNode(node: CommentResponseNode, fallbackParent: string | null = null): Comment {
+function processCommentNode(node: CommentResponseNode): Comment {
     const comment = {
         ...node,
         author: node.author.id,
         replyTarget: node.replyTo ? node.replyTo.id : null,
-        parent: node.parentComment ? node.parentComment.id : fallbackParent,
+        parent: node.parentComment ? node.parentComment.id : node.article.id,
         createdAt: +new Date(node.createdAt),
         derived: {
             upvotes: node.upvotes,
@@ -452,6 +458,7 @@ function processCommentNode(node: CommentResponseNode, fallbackParent: string | 
     delete (comment as any)["replyTo"];
     delete (comment as any)["upvotes"];
     delete (comment as any)["downvotes"];
+    delete (comment as any)["article"];
     return deepCleanTypename(comment);
 }
 
@@ -487,7 +494,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
         }
     });
 
-    const comments: Comment[] = commentEdges.map(edge => processCommentNode(edge.node, articleResponse.id)).map(deepCleanTypename);
+    const comments: Comment[] = commentEdges.map(edge => processCommentNode(edge.node)).map(deepCleanTypename);
 
     const appreciationsEdges = await fetchAllEdges(
         articleResponse.appreciationsReceived.edges,

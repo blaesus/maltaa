@@ -34,7 +34,7 @@ const ITEM_VALIDITY = 7 * DAY;
 
 const FETCHER_INTERVAL = SECOND;
 
-const SERIAL_INDEXER_INTERVAL = 1 * MINUTE;
+const SERIAL_INDEXER_BACKOFF = 60 * MINUTE;
 
 const DAILY_NEWEST_RANGE = 24 * HOUR;
 const DAILY_INDEXER_INTERVAL = 30 * MINUTE;
@@ -175,12 +175,13 @@ function makeSerialIndexer<IdType extends string>(props: {
     idToSerial(id: IdType, atob: (s: string) => string): number,
     serialToId(serial: number, btoa: (s: string) => string): IdType,
     entityState: EntityState<IdType>,
-    interval?: number,
+    exists(id: string): Promise<boolean>,
+    backoff?: number,
 }) {
-    const interval = props.interval || SERIAL_INDEXER_INTERVAL;
+    const backoff = props.backoff || SERIAL_INDEXER_BACKOFF;
     return async function serialArticleIndexer() {
         console.info(`Serial ${props.entityName} indexer launched`);
-        await asyncLoop(interval, async () => {
+        await asyncLoop(backoff, async () => {
             const currentIds = await props.getIds();
             const currentSerials = currentIds.map(id => props.idToSerial(id, atob));
             const max = currentSerials.sort((a, b) => b - a)[0];
@@ -196,7 +197,7 @@ function makeSerialIndexer<IdType extends string>(props: {
                     !props.entityState.toFetch.includes(id)
                     && !props.entityState.fetching.includes(id)
                     && !props.entityState.missingOnRemote.includes(id)
-                    && !(await db.article.exists(id))
+                    && !(await props.exists(id))
                 ) {
                     idsToDownload.push(id)
                 }
@@ -215,6 +216,7 @@ const serialArticleIndexer = makeSerialIndexer({
     entityName: "article",
     entityState: state.articles,
     getIds: db.article.getAllIds,
+    exists: db.article.exists,
     idToSerial: articleIdToSerial,
     serialToId: articleSerialToId,
 });
@@ -223,6 +225,7 @@ const serialUserIndexer = makeSerialIndexer({
     entityName: "user",
     entityState: state.users,
     getIds: db.user.getAllIds,
+    exists: db.user.exists,
     idToSerial: userIdToSerial,
     serialToId: userSerialToId,
 });
@@ -231,6 +234,7 @@ const serialTagIndexer = makeSerialIndexer({
     entityName: "tag",
     entityState: state.tags,
     getIds: db.tag.getAllIds,
+    exists: db.tag.exists,
     idToSerial: tagIdToSerial,
     serialToId: tagSerialToId,
 });
@@ -239,6 +243,7 @@ const serialCommentIndexer = makeSerialIndexer({
     entityName: "comment",
     entityState: state.comments,
     getIds: db.comment.getAllIds,
+    exists: db.comment.exists,
     idToSerial: commentIdToSerial,
     serialToId: commentSerialToId,
 });
@@ -459,14 +464,17 @@ async function restoreSpiderState() {
         state.articles.toFetch = [...loadedState.articles.toFetch,...loadedState.articles.fetching].filter(dedupe).filter(Boolean);
         state.users.toFetch = [...loadedState.users.toFetch, ...loadedState.users.fetching].filter(dedupe).filter(Boolean);
         state.tags.toFetch = [...loadedState.tags.toFetch, ...loadedState.tags.fetching].filter(dedupe).filter(Boolean);
+        state.comments.toFetch = [...loadedState.comments.toFetch, ...loadedState.comments?.fetching].filter(dedupe).filter(Boolean);
 
         state.articles.missingOnRemote = loadedState.articles.missingOnRemote.filter(dedupe).filter(Boolean);
         state.users.missingOnRemote = loadedState.users.missingOnRemote.filter(dedupe).filter(Boolean);
         state.tags.missingOnRemote = loadedState.tags.missingOnRemote.filter(dedupe).filter(Boolean);
+        state.comments.missingOnRemote = loadedState.comments?.missingOnRemote.filter(dedupe).filter(Boolean);
 
         state.articles.lastCheckedSerial = loadedState.articles.lastCheckedSerial || 0;
         state.users.lastCheckedSerial = loadedState.users.lastCheckedSerial || 0;
         state.tags.lastCheckedSerial = loadedState.tags.lastCheckedSerial || 0;
+        state.comments.lastCheckedSerial = loadedState.comments?.lastCheckedSerial || 0;
 
         state.articles.cursor = loadedState.articles.cursor;
     }

@@ -318,6 +318,15 @@ const mongodb = {
                 {upsert: true},
             );
         },
+        async exists(id: CommentId): Promise<boolean> {
+            if (mattersSyncDB) {
+                const existings = mattersSyncDB.collection("comments").find({id}).limit(1);
+                return await existings.count() >= 1;
+            }
+            else {
+                return false;
+            }
+        },
         async findActiveByIds(ids: TransactionMaltaaId[]): Promise<Comment[]> {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("comments")

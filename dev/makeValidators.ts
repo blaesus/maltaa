@@ -355,6 +355,9 @@ function InlineGenerics(declarations: Declaration[]): Declaration[] {
                             }
                             break;
                         }
+                        default: {
+                            console.warn("Generic not implemented")
+                        }
                     }
 
                 }
@@ -363,6 +366,7 @@ function InlineGenerics(declarations: Declaration[]): Declaration[] {
             }
         }
         else if (d.kind === "alias") {
+            // NOT_IMPLEMENTED
         }
         if (canPass) {
             result.push(d);

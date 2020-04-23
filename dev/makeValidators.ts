@@ -4,7 +4,7 @@ import * as ts from "typescript";
 
 type PrimitiveType = {
     kind: "primitive",
-    primitive: "string" | "number" | "boolean"
+    primitive: "string" | "number" | "boolean" | "undefined"
 }
 
 type StringLiteralType = {
@@ -110,7 +110,7 @@ function extractValueType(
                         break;
                     }
                     case ts.SyntaxKind.UnionType: {
-                        parameters.push(extractUnion(child, source, Math.random().toString(36)))
+                        parameters.push(extractUnion(child, source, "union"))
                     }
                 }
             })
@@ -302,11 +302,15 @@ function isnumber(data: any): boolean {
 function isboolean(data: any): boolean {
     return typeof data === "boolean";
 }
+function isundefined(data: any): boolean {
+    return typeof data === "undefined";
+}
 `
 
 function InlineGenerics(declarations: Declaration[]): Declaration[] {
     const result = [];
     for (const d of declarations) {
+        let canPass = true;
         if (d.kind === "interface") {
             for (const field of Object.entries(d.fields)) {
                 const [key, value] = field;
@@ -317,27 +321,54 @@ function InlineGenerics(declarations: Declaration[]): Declaration[] {
                             const firstParameter = value.parameters[0];
                             if (firstParameter && firstParameter.kind === "reference") {
                                 const targetType = declarations.find(d => d.name === firstParameter.reference.identifier)
-                                console.info(targetType)
+                                if (targetType && targetType.kind === "interface") {
+                                    const replacement: InterfaceDeclaration = JSON.parse(JSON.stringify(d));
+                                    canPass = false;
+                                    const partialDeclaration: InterfaceDeclaration = {
+                                        kind: "interface",
+                                        name: "Partial" + targetType.name,
+                                        fields: {}
+                                    };
+                                    for (const entry of Object.entries(targetType.fields)) {
+                                        const [key, value] = entry;
+                                        partialDeclaration.fields[key] = {
+                                            kind: "union",
+                                            name: "",
+                                            types: [
+                                                {
+                                                    kind: "primitive",
+                                                    primitive: "undefined",
+                                                },
+                                                value
+                                            ],
+                                        };
+                                    }
+                                    replacement.fields[key] = {
+                                        kind: "reference",
+                                        reference: {
+                                            identifier: partialDeclaration.name,
+                                        }
+                                    }
+                                    result.push(replacement);
+                                    result.push(partialDeclaration);
+                                }
                             }
+                            break;
                         }
                     }
 
                 }
                 else {
-                    result.push(d);
                 }
             }
         }
         else if (d.kind === "alias") {
-            if (d.meaning.kind === "generic") {
-
-            }
-            else {
-                result.push(d);
-            }
+        }
+        if (canPass) {
+            result.push(d);
         }
     }
-    return declarations;
+    return result;
 
 }
 
@@ -374,7 +405,36 @@ function compile(declarations: Declaration[]): string {
                 }
             `
         }
+        else if (type.kind === "union") {
+            console.info(type)
+            return `
+                if (!(${getUnionClause(type)})) {
+                    return false;
+                }
+            `
+        }
         return `FAILED ${type.kind}`
+    }
+
+    function getUnionClause(union: UnionType) {
+        return union.types.map(type => {
+                        switch (type.kind) {
+                            case "primitive": {
+                                return `is${type.primitive}(data)`
+                            }
+                            case "string-literal": {
+                                if (type.value.startsWith(`"`)) {
+                                    return `is(${type.value})(data)`
+                                }
+                                else {
+                                    return `is${type.value}(data)`
+                                }
+                            }
+                            default: {
+                                return true;
+                            }
+                        }
+                    }).join("||")
     }
 
     for (const declaration of declarations) {
@@ -389,22 +449,9 @@ function compile(declarations: Declaration[]): string {
                 else if (declaration.meaning.kind === "union") {
                     result += `
 function is${declaration.name}(data: any): boolean {
-  return ${declaration.meaning.types.map(type => {
-                        switch (type.kind) {
-                            case "string-literal": {
-                                if (type.value.startsWith(`"`)) {
-                                    return `is(${type.value})(data)`
-                                }
-                                else {
-                                    return `is${type.value}(data)`
-                                }
-                            }
-                            default: {
-                                return true;
-                            }
-                        }
-                    }).join("\n||")};
-}`
+  return ${getUnionClause(declaration.meaning)}
+}
+`
                 }
                 break;
             }

@@ -451,6 +451,7 @@ Article cursor at ${spiderState.articles.cursor}
 articles to download: ${spiderState.articles.toFetch.length} (serial at ${spiderState.articles.lastCheckedSerial})
 users to download ${spiderState.users.toFetch.length} (serial at ${spiderState.users.lastCheckedSerial})
 tags to download ${spiderState.tags.toFetch.length} (serial at ${spiderState.tags.lastCheckedSerial})
+comments to download ${spiderState.comments.toFetch.length} (serial at ${spiderState.comments.lastCheckedSerial})
 *****
 `);
 }

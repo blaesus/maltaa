@@ -433,7 +433,7 @@ function compile(declarations: Declaration[]): string {
                                 return true;
                             }
                         }
-                    }).join("||")
+                    }).join("\n    ||")
     }
 
     for (const declaration of declarations) {
@@ -448,7 +448,7 @@ function compile(declarations: Declaration[]): string {
                 else if (declaration.meaning.kind === "union") {
                     result += `
 function is${declaration.name}(data: any): boolean {
-  return ${getUnionClause(declaration.meaning)}
+    return ${getUnionClause(declaration.meaning)}
 }
 `
                 }

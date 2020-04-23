@@ -98,17 +98,20 @@ export function ArticleListCursorControl(props: {
                     }}>
                         {">>"}
                     </AnchorButton>
-                    <AnchorButton onClick={() => {
-                        dispatch({
-                            type: "SetArticleCursor",
-                            mode,
-                            sort,
-                            period,
-                            backtrack: 0,
-                        });
-                    }}>
-                        {"0"}
-                    </AnchorButton>
+                    {
+                        backtrack !== 0 &&
+                        <AnchorButton onClick={() => {
+                            dispatch({
+                                type: "SetArticleCursor",
+                                mode,
+                                sort,
+                                period,
+                                backtrack: 0,
+                            });
+                        }}>
+                            {"今"}
+                        </AnchorButton>
+                    }
                 </span>
                 }
             </nav>

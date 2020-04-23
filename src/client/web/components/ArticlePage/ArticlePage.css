@@ -3,9 +3,9 @@
     margin: 0 var(--side-margin);
 }
 
-.ArticlePage .root-content h1 {
-    margin: 1rem 0;
-    font-size: 1.5rem;
+.ArticlePage .root-content .title {
+    margin: 2rem 0;
+    font-size: 2rem;
     font-weight: bolder;
 }
 

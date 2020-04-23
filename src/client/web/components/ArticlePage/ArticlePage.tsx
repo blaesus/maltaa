@@ -15,7 +15,6 @@ import { StreamList } from "./StreamList/StreamList";
 
 import { mattersArticleUrl } from "../../../../mattersSpecifics";
 import { ArticleId } from "../../../../definitions/Article";
-import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 import { AssortmentList } from "../AssortmentEditor/AssortmentList";
 
 
@@ -60,7 +59,7 @@ export function ArticlePage(props: {
     return (
         <article className="ArticlePage">
             <section className="root-content">
-                <h1>{article.title}</h1>
+                <h1 className="title">{article.title}</h1>
                 <HtmlRender html={article.content}/>
                 <Byline
                     author={author}

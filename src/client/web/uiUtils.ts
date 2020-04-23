@@ -1,4 +1,3 @@
-import { MouseEvent } from "react";
 import { MaltaaAction } from "../../definitions/Actions";
 import { ClientUIState } from "./states/uiReducer";
 import { Assortment, AssortmentContentType, AssortmentIdentifier } from "../../definitions/Assortment";
@@ -95,8 +94,10 @@ export function serializeToPathName(state: ClientUIState): string {
     }
 }
 
+export type MouseEvent = any;
+
 export function getAnchorClickHandler(onClick?: () => void) {
-    return function (event: MouseEvent<HTMLAnchorElement>) {
+    return function (event: MouseEvent) {
         if (onClick) {
             if (!event.metaKey && !event.altKey && !event.ctrlKey) {
                 event.preventDefault();

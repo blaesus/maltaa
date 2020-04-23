@@ -58,24 +58,54 @@ type TypeAliasDeclaration = {
 
 type Declaration = InterfaceDeclaration | TypeAliasDeclaration;
 
-function prepropcess(entryFileName: string): {entrySourceText: string, combinedSourceText: string} {
-    const entrySourceText = fs.readFileSync(entryFileName).toString();
-    const entrySource = ts.createSourceFile("root.ts", entrySourceText, ts.ScriptTarget.ES2019)
+function findAllImports(rootPath: string): string[] {
 
-    let combinedSourceText: string = entrySourceText;
-    entrySource.forEachChild(node => {
-        if (node.kind === ts.SyntaxKind.ImportDeclaration) {
-            node.forEachChild(child => {
-                if (child.kind === ts.SyntaxKind.StringLiteral) {
-                    const pathReference = child.getText(entrySource).replace(/"/g, "");
-                    const newPath = path.join(path.dirname(entryFileName), pathReference) + ".ts"
-                    const newText = fs.readFileSync(newPath).toString();
-                    combinedSourceText = `${newText}\n${combinedSourceText}`;
-                }
-            })
+    let found = [rootPath];
+
+    function findImports(source: ts.SourceFile): string[] {
+        let imports: string[] = [];
+        source.forEachChild(node => {
+            if (node.kind === ts.SyntaxKind.ImportDeclaration) {
+                node.forEachChild(child => {
+                    if (child.kind === ts.SyntaxKind.StringLiteral) {
+                        const pathReference = child.getText(source).replace(/"/g, "");
+                        const newPath = path.normalize(path.join(path.dirname(source.fileName), pathReference) + ".ts")
+                        imports.push(newPath);
+                    }
+                })
+            }
+        })
+        return imports;
+    }
+
+    function traverse(root: string) {
+        const text = fs.readFileSync(root).toString();
+        let source = ts.createSourceFile(root, text, ts.ScriptTarget.ES2019);
+        const imports = findImports(source);
+        for (const file of imports) {
+            if (!found.includes(file)) {
+                found.push(file);
+                traverse(file);
+            }
         }
-    })
-    return {entrySourceText, combinedSourceText};
+    }
+
+    traverse(rootPath);
+
+    return found;
+}
+
+function preprocess(entryFileName: string): {entrySourceText: string, combinedSourceText: string} {
+    const entry = path.resolve(entryFileName);
+    let entryText = fs.readFileSync(entry).toString();
+
+    const allImports = findAllImports(entry)
+
+    let combinedText = allImports.map(path => fs.readFileSync(path).toString()).join("\n");
+    return {
+        entrySourceText: entryText,
+        combinedSourceText: combinedText,
+    }
 }
 
 function extractValueType(
@@ -214,12 +244,12 @@ function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): Int
 }
 
 function extractUnion(node: ts.Node, source: ts.SourceFile, name: string): UnionType {
-    let types: Type[] = [];
+    let types: TypeLike[] = [];
     node.forEachChild(child => {
-        types.push({
-            kind: "string-literal",
-            value: child.getText(source),
-        });
+        const type = extractValueType(child, source);
+        if (type) {
+            types.push(type);
+        }
     });
     return {
         kind: "union",
@@ -229,7 +259,7 @@ function extractUnion(node: ts.Node, source: ts.SourceFile, name: string): Union
 }
 
 function extractDeclarations(entryFileName: string): Declaration[] {
-    const {entrySourceText, combinedSourceText} = prepropcess(entryFileName);
+    const {entrySourceText, combinedSourceText} = preprocess(entryFileName);
     const source = ts.createSourceFile("test.ts", entrySourceText, ts.ScriptTarget.ES2019)
     const combinedSource = ts.createSourceFile("combined.ts", combinedSourceText, ts.ScriptTarget.ES2019)
     const declarations: Declaration[] = [];
@@ -469,12 +499,12 @@ function is${declaration.name}(data: any): boolean {
         return false;
     }
     ${
-    Object.entries(declaration.fields)
-          .map(entry => {
-              const [key, value] = entry;
-              return getTypeValidateClause(key, value)
-          }).join("\n")
-    }
+                    Object.entries(declaration.fields)
+                          .map(entry => {
+                              const [key, value] = entry;
+                              return getTypeValidateClause(key, value)
+                          }).join("\n")
+                }
     return true;
 }
         `
@@ -488,10 +518,9 @@ function is${declaration.name}(data: any): boolean {
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     const extendedDeclarations = InlineGenerics(declarations);
-    console.info(JSON.stringify(extendedDeclarations.filter(d => d.name === "BaseMeta"), null, 4));
+    console.info(JSON.stringify(extendedDeclarations.filter(d => d.name === "AccountSelf"), null, 4));
     const validatorSource = compile(extendedDeclarations);
     fs.writeFileSync("./validators.ts", validatorSource);
 }
 
 make();
-

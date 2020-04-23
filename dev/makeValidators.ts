@@ -282,7 +282,7 @@ function compile(declarations: Declaration[]): string {
                     result += `const is${declaration.name} = is${declaration.meaning.primitive};`
                 }
                 else if (declaration.meaning.kind === "reference") {
-                    result += `const is${declaration.name} = is${declaration.meaning.reference};`
+                    result += `const is${declaration.name} = is${declaration.meaning.reference.identifier};`
                 }
                 else if (declaration.meaning.kind === "union") {
                     result += `
@@ -338,7 +338,9 @@ function is${declaration.name}(data: any): boolean {
 
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
-    console.info(declarations)
+    console.info(JSON.stringify(
+        declarations.filter(d => d.name === "PublicKeyRecord"), null, 4)
+    );
     const validatorSource = compile(declarations);
     fs.writeFileSync("./validators.ts", validatorSource);
 }

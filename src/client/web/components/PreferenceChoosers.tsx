@@ -17,6 +17,10 @@ const sortOptions: OptionList<ArticleSort> = [
         value: "recent",
         label: "最新",
     },
+    {
+        value: "old",
+        label: "最早",
+    },
 ];
 
 const periodOptions: OptionList<number> = [
@@ -25,8 +29,8 @@ const periodOptions: OptionList<number> = [
         label: "24小时",
     },
     {
-        value: 7,
-        label: "7日",
+        value: 3,
+        label: "3日",
     },
     {
         value: 30,

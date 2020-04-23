@@ -48,6 +48,15 @@ async function queryArticles(params: {
             });
             break;
         }
+        case "old": {
+            articles = await db.article.findActiveByAge({
+                pageNumber,
+                earliest,
+                latest,
+                author,
+            });
+            break;
+        }
         default: {
             articles = await db.article.findActiveByRecency({
                 pageNumber,

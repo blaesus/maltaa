@@ -36,6 +36,7 @@ module.exports = {
     devServer: {
         contentBase: path.resolve("..", __dirname),
         historyApiFallback: true,
+        watchContentBase: true,
         port: 1990,
     },
 

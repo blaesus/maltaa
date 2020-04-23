@@ -176,6 +176,10 @@ function isLoadArticles(data: any): boolean {
     if (!(isnumber(data.pageNumber))) {
         return false;
     }
+
+    if (!(isundefined(data.author) || isUserId(data.author) || isnull(data.author))) {
+        return false;
+    }
     
     return true;
 }
@@ -931,7 +935,10 @@ function isMaltaaAction(data: any): boolean {
     || isViewAssortment(data)
 }
 function isArticleSort(data: any): boolean {
-    return data === "comments" || data === "recent" || data === "appreciationAmount"
+    return data === "comments"
+    || data === "recent"
+    || data === "old"
+    || data === "appreciationAmount"
 }
 function isCommentSort(data: any): boolean {
     return data === "recent" || data === "old"
@@ -1340,7 +1347,7 @@ function isUserPageState(data: any): boolean {
         return false;
     }
 
-    if (!(isArticleListState(data.articles) || isnull(data.articles))) {
+    if (!(isArticleListState(data.articles))) {
         return false;
     }
     

@@ -244,6 +244,9 @@ const mongodb = {
         async findActiveByRecency(params = fallbackParams): Promise<Article[]> {
             return findActiveArticles(paramsConvert({createdAt: -1}, params));
         },
+        async findActiveByAge(params = fallbackParams): Promise<Article[]> {
+            return findActiveArticles(paramsConvert({createdAt: 1}, params));
+        },
         async findActiveByComments(params = fallbackParams): Promise<Article[]> {
             return findActiveArticles(paramsConvert({"derived.comments": -1}, params));
         },

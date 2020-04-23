@@ -276,7 +276,7 @@ function extractDeclarations(entryFileName: string): Declaration[] {
     return declarations;
 }
 
-const literalValiator = `
+const literalValidator = `
 function is(valueA: any): (value: any) => boolean {
   return function(valueB: any): boolean {
     return valueB === valueA;
@@ -305,7 +305,7 @@ function isboolean(data: any): boolean {
 `
 
 function compile(declarations: Declaration[]): string {
-    let result = `${literalValiator}${primitiveValidators}`;
+    let result = `${literalValidator}${primitiveValidators}`;
 
     function getValidatorFnName(type: TypeLike): string {
         if (type.kind === "primitive") {
@@ -337,9 +337,7 @@ function compile(declarations: Declaration[]): string {
                 }
             `
         }
-        else if (type.kind === "generic") {
-            return `FAILED`
-        }
+        return `FAILED`
     }
 
     for (const declaration of declarations) {

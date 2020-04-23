@@ -9,7 +9,7 @@ import { MaltaaAction } from "../definitions/Actions";
 import { respond } from "./action-api";
 import { Article, ArticleId, Comment } from "../definitions/Article";
 import { TOKEN_LIFE } from "../settings";
-import { isMaltaaAction } from "../validators";
+import { isMaltaaAction } from "../checkers";
 
 function getEntityRequestHandler<T>(
     idFieldName: string,

@@ -1,5 +1,5 @@
 import { Assortment } from "./definitions/Assortment";
-import { isAssortment } from "./validators";
+import { isAssortment } from "./checkers";
 
 const forbiddenSubpathCharacters = ["/", "#", ":", "?"];
 

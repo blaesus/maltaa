@@ -600,7 +600,6 @@ function is${declaration.name}(data: any): boolean {
 
         if (exportList.includes(declaration.name)) {
             declarationValidator = `\nexport ` + declarationValidator;
-            console.info(JSON.stringify(declarationValidator))
         }
         validatorCode += declarationValidator;
     }
@@ -611,7 +610,7 @@ function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     const extendedDeclarations = InlineGenerics(declarations);
     const validatorSource = compile(extendedDeclarations);
-    fs.writeFileSync("../src/validators.ts", validatorSource);
+    fs.writeFileSync("../src/checkers.ts", validatorSource);
 }
 
 make();

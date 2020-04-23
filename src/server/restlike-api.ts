@@ -3,7 +3,7 @@ import * as KoaRouter from "koa-router";
 import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
 import { db, SortedArticleQueryParams } from "./db";
-import { fetchArticle, fetchTag, fetchUser } from "./matters-graphq-api";
+import { fetchArticle, fetchComment, fetchTag, fetchUser } from "./matters-graphq-api";
 import { API_PORT } from "./server-configs";
 import { ClientRequest, MaltaaAction } from "../definitions/Actions";
 import { respond } from "./action-api";
@@ -205,7 +205,7 @@ async function main() {
     router.get("/user/:id", getEntityRequestHandler("id", db.user.findByIds, fetchUser));
     router.get("/tag/:id", getEntityRequestHandler("id", db.tag.findActiveByIds, fetchTag));
     router.get("/transaction/:id", getEntityRequestHandler("id", db.transaction.findActiveByIds));
-    router.get("/comment/:id", getEntityRequestHandler("id", db.comment.findActiveByIds));
+    router.get("/comment/:id", getEntityRequestHandler("id", db.comment.findActiveByIds, fetchComment));
     router.get("/article/:id", getEntityRequestHandler("id", db.article.findActiveByIds, fetchArticle));
 
     const commentsRouter = new KoaRouter();

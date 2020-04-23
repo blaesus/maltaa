@@ -30,6 +30,10 @@ export function commentIdToSerial(id: CommentId, atob: (s: string) => string): n
     return Number.parseInt(atob(id).replace("Comment:", ""));
 }
 
+export function commentSerialToId(serial: number, btoa: (s: string) => string): TagId {
+    return btoa(`Comment:${serial}`).replace(/=/g, "");
+}
+
 export function isMattersArticleUrl(url: string): boolean {
     const regex = /matters\.news\/@.*\/.*/;
     return !!regex.exec(url);

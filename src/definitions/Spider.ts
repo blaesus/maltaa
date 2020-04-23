@@ -1,4 +1,4 @@
-import { ArticleId } from "./Article";
+import { ArticleId, CommentId } from "./Article";
 import { TagId } from "./Tag";
 import { UserId } from "./User";
 
@@ -23,7 +23,19 @@ export interface SpiderRecordEntityUser {
     success: boolean,
 }
 
-export type SpiderRecordEntity = SpiderRecordEntityArticle | SpiderRecordEntityTag | SpiderRecordEntityUser;
+export interface SpiderRecordEntityComment {
+    type: "comment"
+    entityId: CommentId,
+    lastFetch: number,
+    success: boolean,
+}
+
+export type SpiderRecordEntity =
+    SpiderRecordEntityArticle
+    | SpiderRecordEntityTag
+    | SpiderRecordEntityUser
+    | SpiderRecordEntityComment
+    ;
 
 
 export interface EntityState<IdType extends string> {
@@ -40,6 +52,7 @@ export interface SpiderState {
     articles: EntityState<ArticleId>,
     users: EntityState<UserId>,
     tags: EntityState<TagId>,
+    comments: EntityState<CommentId>,
 }
 
 export type SpiderRecord = SpiderRecordEntity | SpiderState;

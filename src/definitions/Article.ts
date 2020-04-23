@@ -10,7 +10,7 @@ export interface Comment {
     createdAt: number,
     content: string,
     author: string,
-    parent: string,
+    parent: string | null,
     replyTarget: string | null,
     derived: {
         upvotes: number,

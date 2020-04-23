@@ -9,7 +9,7 @@ import { UserId } from "../definitions/User";
 import {
     ArticleQueryMode,
     fetchArticle,
-    fetchArticleIds,
+    fetchArticleIds, fetchComment,
     fetchTag,
     fetchUser,
 } from "./matters-graphq-api";
@@ -18,7 +18,7 @@ import { db } from "./db";
 
 import {
     articleIdToSerial,
-    articleSerialToId, tagIdToSerial,
+    articleSerialToId, commentIdToSerial, commentSerialToId, tagIdToSerial,
     tagSerialToId,
     userIdToSerial,
     userSerialToId,
@@ -34,7 +34,7 @@ const ITEM_VALIDITY = 7 * DAY;
 
 const FETCHER_INTERVAL = SECOND;
 
-const SERIAL_INDEXER_INTERVAL = 60 * MINUTE;
+const SERIAL_INDEXER_INTERVAL = 1 * MINUTE;
 
 const DAILY_NEWEST_RANGE = 24 * HOUR;
 const DAILY_INDEXER_INTERVAL = 30 * MINUTE;
@@ -46,28 +46,25 @@ const WEEKLY_NEW_ARTICLE_STALE_LIMIT = 24 * HOUR;
 
 const DOWNLOAD_TIMEOUT = 20 * SECOND;
 
+function makeEmptyEntityState(): EntityState<string> {
+    return {
+        toFetch: [],
+        fetching: [],
+        missingOnRemote: [],
+        lastCheckedSerial: 1,
+    }
+}
+
 const state: SpiderState = {
     type: "spider-state",
     entityId: "spider-state",
     articles: {
+        ...makeEmptyEntityState(),
         cursor: null,
-        toFetch: [],
-        fetching: [],
-        missingOnRemote: [],
-        lastCheckedSerial: 1,
     },
-    users: {
-        toFetch: [],
-        fetching: [],
-        missingOnRemote: [],
-        lastCheckedSerial: 1,
-    },
-    tags: {
-        toFetch: [],
-        fetching: [],
-        missingOnRemote: [],
-        lastCheckedSerial: 1,
-    },
+    users: makeEmptyEntityState(),
+    tags: makeEmptyEntityState(),
+    comments: makeEmptyEntityState(),
 };
 
 async function isArticleEncountered(id: ArticleId): Promise<boolean> {
@@ -238,6 +235,14 @@ const serialTagIndexer = makeSerialIndexer({
     serialToId: tagSerialToId,
 });
 
+const serialCommentIndexer = makeSerialIndexer({
+    entityName: "comment",
+    entityState: state.comments,
+    getIds: db.comment.getAllIds,
+    idToSerial: commentIdToSerial,
+    serialToId: commentSerialToId,
+});
+
 async function obsoleteIndexer() {
     console.info("Obsolete indexer launched");
     await asyncLoop(OBSOLETE_INDEXER_CHECK_INTERVAL, async () => {
@@ -368,9 +373,32 @@ const tagFetcher = makeFetcher({
     downloadMentioned: false,
 });
 
+const commentFetcher = makeFetcher({
+    entityName: "comment",
+    entityState: state.comments,
+    download: downloadComment,
+    downloadMentioned: false,
+});
+
+async function downloadComment(nextId: string) {
+    const now = Date.now();
+    const data = await fetchComment(nextId);
+    await db.spiderRecord.upsert({
+        entityId: nextId,
+        type: "comment",
+        lastFetch: now,
+        success: !!data,
+    });
+    if (data) {
+        const comment = data.entity;
+        await db.comment.upsert(comment);
+    }
+    else {
+        state.tags.missingOnRemote.push(nextId);
+    }
+}
 
 async function downloadTag(nextId: string) {
-    await sleep(1000);
     const now = Date.now();
     const data = await fetchTag(nextId);
     await db.spiderRecord.upsert({
@@ -404,10 +432,12 @@ async function crawl() {
         serialArticleIndexer(),
         serialUserIndexer(),
         serialTagIndexer(),
+        serialCommentIndexer(),
         obsoleteIndexer(),
         ...parallel(articleFetcher, 4),
         ...parallel(userFetcher, 6),
         ...parallel(tagFetcher, 6),
+        ...parallel(commentFetcher, 2),
     ]);
 }
 

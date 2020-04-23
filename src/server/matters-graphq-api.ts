@@ -24,7 +24,7 @@ function deepClean<T extends any>(obj: T, undesirableField: string): T {
     if (Array.isArray(obj)) {
         return obj.map((element: any) => deepClean(element, undesirableField));
     }
-    else if (typeof obj === "object") {
+    else if (typeof obj === "object" && obj !== null) {
         const result: T = {
             ...obj,
         };
@@ -41,50 +41,13 @@ function deepClean<T extends any>(obj: T, undesirableField: string): T {
     }
 }
 
-const deepCleanTypename = <T>(obj: T) => deepClean<T>(obj, "__typename");
+const deepCleanTypename = <T>(obj: T): T => deepClean<T>(obj, "__typename");
 
 // Make a new one for each session to ensure no cache.
 const getApolloClient = () => new ApolloClient({
     uri: "https://server.matters.news/graphql",
     fetch,
 });
-
-function enforceNumber(input: any, fallback = 0): number {
-    if (typeof input === "number") {
-        return input;
-    }
-    else {
-        return fallback;
-    }
-}
-
-function enforceNumberOrNull(input: any): number | null {
-    if (typeof input === "number") {
-        return input;
-    }
-    else {
-        return null;
-    }
-}
-
-
-function enforceString(input: any, fallback = ""): string {
-    if (typeof input === "string") {
-        return input;
-    }
-    else {
-        return fallback;
-    }
-}
-
-function enforceStringOrNull(input: any): string | null {
-    if (typeof input === "string") {
-        return input;
-    }
-    else {
-        return null;
-    }
-}
 
 async function fetchAllEdges<N>(
     seedEdges: Edge<N>[],
@@ -213,6 +176,24 @@ function articleBasicGql() {
 `;
 }
 
+const commentNodeGql = `
+  id,
+  createdAt,
+  state,
+  content,
+  author {
+    id,
+  },
+  parentComment {
+    id,
+  },
+  replyTo {
+    id,
+  },
+  upvotes,
+  downvotes,
+`
+
 function commentEdgeGql(after?: string) {
     return `
       comments(input: {
@@ -224,21 +205,7 @@ function commentEdgeGql(after?: string) {
       edges {
         cursor, 
         node {
-          id,
-          createdAt,
-          state,
-          content,
-          author {
-            id,
-          },
-          parentComment {
-            id,
-          },
-          replyTo {
-            id,
-          },
-          upvotes,
-          downvotes,
+            ${commentNodeGql}
         }
       }
     }
@@ -469,6 +436,25 @@ interface ArticleFetchData {
     mentionedUsers: UserId[],
 }
 
+function processCommentNode(node: CommentResponseNode, fallbackParent: string | null = null): Comment {
+    const comment = {
+        ...node,
+        author: node.author.id,
+        replyTarget: node.replyTo ? node.replyTo.id : null,
+        parent: node.parentComment ? node.parentComment.id : fallbackParent,
+        createdAt: +new Date(node.createdAt),
+        derived: {
+            upvotes: node.upvotes,
+            downvotes: node.downvotes,
+        },
+    }
+    delete (comment as any)["parentComment"];
+    delete (comment as any)["replyTo"];
+    delete (comment as any)["upvotes"];
+    delete (comment as any)["downvotes"];
+    return deepCleanTypename(comment);
+}
+
 export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | null> {
     const client = getApolloClient();
     const response = await client.query<ArticleResponseFullData>({
@@ -501,24 +487,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
         }
     });
 
-    const comments: Comment[] = commentEdges.map(edge => ({
-        ...edge.node,
-        author: edge.node.author.id,
-        replyTarget: edge.node.replyTo ? edge.node.replyTo.id : articleResponse.id,
-        parent: edge.node.parentComment ? edge.node.parentComment.id : articleResponse.id,
-        createdAt: +new Date(edge.node.createdAt),
-        derived: {
-            upvotes: edge.node.upvotes,
-            downvotes: edge.node.downvotes,
-        },
-    })).map(deepCleanTypename);
-
-    for (const c of comments) {
-        delete (c as any)["parentComment"];
-        delete (c as any)["replyTo"];
-        delete (c as any)["upvotes"];
-        delete (c as any)["downvotes"];
-    }
+    const comments: Comment[] = commentEdges.map(edge => processCommentNode(edge.node, articleResponse.id)).map(deepCleanTypename);
 
     const appreciationsEdges = await fetchAllEdges(
         articleResponse.appreciationsReceived.edges,
@@ -575,7 +544,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
 
     const article: Article = deepCleanTypename({
         ...articleResponse,
-        topicScore: enforceNumberOrNull(articleResponse.topicScore),
+        topicScore: articleResponse.topicScore,
         author: articleResponse.author.id,
         tags: articleResponse.tags.map(node => node.id),
         createdAt: +new Date(articleResponse.createdAt),
@@ -799,9 +768,9 @@ export async function fetchUser(id: string): Promise<UserFetchData | null> {
         info: {
             createdAt: +new Date(userResponse.info.createdAt),
             userNameEditable: userResponse.info.userNameEditable,
-            description: enforceString(userResponse.info.description),
+            description: userResponse.info.description,
             agreeOn: +new Date(userResponse.info.agreeOn),
-            profileCover: enforceStringOrNull(userResponse.info.profileCover),
+            profileCover: userResponse.info.profileCover,
         },
     });
     const mentionedUsers = [
@@ -898,6 +867,55 @@ export async function fetchTag(id: string): Promise<TagFetchData | null> {
         throw error;
     }
 }
+
+const fetchOneComment = gql`
+query($id: ID!) {
+  node(input: {id:$id} ) {
+    ... on Comment {
+        ${commentNodeGql}
+    }
+  }
+}
+`;
+
+interface CommentFetchData {
+    entity: Comment
+}
+
+type CommentResponse = {
+    node: CommentResponseNode,
+}
+
+export async function fetchComment(id: string): Promise<CommentFetchData | null> {
+    const client = getApolloClient();
+    try {
+        const response = await client.query<CommentResponse>({
+            query: fetchOneComment,
+            variables: {
+                id,
+            },
+        });
+
+        const commentResponse = response.data.node;
+        if (!commentResponse) {
+            throw new Error("Missing node in comment response");
+        }
+        const comment: Comment = processCommentNode(commentResponse);
+        return {entity: comment};
+    } catch (error) {
+        const typedError = error as GraphQLErrorResponse;
+        if (typedError.graphQLErrors) {
+            const firstError = typedError.graphQLErrors[0];
+            if (firstError) {
+                if (firstError.message === "target does not exist") {
+                    return null;
+                }
+            }
+        }
+        throw error;
+    }
+}
+
 
 interface LoginResponse {
     userLogin: {

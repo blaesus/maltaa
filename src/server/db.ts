@@ -415,7 +415,7 @@ const mongodb = {
         },
         async getAllIds(): Promise<UserId[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("users").find().map((user: UserPublic) => user.id).toArray();
+                return mattersSyncDB.collection("users").find().project({id: 1}).map((user: UserPublic) => user.id).toArray();
             }
             else {
                 return [];

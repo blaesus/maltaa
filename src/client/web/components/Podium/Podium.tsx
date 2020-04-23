@@ -1,8 +1,6 @@
 import * as React from "react";
 
 import "./Podium.css";
-
-import { PodiumPageState } from "../../states/uiReducer";
 import { ClientState } from "../../states/reducer";
 
 import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorControl";
@@ -25,6 +23,7 @@ export function Podium(props: {
                 mode="podium"
                 listSetting={state.ui.pages.podium}
                 dispatch={dispatch}
+                enableTimeMachine={true}
             >
                 <ArticleList
                     mode="podium"

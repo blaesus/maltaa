@@ -7,10 +7,11 @@ export function AnchorButton(props: {
     className?: string,
     href?: string
     onClick?: MouseEventHandler<HTMLAnchorElement>
+    disabled?: boolean,
 }) {
     return (
         <a
-            className={`AnchorButton ${props.className || ""}`}
+            className={`AnchorButton ${props.className || ""} ${props.disabled ? "disabled" : "none"}`}
             onClick={props.onClick}
             role="button"
             href={props.href}

@@ -32,9 +32,10 @@ export function ArticleListCursorControl(props: {
     mode: "podium" | "user",
     listSetting: ArticleListSetting,
     dispatch: MaltaaDispatch,
+    enableTimeMachine?: boolean,
     children?: React.ReactNode,
 }) {
-    const {dispatch, mode} = props;
+    const {dispatch, mode, enableTimeMachine} = props;
     const {sort, period, backtrack} = props.listSetting;
 
     const onSetBacktrackDifference = (delta: number) => {
@@ -75,7 +76,7 @@ export function ArticleListCursorControl(props: {
                     }}
                 />
                 {
-                    typeof backtrack === "number" &&
+                    enableTimeMachine &&
                     <span className="TimeMachineDate">
                     <AnchorButton onClick={() => {
                         onSetBacktrackDifference(daysInMonth(backtrack, -1));
@@ -88,14 +89,20 @@ export function ArticleListCursorControl(props: {
                         {"<"}
                     </AnchorButton>
                     <BacktrackDisplay backtrack={backtrack}/>
-                    <AnchorButton onClick={() => {
-                        onSetBacktrackDifference(+1);
-                    }}>
+                    <AnchorButton
+                        onClick={() => {
+                            onSetBacktrackDifference(+1);
+                        }}
+                        disabled={backtrack <= 0}
+                    >
                         {">"}
                     </AnchorButton>
-                    <AnchorButton onClick={() => {
-                        onSetBacktrackDifference(daysInMonth(backtrack, +1));
-                    }}>
+                    <AnchorButton
+                        onClick={() => {
+                            onSetBacktrackDifference(daysInMonth(backtrack, +1));
+                        }}
+                        disabled={backtrack <= 0}
+                    >
                         {">>"}
                     </AnchorButton>
                     {

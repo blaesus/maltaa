@@ -4,11 +4,17 @@
     font-weight: bolder;
 }
 
+.AnchorButton.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
 @media only screen and (min-width: 769px) {
-    .AnchorButton:hover {
+    .AnchorButton:not(.disabled):hover {
         border-bottom-color: #333;
     }
-    .AnchorButton:active {
+    .AnchorButton:not(.disabled):active {
         border-bottom-color: black;
     }
 }

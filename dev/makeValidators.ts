@@ -2,57 +2,55 @@ import * as fs from "fs";
 import * as path from "path"
 import * as ts from "typescript";
 
-type PrimitiveDefinition = {
+type PrimitiveType = {
     kind: "primitive",
     primitive: "string" | "number" | "boolean"
-};
-
-type StringLiteralDefinition = {
-    kind: "literal",
-    literal: string,
 }
 
-type ReferenceDefinition = {
-    kind: "reference",
-    reference: string,
+type StringLiteralType = {
+    kind: "string-literal",
+    value: string,
 }
 
-type ArrayModifier = {
+type ArrayType = {
     kind: "array",
-    element: ValueDefinition,
+    element: TypeLike,
 }
 
-type ValueDefinition =
-    PrimitiveDefinition
-    | ReferenceDefinition
-    | StringLiteralDefinition
-    | ArrayModifier
-;
-
-type InterfaceData = {
-    [key in string]: ValueDefinition
-}
-
-interface InterfaceDefinition {
-    kind: "interface",
-    name: string,
-    keyvalues: InterfaceData
-}
-
-interface UnionTypeDefinition {
+interface UnionType {
     kind: "union",
     name: string,
-    conditions: ValueDefinition[],
+    types: TypeLike[],
 }
 
-interface AliasTypeDefinition {
+type Type = PrimitiveType | StringLiteralType | ArrayType | UnionType;
+
+type TypeReference = {
+    kind: "reference",
+    reference: {
+        identifier: string,
+    },
+}
+
+type TypeLike = Type | TypeReference;
+
+type InterfaceFields = {
+    [key in string]: TypeLike;
+}
+
+interface InterfaceDeclaration {
+    kind: "interface",
+    name: string,
+    fields: InterfaceFields
+}
+
+type TypeAliasDeclaration = {
     kind: "alias",
     name: string,
-    value: ValueDefinition;
-}
+    meaning: TypeLike
+};
 
-
-type TypeDefinition = UnionTypeDefinition | InterfaceDefinition | AliasTypeDefinition;
+type Declaration = InterfaceDeclaration | TypeAliasDeclaration;
 
 function prepropcess(entryFileName: string): {entrySourceText: string, combinedSourceText: string} {
     const entrySourceText = fs.readFileSync(entryFileName).toString();
@@ -74,9 +72,9 @@ function prepropcess(entryFileName: string): {entrySourceText: string, combinedS
     return {entrySourceText, combinedSourceText};
 }
 
-function extractValue(
+function extractValueType(
     node: ts.Node, source: ts.SourceFile
-): ValueDefinition | null {
+): Type | TypeReference | null {
     switch (node.kind) {
         case ts.SyntaxKind.StringKeyword: {
             return {kind: "primitive", primitive: "string"};
@@ -90,13 +88,15 @@ function extractValue(
         case ts.SyntaxKind.TypeReference: {
             return {
                 kind: "reference",
-                reference: node.getText(source),
+                reference: {
+                    identifier: node.getText(source)
+                },
             };
         }
         case ts.SyntaxKind.LiteralType: {
             return {
-                kind: "literal",
-                literal: node.getText(source),
+                kind: "string-literal",
+                value: node.getText(source),
             };
         }
         case ts.SyntaxKind.ArrayType: {
@@ -105,7 +105,7 @@ function extractValue(
                 grandChild = candidate;
             })
             if (grandChild) {
-                const value = extractValue(grandChild, source);
+                const value = extractValueType(grandChild, source);
                 if (value && typeof value === "object") {
                     return {
                         kind: "array",
@@ -135,15 +135,15 @@ function extractKey(
     }
 }
 
-function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): InterfaceData {
+function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): InterfaceFields {
     let key: string = "";
-    const keyvalues: InterfaceData = {}
+    const keyvalues: InterfaceFields = {}
     rootNode.forEachChild(nextLevelNode => {
         const possibleKey = extractKey(nextLevelNode, source);
         if (possibleKey) {
             key = possibleKey;
         }
-        const value = extractValue(nextLevelNode, source);
+        const value = extractValueType(nextLevelNode, source);
         if (value) {
             keyvalues[key] = value;
         }
@@ -154,76 +154,76 @@ function extractPropertySignature(rootNode: ts.Node, source: ts.SourceFile): Int
     return keyvalues;
 }
 
-function extractDefinitions(entryFileName: string): TypeDefinition[] {
+function extractDeclarations(entryFileName: string): Declaration[] {
     const {entrySourceText, combinedSourceText} = prepropcess(entryFileName);
     const source = ts.createSourceFile("test.ts", entrySourceText, ts.ScriptTarget.ES2019)
     const combinedSource = ts.createSourceFile("combined.ts", combinedSourceText, ts.ScriptTarget.ES2019)
-    const definitions: TypeDefinition[] = [];
+    const declarations: Declaration[] = [];
     combinedSource.forEachChild(firstLevelNode => {
         switch (firstLevelNode.kind) {
             case ts.SyntaxKind.InterfaceDeclaration: {
-                const definition: TypeDefinition = {kind: "interface", name: "", keyvalues: {}};
+                const declaration: Declaration = {kind: "interface", name: "", fields: {}};
                 firstLevelNode.forEachChild(secondLevelNode => {
                     if (secondLevelNode.kind === ts.SyntaxKind.Identifier) {
-                        definition.name = secondLevelNode.getText(combinedSource);
+                        declaration.name = secondLevelNode.getText(combinedSource);
                     }
                     else if (secondLevelNode.kind === ts.SyntaxKind.PropertySignature) {
                         const keyvalues = extractPropertySignature(secondLevelNode, combinedSource);
-                        definition.keyvalues = {
-                            ...definition.keyvalues,
+                        declaration.fields = {
+                            ...declaration.fields,
                             ...keyvalues
                         };
                     }
                 });
-                definitions.push(definition);
+                declarations.push(declaration);
                 break;
             }
             case ts.SyntaxKind.TypeAliasDeclaration: {
                 let name: string = "";
-                let conditions: ValueDefinition[] = [];
-                let value: ValueDefinition | null = null;
+                let meaning: TypeLike | null = null;
                 firstLevelNode.forEachChild(child => {
                     if (child.kind === ts.SyntaxKind.Identifier) {
                         name = child.getText(combinedSource);
                     }
                     else if (child.kind === ts.SyntaxKind.UnionType) {
+                        let types: Type[] = [];
                         child.forEachChild(grandChild => {
-                            conditions.push({
-                                kind: "literal",
-                                literal: grandChild.getText(combinedSource),
+                            types.push({
+                                kind: "string-literal",
+                                value: grandChild.getText(combinedSource),
                             });
                         });
+                        meaning = {
+                            kind: "union",
+                            name,
+                            types,
+                        }
                     }
                     else if (child.kind === ts.SyntaxKind.StringKeyword) {
-                        value = {
+                        meaning = {
                             kind: "primitive",
                             primitive: "string",
                         };
                     }
                     else if (child.kind === ts.SyntaxKind.TypeReference) {
-                        value = extractValue(child, combinedSource);
+                        meaning = extractValueType(child, combinedSource);
                     }
                 });
-                if (value) {
-                    definitions.push({
+                if (meaning) {
+                    declarations.push({
                         kind: "alias",
                         name,
-                        value: value,
-                    });
-                }
-                else if (conditions.length) {
-                    definitions.push({
-                        kind: "union",
-                        name,
-                        conditions,
+                        meaning,
                     });
                 }
                 break;
-
+            }
+            default: {
+                // No-op
             }
         }
     });
-    return definitions;
+    return declarations;
 }
 
 const literalValiator = `
@@ -254,63 +254,61 @@ function isboolean(data: any): boolean {
 }
 `
 
-function compile(definitions: TypeDefinition[]): string {
+function compile(declarations: Declaration[]): string {
     let result = `${literalValiator}${primitiveValidators}`;
 
-    function getValidatorFnName(value: ValueDefinition): string {
-        if (value.kind === "primitive") {
-            return `is${value.primitive}`;
+    function getValidatorFnName(type: TypeLike): string {
+        if (type.kind === "primitive") {
+            return `is${type.primitive}`;
         }
-        else if (value.kind === "reference") {
-            return `is${value.reference}`;
+        else if (type.kind === "reference") {
+            return `is${type.reference.identifier}`;
         }
-        else if (value.kind === "literal") {
-            return `is(${value.literal})`;
+        else if (type.kind === "string-literal") {
+            return `is(${type.value})`;
         }
-        else if (value.kind === "array") {
-            return `isArray(${getValidatorFnName(value.element)})`
+        else if (type.kind === "array") {
+            return `isArray(${getValidatorFnName(type.element)})`
         }
         else {
             return `is`
         }
     }
 
-    for (const definition of definitions) {
-        switch (definition.kind) {
-            case "union": {
-                result += `
-function is${definition.name}(data: any): boolean {
-  return ${definition.conditions.map(value => {
-      switch (value.kind) {
-          case "literal": {
-              if (value.literal.startsWith(`"`)) {
-                  return `is(${value.literal})(data)`
-              }
-              else {
-                  return `is${value.literal}(data)`
-              }
-          }
-          default: {
-              return true;
-          }
-      }
-                }).join("\n||")};
-}
-        `
-                break;
-            }
+    for (const declaration of declarations) {
+        switch (declaration.kind) {
             case "alias": {
-                if (definition.value.kind === "primitive") {
-                    result += `const is${definition.name} = is${definition.value.primitive};`
+                if (declaration.meaning.kind === "primitive") {
+                    result += `const is${declaration.name} = is${declaration.meaning.primitive};`
                 }
-                else if (definition.value.kind === "reference") {
-                    result += `const is${definition.name} = is${definition.value.reference};`
+                else if (declaration.meaning.kind === "reference") {
+                    result += `const is${declaration.name} = is${declaration.meaning.reference};`
+                }
+                else if (declaration.meaning.kind === "union") {
+                    result += `
+function is${declaration.name}(data: any): boolean {
+  return ${declaration.meaning.types.map(type => {
+                        switch (type.kind) {
+                            case "string-literal": {
+                                if (type.value.startsWith(`"`)) {
+                                    return `is(${type.value})(data)`
+                                }
+                                else {
+                                    return `is${type.value}(data)`
+                                }
+                            }
+                            default: {
+                                return true;
+                            }
+                        }
+                    }).join("\n||")};
+}`
                 }
                 break;
             }
             case "interface": {
                 result += `
-function is${definition.name}(data: any): boolean {
+function is${declaration.name}(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -318,7 +316,7 @@ function is${definition.name}(data: any): boolean {
         return false;
     }
     ${
-    Object.entries(definition.keyvalues)
+    Object.entries(declaration.fields)
           .map(entry => {
               const [key, value] = entry;
               return `
@@ -339,8 +337,9 @@ function is${definition.name}(data: any): boolean {
 }
 
 function make() {
-    const definitions = extractDefinitions("../src/definitions/Actions.ts");
-    const validatorSource = compile(definitions);
+    const declarations = extractDeclarations("../src/definitions/Actions.ts");
+    console.info(declarations)
+    const validatorSource = compile(declarations);
     fs.writeFileSync("./validators.ts", validatorSource);
 }
 

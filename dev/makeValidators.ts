@@ -2,6 +2,10 @@ import * as fs from "fs";
 import * as path from "path"
 import * as ts from "typescript";
 
+const exportList = [
+    "MaltaaAction",
+]
+
 type PrimitiveType = {
     kind: "primitive",
     primitive: "string" | "number" | "boolean" | "null" | "undefined"
@@ -503,7 +507,8 @@ function compile(declarations: Declaration[]): string {
             return `${dataReference} === ${type.value}`
         }
         else if (type.kind === "union") {
-            return type.types.map(condition => getTypeCheckCondition(condition, dataReference)).join("||")
+            const delimiter = type.types.length >= 4 ? "\n    ||" : " || "
+            return type.types.map(condition => getTypeCheckCondition(condition, dataReference)).join(delimiter);
         }
         else {
             console.warn(`unimplemented_condition ${type.kind}`);
@@ -524,16 +529,17 @@ function compile(declarations: Declaration[]): string {
     }
 
     for (const declaration of declarations) {
+        let declarationValidator: string = "";
         switch (declaration.kind) {
             case "alias": {
                 if (declaration.meaning.kind === "primitive") {
-                    validatorCode += `const is${declaration.name} = is${declaration.meaning.primitive};`
+                    declarationValidator = `\nconst is${declaration.name} = is${declaration.meaning.primitive};\n`
                 }
                 else if (declaration.meaning.kind === "reference") {
-                    validatorCode += `const is${declaration.name} = is${declaration.meaning.reference.identifier};`
+                    declarationValidator = `\nconst is${declaration.name} = is${declaration.meaning.reference.identifier};\n`
                 }
                 else if (declaration.meaning.kind === "union") {
-                    validatorCode += `
+                    declarationValidator = `
 function is${declaration.name}(data: any): boolean {
     return ${getUnionClause(declaration.meaning)}
 }
@@ -542,7 +548,7 @@ function is${declaration.name}(data: any): boolean {
                 break;
             }
             case "interface": {
-                validatorCode += `
+                declarationValidator = `
 function is${declaration.name}(data: any): boolean {
     if (typeof data !== "object") {
         return false;
@@ -550,7 +556,7 @@ function is${declaration.name}(data: any): boolean {
     if (!data) {
         return false;
     }
-    ${
+                ${
                     Object.entries(declaration.fields)
                           .map(entry => {
                               const [key, value] = entry;
@@ -563,6 +569,11 @@ function is${declaration.name}(data: any): boolean {
             }
 
         }
+
+        if (exportList.includes(declaration.name)) {
+            declarationValidator = `export ` + declarationValidator;
+        }
+        validatorCode += declarationValidator;
     }
     return validatorCode;
 }
@@ -571,7 +582,7 @@ function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     const extendedDeclarations = InlineGenerics(declarations);
     const validatorSource = compile(extendedDeclarations);
-    fs.writeFileSync("./validators.ts", validatorSource);
+    fs.writeFileSync("../src/validators.ts", validatorSource);
 }
 
 make();

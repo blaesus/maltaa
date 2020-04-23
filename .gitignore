@@ -4,4 +4,3 @@ node_modules
 .DS_Store
 dev/db
 ip_blacklist.nginx
-dev/validators.ts

@@ -14,6 +14,7 @@ function isArray(filter: (data: any) => boolean): (value: any) => boolean {
       return value.every(filter);
   }
 }
+
 function isstring(data: any): boolean {
     return typeof data === "string";
 }

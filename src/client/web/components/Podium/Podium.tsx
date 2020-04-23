@@ -24,41 +24,9 @@ export function Podium(props: {
     return (
         <div className="Podium">
             <ArticleListCursorControl
-                sort={sort}
-                period={period}
-                backtrack={backtrack}
-                onChooseSort={nextSort => {
-                    dispatch({
-                        type: "SetPodiumCursor",
-                        sort: nextSort,
-                        period,
-                        backtrack,
-                    });
-                }}
-                onChoosePeriod={newPeriod => {
-                    dispatch({
-                        type: "SetPodiumCursor",
-                        sort: sort,
-                        period: newPeriod,
-                        backtrack,
-                    });
-                }}
-                onSetBacktrackDifference={delta => {
-                    dispatch({
-                        type: "SetPodiumCursor",
-                        sort,
-                        period,
-                        backtrack: Math.max(backtrack - delta, 0),
-                    });
-                }}
-                onResetBacktrack={() => {
-                    dispatch({
-                        type: "SetPodiumCursor",
-                        sort,
-                        period,
-                        backtrack: 0,
-                    });
-                }}
+                mode="podium"
+                listSetting={state.ui.pages.podium}
+                dispatch={dispatch}
             >
                 <ArticleList
                     mode="podium"

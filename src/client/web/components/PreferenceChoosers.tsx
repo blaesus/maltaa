@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Chooser, OptionList } from "./Chooser/Chooser";
 import { ArticleSort } from "../../../sorts";
-
-const DECADE = 10 * 365;
+import { INFINITY_JSON } from "../../../utils";
 
 const sortOptions: OptionList<ArticleSort> = [
     {
@@ -41,7 +40,7 @@ const periodOptions: OptionList<number> = [
         label: "1年",
     },
     {
-        value: DECADE,
+        value: INFINITY_JSON,
         label: "所有",
     },
 ];

@@ -7,12 +7,14 @@ import { UserId, UserPublic } from "../../../../definitions/User";
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 import { USER_URL_SIGIL } from "../../../../settings";
-import { readableDateTime } from "../../../../utils";
+import { INFINITY_JSON, readableDateTime } from "../../../../utils";
 import { AssortmentList } from "../AssortmentEditor/AssortmentList";
 import { ClientState } from "../../states/reducer";
 import { MaltaaDispatch } from "../../uiUtils";
 import { useEffect, useState } from "react";
 import { ArticleList } from "../ArticleList/ArticleList";
+import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorControl";
+import { ArticleSort } from "../../../../sorts";
 
 type UserPageTab = "articles" | "comments";
 
@@ -23,6 +25,8 @@ export function UserPage(props: {
     const {state, dispatch} = props;
     const {entities, ui: {pages}, preferences} = state;
     const [tab, setTab] = useState<UserPageTab>("articles");
+    const [sort, setSort] = useState<ArticleSort>("recent");
+    const [period, setPeriod] = useState<number>(INFINITY_JSON);
 
     const user = Object.values(entities.users).find(user => user.userName === pages.user.name)
 
@@ -68,8 +72,14 @@ export function UserPage(props: {
             </div>
             
             {
-                tab === "articles" && state.ui.pages.user.articles &&
-                <ArticleList state={state} mode="user" dispatch={dispatch} />
+                tab === "articles" &&
+                <ArticleListCursorControl
+                    mode="user"
+                    listSetting={state.ui.pages.user.articles}
+                    dispatch={dispatch}
+                >
+                    <ArticleList state={state} mode="user" dispatch={dispatch} />
+                </ArticleListCursorControl>
             }
 
             <AssortmentList

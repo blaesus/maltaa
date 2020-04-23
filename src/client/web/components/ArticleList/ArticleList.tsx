@@ -4,7 +4,7 @@ import "./ArticleList.css";
 
 import { MaltaaAction } from "../../../../definitions/Actions";
 import { ClientState } from "../../states/reducer";
-import { ArticleListState, PageName } from "../../states/uiReducer";
+import { ArticleListSetting, PageName } from "../../states/uiReducer";
 
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 
@@ -23,7 +23,7 @@ function usePrevious<T>(value: T) {
 
 function useLoadArticleList(
     currentPage: PageName,
-    listState: ArticleListState,
+    listState: ArticleListSetting,
     author: UserId | null,
     dispatch: MaltaaDispatch
 ) {
@@ -63,7 +63,7 @@ export function ArticleList(props: {
     dispatch(action: MaltaaAction): void;
 }) {
     const {mode, dispatch, state} = props;
-    let page: ArticleListState;
+    let page: ArticleListSetting;
     let authorId: UserId | null;
     switch (mode) {
         case "podium": {

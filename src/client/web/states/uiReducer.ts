@@ -21,14 +21,14 @@ export function getEmptyPaginationStatus(): PaginationStatus {
     }
 }
 
-export interface ArticleListState {
+export interface ArticleListSetting {
     sort: ArticleSort,
     period: number,
     backtrack: number,
     pagination: PaginationStatus
 }
 
-export function getEmptyArticleListState(): ArticleListState {
+export function getEmptyArticleListState(): ArticleListSetting {
     return {
         sort: "recent",
         period: INFINITY_JSON,
@@ -37,7 +37,7 @@ export function getEmptyArticleListState(): ArticleListState {
     }
 }
 
-export interface PodiumPageState extends ArticleListState {
+export interface PodiumPageState extends ArticleListSetting {
 }
 
 export interface ArticlePageState {
@@ -46,7 +46,7 @@ export interface ArticlePageState {
 
 export interface UserPageState {
     name: string | null,
-    articles: ArticleListState,
+    articles: ArticleListSetting,
 }
 
 export type PageName =
@@ -318,33 +318,52 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                 }
             }
         }
-        case "SetPodiumCursor": {
+        case "SetArticleCursor": {
             const pages = ui.pages;
-            if (pages.current === "podium") {
-                const isCursorChanged =
-                    action.sort !== pages.podium.sort
-                    || action.period !== pages.podium.period
-                    || action.backtrack !== pages.podium.backtrack;
-                let nextPagination = ui.pages.podium.pagination;
-                if (isCursorChanged) {
-                    nextPagination = getEmptyPaginationStatus();
-                }
+            let setting: ArticleListSetting;
+            if (action.mode === "podium") {
+                setting = pages.podium;
+            }
+            else {
+                setting = pages.user.articles;
+            }
+            const isCursorChanged =
+                action.sort !== setting.sort
+                || action.period !== setting.period
+                || action.backtrack !== setting.backtrack;
+            let nextPagination = setting.pagination;
+            if (isCursorChanged) {
+                nextPagination = getEmptyPaginationStatus();
+            }
+            const nextSetting = {
+                ...setting,
+                sort: action.sort,
+                period: action.period,
+                backtrack: action.backtrack || 0,
+                pagination: nextPagination,
+            }
+            if (action.mode === "podium") {
                 return {
                     ...ui,
                     pages: {
                         ...ui.pages,
-                        podium: {
-                            ...ui.pages.podium,
-                            sort: action.sort,
-                            period: action.period,
-                            backtrack: action.backtrack || 0,
-                            pagination: nextPagination,
+                        podium: nextSetting,
+                    },
+                };
+            }
+            else {
+                return {
+                    ...ui,
+                    pages: {
+                        ...ui.pages,
+                        user: {
+                            ...ui.pages.user,
+                            articles: nextSetting,
                         },
                     },
                 };
-            } else {
-                return ui;
             }
+
         }
         case "GoToPage": {
             return {

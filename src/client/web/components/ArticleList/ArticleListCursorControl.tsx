@@ -6,6 +6,8 @@ import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 import { DAY, readableDateTime } from "../../../../utils";
 import { ArticleSort } from "../../../../sorts";
+import { ArticleListSetting } from "../../states/uiReducer";
+import { MaltaaDispatch } from "../../uiUtils";
 
 export function BacktrackDisplay(props: {
     backtrack: number
@@ -27,56 +29,88 @@ function daysInMonth(backtrack: number, monthOffset: number) {
 }
 
 export function ArticleListCursorControl(props: {
-    sort: ArticleSort,
-    period: number,
-    backtrack: number,
-    onChooseSort(sort: ArticleSort): void,
-    onChoosePeriod(period: number): void,
-    onSetBacktrackDifference?(delta: number): void,
-    onResetBacktrack?(): void
+    mode: "podium" | "user",
+    listSetting: ArticleListSetting,
+    dispatch: MaltaaDispatch,
     children?: React.ReactNode,
 }) {
-    const {sort, period, backtrack} = props;
+    const {dispatch, mode} = props;
+    const {sort, period, backtrack} = props.listSetting;
+
+    const onSetBacktrackDifference = (delta: number) => {
+        dispatch({
+            type: "SetArticleCursor",
+            mode,
+            sort,
+            period,
+            backtrack: Math.max(backtrack - delta, 0),
+        });
+    }
+
     return (
         <div className="ArticleListCursorControl">
             <nav className="CursorSettings">
                 <ArticleSortChooser
                     chosen={sort}
-                    onChange={props.onChooseSort}
+                    onChange={nextSort => {
+                        dispatch({
+                            type: "SetArticleCursor",
+                            mode,
+                            sort: nextSort,
+                            period,
+                            backtrack,
+                        });
+                    }}
                 />
                 <ArticlePeriodChooser
                     chosen={period}
-                    onChange={props.onChoosePeriod}
+                    onChange={newPeriod => {
+                        dispatch({
+                            type: "SetArticleCursor",
+                            mode,
+                            sort: sort,
+                            period: newPeriod,
+                            backtrack,
+                        });
+                    }}
                 />
-                <span className="TimeMachineDate">
+                {
+                    backtrack &&
+                    <span className="TimeMachineDate">
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(daysInMonth(backtrack, -1));
+                        onSetBacktrackDifference(daysInMonth(backtrack, -1));
                     }}>
                         {"<<"}
                     </AnchorButton>
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(-1);
+                        onSetBacktrackDifference(-1);
                     }}>
                         {"<"}
                     </AnchorButton>
                     <BacktrackDisplay backtrack={backtrack}/>
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(1);
+                        onSetBacktrackDifference(+1);
                     }}>
                         {">"}
                     </AnchorButton>
                     <AnchorButton onClick={() => {
-                        props.onSetBacktrackDifference && props.onSetBacktrackDifference(daysInMonth(backtrack, +1));
+                        onSetBacktrackDifference(daysInMonth(backtrack, +1));
                     }}>
                         {">>"}
                     </AnchorButton>
                     <AnchorButton onClick={() => {
-                        props.onResetBacktrack && props.onResetBacktrack();
+                        dispatch({
+                            type: "SetArticleCursor",
+                            mode,
+                            sort,
+                            period,
+                            backtrack: 0,
+                        });
                     }}>
                         {"0"}
                     </AnchorButton>
-
                 </span>
+                }
             </nav>
             {props.children}
         </div>

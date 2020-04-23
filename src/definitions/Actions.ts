@@ -55,12 +55,14 @@ export interface ProvideEntities extends BaseAction {
     }
 }
 
-export interface SetPodiumCursor extends BaseAction {
-    type: "SetPodiumCursor",
+export interface SetArticleCursor extends BaseAction {
+    type: "SetArticleCursor",
+    mode: "podium" | "user"
     sort: ArticleSort,
     period: number,
     backtrack?: number,
 }
+
 
 export interface LoadArticles extends BaseAction {
     type: "LoadArticles",
@@ -272,7 +274,7 @@ export type ClientRequest =
 export type MaltaaAction =
     ChangePathname
     | ProvideEntities
-    | SetPodiumCursor
+    | SetArticleCursor
     | ViewArticle
     | ViewUser
     | GoHome

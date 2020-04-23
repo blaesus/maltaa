@@ -120,7 +120,7 @@ function isProvideEntities(data: any): boolean {
     return true;
 }
         
-function isSetPodiumCursor(data: any): boolean {
+function isSetArticleCursor(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -129,7 +129,11 @@ function isSetPodiumCursor(data: any): boolean {
         return false;
     }
                 
-    if (!(data.type === "SetPodiumCursor")) {
+    if (!(data.type === "SetArticleCursor")) {
+        return false;
+    }
+
+    if (!(data.mode === "podium" || data.mode === "user")) {
         return false;
     }
 
@@ -910,7 +914,7 @@ export
 function isMaltaaAction(data: any): boolean {
     return isChangePathname(data)
     || isProvideEntities(data)
-    || isSetPodiumCursor(data)
+    || isSetArticleCursor(data)
     || isViewArticle(data)
     || isViewUser(data)
     || isGoHome(data)
@@ -1277,7 +1281,7 @@ function isPaginationStatus(data: any): boolean {
     return true;
 }
         
-function isArticleListState(data: any): boolean {
+function isArticleListSetting(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1347,7 +1351,7 @@ function isUserPageState(data: any): boolean {
         return false;
     }
 
-    if (!(isArticleListState(data.articles))) {
+    if (!(isArticleListSetting(data.articles))) {
         return false;
     }
     

@@ -580,6 +580,7 @@ function is${declaration.name}(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }

@@ -39,6 +39,7 @@ function isBaseMeta(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -79,6 +80,7 @@ function isBaseAction(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -90,6 +92,7 @@ function isChangePathname(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -110,6 +113,7 @@ function isProvideEntities(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -125,6 +129,7 @@ function isSetPodiumCursor(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -155,6 +160,7 @@ function isLoadPodiumArticles(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -190,6 +196,7 @@ function isViewArticle(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -210,6 +217,7 @@ function isViewUser(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -230,6 +238,7 @@ function isGoHome(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -245,6 +254,7 @@ function isSearch(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -265,6 +275,7 @@ function isStartAuthenticationDialog(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -280,6 +291,7 @@ function isStartPreferencesDialog(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -295,6 +307,7 @@ function isStartMeDialog(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -310,6 +323,7 @@ function is__PartialPreferences(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -325,6 +339,7 @@ function isSetMyPreferences(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -345,6 +360,7 @@ function isLoadedStoredPreferences(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -365,6 +381,7 @@ function isGenericError(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -385,6 +402,7 @@ function isGenericOk(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -400,6 +418,7 @@ function isCancelDialog(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -415,6 +434,7 @@ function isRegister(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -450,6 +470,7 @@ function isSignin(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -475,6 +496,7 @@ function isSearchResultArticleRedirect(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -495,6 +517,7 @@ function isGoToPage(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -515,6 +538,7 @@ function isGetMyData(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -530,6 +554,7 @@ function isCreateAssortment(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -570,6 +595,7 @@ function isItemSpec(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -600,6 +626,7 @@ function isUpdateAssortmentAddItem(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -630,6 +657,7 @@ function isUpdateAssortmentDropItem(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -660,6 +688,7 @@ function isUpdateAssortmentOrderItems(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -690,6 +719,7 @@ function isUpdateAssortmentEditReview(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -725,6 +755,7 @@ function isUpdateAssortmentSetPolicy(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -755,6 +786,7 @@ function isUpdateAssortmentEditTitle(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -785,6 +817,7 @@ function isUpdateAssortmentEditSubpath(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -815,6 +848,7 @@ function isUpdateAssortmentEditUpstreams(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -845,6 +879,7 @@ function isUpdateAssortmentSyncFromUpstreams(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -882,6 +917,7 @@ function isSignout(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -897,6 +933,7 @@ function isViewAssortment(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -957,6 +994,7 @@ function isComment(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1005,6 +1043,7 @@ function isArticle(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1126,6 +1165,7 @@ function isArticleVersion(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1156,6 +1196,7 @@ function isArticleSupplement(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1193,6 +1234,7 @@ function isUserPublic(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1235,6 +1277,7 @@ function isRoomPolicy(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1246,6 +1289,7 @@ function isRoom(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1296,6 +1340,7 @@ function isPaginationStatus(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1326,6 +1371,7 @@ function isPodiumPageState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1356,6 +1402,7 @@ function isArticlePageState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1371,6 +1418,7 @@ function isUserPageState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1394,6 +1442,7 @@ function isStudyPageState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1405,6 +1454,7 @@ function isAssortmentPageState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1420,6 +1470,7 @@ function isPagesState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1460,6 +1511,7 @@ function isClientUIState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1483,6 +1535,7 @@ function isAssortmentUIIdentifier(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1508,6 +1561,7 @@ function isPathState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1542,6 +1596,7 @@ function isAssortmentBaseItem(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1582,6 +1637,7 @@ function isMattersEntityItem(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1615,6 +1671,7 @@ function isAssortmentIdentifier(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1640,6 +1697,7 @@ function isAssortmentPolicy(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1660,6 +1718,7 @@ function isAssortment(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1725,6 +1784,7 @@ function isClientState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1750,6 +1810,7 @@ function isPreferences(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1765,6 +1826,7 @@ function isLeveledCommentPreferences(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1785,6 +1847,7 @@ function isEntitiesState(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1820,6 +1883,7 @@ function isTokenRecord(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1840,6 +1904,7 @@ function isRSAPublicKeyRecord(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1866,6 +1931,7 @@ function isScryptRecord(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1900,6 +1966,7 @@ function isMaltaaAccount(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1945,6 +2012,7 @@ function is__PickMaltaaAccount(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -1982,6 +2050,7 @@ function isTokenInfo(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -2009,6 +2078,7 @@ function isTag(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }
@@ -2046,6 +2116,7 @@ function isAuthToken(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
+    
     if (!data) {
         return false;
     }

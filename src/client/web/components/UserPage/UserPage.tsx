@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { ArticleList } from "../ArticleList/ArticleList";
 import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorControl";
 import { ArticleSort } from "../../../../sorts";
+import { userIdToSerial } from "../../../../mattersSpecifics";
 
 type UserPageTab = "articles" | "comments";
 
@@ -59,7 +60,7 @@ export function UserPage(props: {
             <div className="Description">
                 {user.info.description}
             </div>
-            <div>
+            <div title={`#${userIdToSerial(user.id, atob)}`}>
                 註冊於{readableDateTime(user.info.createdAt)}
             </div>
 

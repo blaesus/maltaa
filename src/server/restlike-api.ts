@@ -9,6 +9,7 @@ import { MaltaaAction } from "../definitions/Actions";
 import { respond } from "./action-api";
 import { Article, ArticleId, Comment } from "../definitions/Article";
 import { TOKEN_LIFE } from "../settings";
+import { isMaltaaAction } from "../validators";
 
 function getEntityRequestHandler<T>(
     idFieldName: string,
@@ -116,13 +117,13 @@ async function getArticles(context: Koa.Context, next: any) {
     return next();
 }
 
-function verifyActionForm(data: any): MaltaaAction {
-    const ok = typeof data === "object" && typeof data.type === "string";
+function verifyActionForm(data: unknown): MaltaaAction {
+    const ok = isMaltaaAction(data);
     if (!ok) {
         throw new Error("Malformed");
     }
     else {
-        return data;
+        return data as any;
     }
 }
 

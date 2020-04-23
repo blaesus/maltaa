@@ -37,32 +37,32 @@ function isBaseMeta(data: any): boolean {
         return false;
     }
                 
-    if (!(isMaltaaAction(data.request))) {
+    if (!(isundefined(data.request) || isMaltaaAction(data.request))) {
         return false;
     }
         
 
-    if (!(isstring(data.acid))) {
+    if (!(isundefined(data.acid) || isstring(data.acid))) {
         return false;
     }
         
 
-    if (!(isAuthToken(data.token) || isnull(data.token))) {
+    if (!(isundefined(data.token) || isAuthToken(data.token) || isnull(data.token))) {
         return false;
     }
         
 
-    if (!(isAccountId(data.account))) {
+    if (!(isundefined(data.account) || isAccountId(data.account))) {
         return false;
     }
         
 
-    if (!(isUserId(data.operator) || isnull(data.operator))) {
+    if (!(isundefined(data.operator) || isUserId(data.operator) || isnull(data.operator))) {
         return false;
     }
         
 
-    if (!(data.doNotTrack === 0 || data.doNotTrack === 1 || isnull(data.doNotTrack))) {
+    if (!(isundefined(data.doNotTrack) || data.doNotTrack === 0 || data.doNotTrack === 1 || isnull(data.doNotTrack))) {
         return false;
     }
         
@@ -138,7 +138,7 @@ function isSetPodiumCursor(data: any): boolean {
     }
         
 
-    if (!(isnumber(data.backtrack))) {
+    if (!(isundefined(data.backtrack) || isnumber(data.backtrack))) {
         return false;
     }
         
@@ -168,7 +168,7 @@ function isLoadPodiumArticles(data: any): boolean {
     }
         
 
-    if (!(isnumber(data.backtrackInDays))) {
+    if (!(isundefined(data.backtrackInDays) || isnumber(data.backtrackInDays))) {
         return false;
     }
         
@@ -428,12 +428,12 @@ function isRegister(data: any): boolean {
     }
         
 
-    if (!(data.externalPlatform === "matters")) {
+    if (!(isundefined(data.externalPlatform) || data.externalPlatform === "matters")) {
         return false;
     }
         
 
-    if (!(isPreferences(data.preferences))) {
+    if (!(isundefined(data.preferences) || isPreferences(data.preferences))) {
         return false;
     }
         
@@ -1506,22 +1506,22 @@ function isPathState(data: any): boolean {
         return false;
     }
                 
-    if (!(isstring(data.username))) {
+    if (!(isundefined(data.username) || isstring(data.username))) {
         return false;
     }
         
 
-    if (!(isstring(data.articleId))) {
+    if (!(isundefined(data.articleId) || isstring(data.articleId))) {
         return false;
     }
         
 
-    if (!(isAssortmentUIIdentifier(data.assortment))) {
+    if (!(isundefined(data.assortment) || isAssortmentUIIdentifier(data.assortment))) {
         return false;
     }
         
 
-    if (!(data.page === "study")) {
+    if (!(isundefined(data.page) || data.page === "study")) {
         return false;
     }
         

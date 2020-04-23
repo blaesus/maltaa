@@ -33,7 +33,12 @@ type GenericType = {
     parameters: TypeLike[],
 }
 
-type Type = PrimitiveType | StringLiteralType | ArrayType | UnionType | GenericType;
+type OptionalType = {
+    kind: "optional",
+    value: TypeLike,
+}
+
+type Type = PrimitiveType | StringLiteralType | ArrayType | UnionType | GenericType | OptionalType;
 
 type TypeReference = {
     kind: "reference",
@@ -234,15 +239,27 @@ function extractKey(
 
 function extractPropertySignatures(rootNode: ts.Node, source: ts.SourceFile): InterfaceFields {
     let key: string = "";
+    let optional = false;
     const fields: InterfaceFields = {}
     rootNode.forEachChild(nextLevelNode => {
         const possibleKey = extractKey(nextLevelNode, source);
         if (possibleKey) {
             key = possibleKey;
         }
+        if (nextLevelNode.kind === ts.SyntaxKind.QuestionToken) {
+            optional = true;
+        }
         const value = extractValueType(nextLevelNode, source);
         if (value) {
-            fields[key] = value;
+            if (optional) {
+                fields[key] = {
+                    kind: "optional",
+                    value,
+                };
+            }
+            else {
+                fields[key] = value;
+            }
         }
         else {
             return;
@@ -510,6 +527,9 @@ function compile(declarations: Declaration[]): string {
             const delimiter = type.types.length >= 4 ? "\n    ||" : " || "
             return type.types.map(condition => getTypeCheckCondition(condition, dataReference)).join(delimiter);
         }
+        else if (type.kind === "optional") {
+            return `isundefined(${dataReference}) || ${getTypeCheckCondition(type.value, dataReference)}`;
+        }
         else {
             console.warn(`unimplemented_condition ${type.kind}`);
             return `true`;
@@ -581,6 +601,7 @@ function is${declaration.name}(data: any): boolean {
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     const extendedDeclarations = InlineGenerics(declarations);
+    console.info(JSON.stringify(extendedDeclarations.filter(d => d.name ==="LoadPodiumArticles"), null, 4));
     const validatorSource = compile(extendedDeclarations);
     fs.writeFileSync("../src/validators.ts", validatorSource);
 }

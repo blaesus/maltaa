@@ -4,7 +4,7 @@ import * as ts from "typescript";
 
 type PrimitiveType = {
     kind: "primitive",
-    primitive: "string" | "number" | "boolean" | "undefined"
+    primitive: "string" | "number" | "boolean" | "null" | "undefined"
 }
 
 type StringLiteralType = {
@@ -91,6 +91,9 @@ function extractValueType(
         case ts.SyntaxKind.BooleanKeyword: {
             return {kind: "primitive", primitive: "boolean"};
         }
+        case ts.SyntaxKind.NullKeyword: {
+            return {kind: "primitive", primitive: "null"};
+        }
         case ts.SyntaxKind.TypeReference: {
             let identifier = "";
             let parameters: TypeLike[] = [];
@@ -156,6 +159,20 @@ function extractValueType(
                 }
             }
             return null;
+        }
+        case ts.SyntaxKind.UnionType: {
+            const union: UnionType = {
+                kind: "union",
+                name: "union",
+                types: [],
+            }
+            node.forEachChild(child => {
+                const value = extractValueType(child, source);
+                if (value) {
+                    union.types.push(value);
+                }
+            })
+            return union;
         }
         default: {
             return null;
@@ -305,6 +322,9 @@ function isboolean(data: any): boolean {
 function isundefined(data: any): boolean {
     return typeof data === "undefined";
 }
+function isnull(data: any): boolean {
+    return data === null;
+}
 `
 
 function InlineGenerics(declarations: Declaration[]): Declaration[] {
@@ -394,51 +414,31 @@ function compile(declarations: Declaration[]): string {
         }
     }
 
-    function getTypeValidateClause(key: string, type: TypeLike): string {
+    function getTypeCheckCondition(type: TypeLike, dataReference = "data"): string {
         if (type.kind === "primitive" || type.kind === "reference" || type.kind === "array") {
-            return `
-    if (!${getValidatorFnName(type)}(data.${key})) {
-        return false;
-    }
-            `
+            return `${getValidatorFnName(type)}(${dataReference})`
         }
         else if (type.kind === "string-literal") {
-            return `
-    if (data.${key} !== ${type.value}) {
-        return false;
-    }
-            `
+            return `${dataReference} === ${type.value}`
         }
         else if (type.kind === "union") {
-            return `
-    if (!(${getUnionClause(type)})) {
-        return false;
-    }
-            `
+            return type.types.map(condition => getTypeCheckCondition(condition, dataReference)).join("||")
         }
-        return `FAILED ${type.kind}`
+        else {
+            return `unimplemented type ${type.kind}`;
+        }
     }
 
-    function getUnionClause(union: UnionType) {
-        const separator = union.types.length > 4 ? "\n     ||" : " || ";
-        return union.types.map(type => {
-                        switch (type.kind) {
-                            case "primitive": {
-                                return `is${type.primitive}(data)`
-                            }
-                            case "string-literal": {
-                                if (type.value.startsWith(`"`)) {
-                                    return `data === ${type.value}`
-                                }
-                                else {
-                                    return `is${type.value}(data)`
-                                }
-                            }
-                            default: {
-                                return true;
-                            }
-                        }
-                    }).join(separator)
+    function getTypeValidateClause(key: string, type: TypeLike): string {
+        return `
+    if (!(${getTypeCheckCondition(type, `data.${key}`)})) {
+        return false;
+    }
+        `
+    }
+
+    function getUnionClause(union: UnionType, dataReference = "data") {
+        return getTypeCheckCondition(union, dataReference)
     }
 
     for (const declaration of declarations) {
@@ -488,6 +488,7 @@ function is${declaration.name}(data: any): boolean {
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     const extendedDeclarations = InlineGenerics(declarations);
+    console.info(JSON.stringify(extendedDeclarations.filter(d => d.name === "BaseMeta"), null, 4));
     const validatorSource = compile(extendedDeclarations);
     fs.writeFileSync("./validators.ts", validatorSource);
 }

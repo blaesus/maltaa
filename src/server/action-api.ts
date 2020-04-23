@@ -1,4 +1,4 @@
-import { MaltaaAction } from "../definitions/Actions";
+import { ClientRequest, MaltaaAction } from "../definitions/Actions";
 
 import { register } from "./mappers/register";
 import { createAssortment } from "./mappers/createAssortment";
@@ -13,7 +13,7 @@ import { getMyData } from "./mappers/getMyData";
 import { viewUser } from "./mappers/viewUser";
 import { loadPodiumArticles } from "./mappers/loadPodiumArticles";
 
-export async function routeRequest(request: MaltaaAction): Promise<MaltaaAction> {
+export async function routeRequest(request: ClientRequest): Promise<MaltaaAction> {
     switch (request.type) {
         case "LoadPodiumArticles": {
             return loadPodiumArticles(request);
@@ -60,16 +60,15 @@ export async function routeRequest(request: MaltaaAction): Promise<MaltaaAction>
     }
 }
 
-export async function respond(request: MaltaaAction): Promise<MaltaaAction> {
+export async function respond(request: ClientRequest): Promise<MaltaaAction> {
     let response: MaltaaAction;
     try {
         response = await routeRequest(request);
-    }
-    catch (error) {
+    } catch (error) {
         response = {
             type: "GenericError",
             reason: error.message,
-        }
+        };
     }
     response.meta = {
         ...response.meta,

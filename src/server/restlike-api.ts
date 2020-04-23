@@ -5,11 +5,11 @@ import * as KoaBody from "koa-body";
 import { db, SortedArticleQueryParams } from "./db";
 import { fetchArticle, fetchTag, fetchUser } from "./matters-graphq-api";
 import { API_PORT } from "./server-configs";
-import { MaltaaAction } from "../definitions/Actions";
+import { ClientRequest, MaltaaAction } from "../definitions/Actions";
 import { respond } from "./action-api";
 import { Article, ArticleId, Comment } from "../definitions/Article";
 import { TOKEN_LIFE } from "../settings";
-import { isMaltaaAction } from "../checkers";
+import { isClientRequest, isMaltaaAction } from "../checkers";
 
 function getEntityRequestHandler<T>(
     idFieldName: string,
@@ -117,8 +117,8 @@ async function getArticles(context: Koa.Context, next: any) {
     return next();
 }
 
-function verifyActionForm(data: unknown): MaltaaAction {
-    const ok = isMaltaaAction(data);
+function verifyActionForm(data: unknown): ClientRequest {
+    const ok = isClientRequest(data);
     if (!ok) {
         throw new Error("Malformed");
     }
@@ -134,7 +134,7 @@ async function handleAction(context: Koa.Context, next: any) {
     context.response.type = "json";
 
 
-    async function authenticateFromCookie(request: MaltaaAction, context: Koa.Context): Promise<MaltaaAction> {
+    async function authenticateFromCookie(request: ClientRequest, context: Koa.Context): Promise<ClientRequest> {
         const targetTokenId = context.cookies.get(AUTH_TOKEN_ID_KEY);
         if (!targetTokenId) {
             return request;

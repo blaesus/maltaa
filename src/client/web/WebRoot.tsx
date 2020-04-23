@@ -8,7 +8,7 @@ import "./normalize.css"
 import "./WebRoot.css"
 
 import { PageName } from "./states/uiReducer";
-import { MaltaaAction } from "../../definitions/Actions";
+import { ClientRequest, MaltaaAction } from "../../definitions/Actions";
 import { ClientState, getInitialClientState, reducer } from "./states/reducer";
 
 import { ArticlePage } from "./components/ArticlePage/ArticlePage";
@@ -24,19 +24,20 @@ import { maltaaApi } from "./maltaaApiClient";
 import { USER_URL_SIGIL } from "../../settings";
 import { loadStoredPreference, MaltaaDispatch, serializeToPathName, storePreference } from "./uiUtils";
 
-const remoteActions: MaltaaAction["type"][] = [
-    "LoadPodiumArticles",
-    "ViewUser",
-    "ViewArticle",
-    "Register",
-    "Search",
-    "GetMyData",
-    "CreateAssortment",
-    "UpdateAssortment",
-    "ViewAssortment",
-    "Signin",
-    "SetMyPreferences",
-];
+const clientRequestRecords: {[key in ClientRequest["type"]]: boolean} = {
+    "LoadPodiumArticles": true,
+    "ViewUser": true,
+    "ViewArticle": true,
+    "Register": true,
+    "Search": true,
+    "GetMyData": true,
+    "CreateAssortment": true,
+    "UpdateAssortment": true,
+    "ViewAssortment": true,
+    "Signin": true,
+    "Signout": true,
+    "SetMyPreferences": true,
+};
 
 const pageOptions: OptionList<PageName> = [
     {
@@ -59,11 +60,11 @@ function WebRoot(props: {
     if (DEV) {
         [state, localDispatch] = useReducerInspected(reducer, undefined, () => initialState, "ROOT");
     }
-    const {entities, ui, preferences} = state;
+    const {ui, preferences} = state;
 
     function dispatchWithRemote(action: MaltaaAction) {
         localDispatch(action);
-        if (remoteActions.includes(action.type)) {
+        if (clientRequestRecords.hasOwnProperty(action.type)) {
             const request: MaltaaAction = {
                 ...action,
                 meta: {

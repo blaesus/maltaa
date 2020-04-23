@@ -888,6 +888,21 @@ function isViewAssortment(data: any): boolean {
 }
         
 export 
+function isClientRequest(data: any): boolean {
+    return isLoadPodiumArticles(data)
+    || isViewUser(data)
+    || isViewArticle(data)
+    || isRegister(data)
+    || isSearch(data)
+    || isGetMyData(data)
+    || isCreateAssortment(data)
+    || isUpdateAssortment(data)
+    || isViewAssortment(data)
+    || isSignin(data)
+    || isSignout(data)
+    || isSetMyPreferences(data)
+}
+export 
 function isMaltaaAction(data: any): boolean {
     return isChangePathname(data)
     || isProvideEntities(data)

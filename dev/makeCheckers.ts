@@ -4,6 +4,7 @@ import * as ts from "typescript";
 
 const exportList = [
     "MaltaaAction",
+    "ClientRequest",
     "Assortment",
 ]
 

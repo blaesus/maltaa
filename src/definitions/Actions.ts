@@ -253,6 +253,21 @@ export interface ViewAssortment extends BaseAction {
     assortment: AssortmentUIIdentifier | AssortmentId,
 }
 
+export type ClientRequest =
+    LoadPodiumArticles
+    | ViewUser
+    | ViewArticle
+    | Register
+    | Search
+    | GetMyData
+    | CreateAssortment
+    | UpdateAssortment
+    | ViewAssortment
+    | Signin
+    | Signout
+    | SetMyPreferences
+;
+
 export type MaltaaAction =
     ChangePathname
     | ProvideEntities

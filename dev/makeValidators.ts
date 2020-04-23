@@ -533,7 +533,7 @@ function compile(declarations: Declaration[]): string {
             return `${dataReference} === ${type.value}`
         }
         else if (type.kind === "union") {
-            const delimiter = type.types.length >= 4 ? "\n    ||" : " || "
+            const delimiter = type.types.length >= 4 ? "\n    || " : " || "
             return type.types.map(condition => getTypeCheckCondition(condition, dataReference)).join(delimiter);
         }
         else if (type.kind === "optional") {
@@ -610,7 +610,6 @@ function is${declaration.name}(data: any): boolean {
 function make() {
     const declarations = extractDeclarations("../src/definitions/Actions.ts");
     const extendedDeclarations = InlineGenerics(declarations);
-    console.info(JSON.stringify(extendedDeclarations.filter(d => d.name ==="LoadPodiumArticles"), null, 4));
     const validatorSource = compile(extendedDeclarations);
     fs.writeFileSync("../src/validators.ts", validatorSource);
 }

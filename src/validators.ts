@@ -870,14 +870,14 @@ function isUpdateAssortmentSyncFromUpstreams(data: any): boolean {
         
 function isUpdateAssortment(data: any): boolean {
     return isUpdateAssortmentAddItem(data)
-    ||isUpdateAssortmentDropItem(data)
-    ||isUpdateAssortmentOrderItems(data)
-    ||isUpdateAssortmentEditReview(data)
-    ||isUpdateAssortmentSetPolicy(data)
-    ||isUpdateAssortmentEditTitle(data)
-    ||isUpdateAssortmentEditSubpath(data)
-    ||isUpdateAssortmentEditUpstreams(data)
-    ||isUpdateAssortmentSyncFromUpstreams(data)
+    || isUpdateAssortmentDropItem(data)
+    || isUpdateAssortmentOrderItems(data)
+    || isUpdateAssortmentEditReview(data)
+    || isUpdateAssortmentSetPolicy(data)
+    || isUpdateAssortmentEditTitle(data)
+    || isUpdateAssortmentEditSubpath(data)
+    || isUpdateAssortmentEditUpstreams(data)
+    || isUpdateAssortmentSyncFromUpstreams(data)
 }
 
 function isSignout(data: any): boolean {
@@ -917,30 +917,30 @@ function isViewAssortment(data: any): boolean {
         export 
 function isMaltaaAction(data: any): boolean {
     return isChangePathname(data)
-    ||isProvideEntities(data)
-    ||isSetPodiumCursor(data)
-    ||isViewArticle(data)
-    ||isViewUser(data)
-    ||isGoHome(data)
-    ||isSearch(data)
-    ||isStartAuthenticationDialog(data)
-    ||isLoadPodiumArticles(data)
-    ||isSetMyPreferences(data)
-    ||isGenericError(data)
-    ||isLoadedStoredPreferences(data)
-    ||isCancelDialog(data)
-    ||isStartPreferencesDialog(data)
-    ||isRegister(data)
-    ||isSearchResultArticleRedirect(data)
-    ||isStartMeDialog(data)
-    ||isGoToPage(data)
-    ||isGetMyData(data)
-    ||isCreateAssortment(data)
-    ||isSignout(data)
-    ||isGenericOk(data)
-    ||isUpdateAssortment(data)
-    ||isSignin(data)
-    ||isViewAssortment(data)
+    || isProvideEntities(data)
+    || isSetPodiumCursor(data)
+    || isViewArticle(data)
+    || isViewUser(data)
+    || isGoHome(data)
+    || isSearch(data)
+    || isStartAuthenticationDialog(data)
+    || isLoadPodiumArticles(data)
+    || isSetMyPreferences(data)
+    || isGenericError(data)
+    || isLoadedStoredPreferences(data)
+    || isCancelDialog(data)
+    || isStartPreferencesDialog(data)
+    || isRegister(data)
+    || isSearchResultArticleRedirect(data)
+    || isStartMeDialog(data)
+    || isGoToPage(data)
+    || isGetMyData(data)
+    || isCreateAssortment(data)
+    || isSignout(data)
+    || isGenericOk(data)
+    || isUpdateAssortment(data)
+    || isSignin(data)
+    || isViewAssortment(data)
 }
 
 function isArticleSort(data: any): boolean {
@@ -969,9 +969,9 @@ function isComment(data: any): boolean {
         
 
     if (!(data.state === "active"
-    ||data.state === "archived"
-    ||data.state === "banned"
-    ||data.state === "collapsed")) {
+    || data.state === "archived"
+    || data.state === "banned"
+    || data.state === "collapsed")) {
         return false;
     }
         
@@ -1115,13 +1115,13 @@ function isArticle(data: any): boolean {
         
 function isLicense(data: any): boolean {
     return data === "UNLICENSED"
-    ||data === "NOCLAIM"
-    ||data === "CC BY-SA"
-    ||data === "CC BY-ND"
-    ||data === "CC BY-NC"
-    ||data === "CC BY-NC-SA"
-    ||data === "CC BY-NC-ND"
-    ||data === "CC0"
+    || data === "NOCLAIM"
+    || data === "CC BY-SA"
+    || data === "CC BY-ND"
+    || data === "CC BY-NC"
+    || data === "CC BY-NC-SA"
+    || data === "CC BY-NC-ND"
+    || data === "CC0"
 }
 
 function isArticleVersion(data: any): boolean {
@@ -1386,10 +1386,10 @@ function isUserPageState(data: any): boolean {
         
 function isPageName(data: any): boolean {
     return data === "podium"
-    ||data === "study"
-    ||data === "article"
-    ||data === "user"
-    ||data === "assortment"
+    || data === "study"
+    || data === "article"
+    || data === "user"
+    || data === "assortment"
 }
 
 function isStudyPageState(data: any): boolean {
@@ -1472,9 +1472,9 @@ function isClientUIState(data: any): boolean {
         
 
     if (!(data.dialog === "auth"
-    ||data.dialog === "preferences"
-    ||data.dialog === "me"
-    ||isnull(data.dialog))) {
+    || data.dialog === "preferences"
+    || data.dialog === "me"
+    || isnull(data.dialog))) {
         return false;
     }
         

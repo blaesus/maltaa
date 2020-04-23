@@ -4,6 +4,7 @@ import * as ts from "typescript";
 
 const exportList = [
     "MaltaaAction",
+    "Assortment",
 ]
 
 type PrimitiveType = {
@@ -598,7 +599,8 @@ function is${declaration.name}(data: any): boolean {
         }
 
         if (exportList.includes(declaration.name)) {
-            declarationValidator = `export ` + declarationValidator;
+            declarationValidator = `\nexport ` + declarationValidator;
+            console.info(JSON.stringify(declarationValidator))
         }
         validatorCode += declarationValidator;
     }

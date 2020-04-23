@@ -1,4 +1,5 @@
 import { Assortment } from "./definitions/Assortment";
+import { isAssortment } from "./validators";
 
 const forbiddenSubpathCharacters = ["/", "#", ":", "?"];
 
@@ -8,6 +9,9 @@ export function isWellFormedSubpath(subpath: string): boolean {
 }
 
 export function isWellFormedAssortment(assortment: Assortment): boolean {
+    if (!isAssortment(assortment)) {
+        return false;
+    }
     const {title, subpath} = assortment;
     return (
         title.length > 0

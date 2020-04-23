@@ -886,7 +886,8 @@ function isViewAssortment(data: any): boolean {
     
     return true;
 }
-        export 
+        
+export 
 function isMaltaaAction(data: any): boolean {
     return isChangePathname(data)
     || isProvideEntities(data)
@@ -1575,6 +1576,7 @@ function isAssortmentPolicy(data: any): boolean {
     return true;
 }
         
+export 
 function isAssortment(data: any): boolean {
     if (typeof data !== "object") {
         return false;

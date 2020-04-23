@@ -197,11 +197,7 @@ function WebRoot(props: {
                     }}
                 />
             </div>
-            <Podium
-                page={page.podium}
-                state={state}
-                dispatch={dispatch}
-            />
+            <Podium state={state} dispatch={dispatch}/>
             <Study state={state} dispatch={dispatch}/>
             <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state}/>
             <AssortmentPage state={state} dispatch={dispatch}/>

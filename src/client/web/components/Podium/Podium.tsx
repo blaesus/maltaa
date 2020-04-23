@@ -10,12 +10,10 @@ import { MaltaaDispatch } from "../../uiUtils";
 import { ArticleList } from "../ArticleList/ArticleList";
 
 export function Podium(props: {
-    page: PodiumPageState,
     state: ClientState,
     dispatch: MaltaaDispatch,
 }) {
-    const {dispatch, page, state} = props;
-    const {sort, period, backtrack} = state.ui.pages.podium;
+    const {dispatch, state} = props;
 
     if (state.ui.pages.current !== "podium") {
         return null;

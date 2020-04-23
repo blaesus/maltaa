@@ -377,7 +377,7 @@ function InlineGenerics(declarations: Declaration[]): Declaration[] {
 }
 
 function compile(declarations: Declaration[]): string {
-    let result = `${literalValidator}${primitiveValidators}`;
+    let validatorCode = `${literalValidator}${primitiveValidators}`;
 
     function getValidatorFnName(type: TypeLike): string {
         if (type.kind === "primitive") {
@@ -420,6 +420,7 @@ function compile(declarations: Declaration[]): string {
     }
 
     function getUnionClause(union: UnionType) {
+        const separator = union.types.length > 4 ? "\n     ||" : " || ";
         return union.types.map(type => {
                         switch (type.kind) {
                             case "primitive": {
@@ -427,7 +428,7 @@ function compile(declarations: Declaration[]): string {
                             }
                             case "string-literal": {
                                 if (type.value.startsWith(`"`)) {
-                                    return `is(${type.value})(data)`
+                                    return `data === ${type.value}`
                                 }
                                 else {
                                     return `is${type.value}(data)`
@@ -437,20 +438,20 @@ function compile(declarations: Declaration[]): string {
                                 return true;
                             }
                         }
-                    }).join("\n    ||")
+                    }).join(separator)
     }
 
     for (const declaration of declarations) {
         switch (declaration.kind) {
             case "alias": {
                 if (declaration.meaning.kind === "primitive") {
-                    result += `const is${declaration.name} = is${declaration.meaning.primitive};`
+                    validatorCode += `const is${declaration.name} = is${declaration.meaning.primitive};`
                 }
                 else if (declaration.meaning.kind === "reference") {
-                    result += `const is${declaration.name} = is${declaration.meaning.reference.identifier};`
+                    validatorCode += `const is${declaration.name} = is${declaration.meaning.reference.identifier};`
                 }
                 else if (declaration.meaning.kind === "union") {
-                    result += `
+                    validatorCode += `
 function is${declaration.name}(data: any): boolean {
     return ${getUnionClause(declaration.meaning)}
 }
@@ -459,7 +460,7 @@ function is${declaration.name}(data: any): boolean {
                 break;
             }
             case "interface": {
-                result += `
+                validatorCode += `
 function is${declaration.name}(data: any): boolean {
     if (typeof data !== "object") {
         return false;
@@ -481,7 +482,7 @@ function is${declaration.name}(data: any): boolean {
 
         }
     }
-    return result;
+    return validatorCode;
 }
 
 function make() {

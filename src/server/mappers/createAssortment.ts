@@ -39,6 +39,12 @@ export async function createAssortment(request: CreateAssortment): Promise<Malta
     let items: AssortmentItem[] = [];
     if (request.upstreams.length) {
         const upstreams = await db.assortment.findByIds(request.upstreams);
+        if (upstreams.some(upstream => !upstream.policy.allowForking)) {
+            return {
+                type: "GenericError",
+                reason: "Forking forbidden for some upstream",
+            };
+        }
         items = upstreams.map(upstream => upstream.items).flat();
     }
     const newAssortment: Assortment = {

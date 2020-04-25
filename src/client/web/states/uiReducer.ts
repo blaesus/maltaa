@@ -4,6 +4,8 @@ import { AssortmentUIIdentifier, parsePathName } from "../uiUtils";
 import { ArticleId } from "../../../definitions/Article";
 import { Preferences } from "../../../definitions/Preferences";
 import { INFINITY_JSON } from "../../../utils";
+import { UserPageTab } from "../../../definitions/UI";
+import { defaultUserTab } from "../../uiSettings";
 
 export interface PaginationStatus {
     nextPage: number,
@@ -46,6 +48,7 @@ export interface ArticlePageState {
 
 export interface UserPageState {
     name: string | null,
+    tab: UserPageTab,
     articles: ArticleListSetting,
 }
 
@@ -93,6 +96,7 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             },
             user: {
                 name: "",
+                tab: defaultUserTab,
                 articles: getEmptyArticleListState(),
             },
             study: {},
@@ -224,6 +228,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                             ...ui.pages,
                             current: "user",
                             user: {
+                                ...ui.pages.user,
                                 name: pathState.username,
                                 articles: getEmptyArticleListState(),
                             }
@@ -268,8 +273,10 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                     ...ui.pages,
                     current: "user",
                     user: {
+                        ...ui.pages.user,
                         name: action.username,
                         articles: getEmptyArticleListState(),
+                        tab: action.tab || ui.pages.user.tab,
                     },
                 }
             };

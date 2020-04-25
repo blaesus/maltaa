@@ -14,6 +14,7 @@ import { AccountId, AccountSelf } from "./MaltaaAccount";
 import { Article, ArticleId, Comment } from "./Article";
 import { UserId, UserPublic } from "./User";
 import { Preferences } from "./Preferences";
+import { UserPageTab } from "./UI";
 
 export interface BaseMeta {
 
@@ -81,6 +82,7 @@ export interface ViewArticle extends BaseAction {
 export interface ViewUser extends BaseAction {
     type: "ViewUser",
     username: string,
+    tab?: UserPageTab,
 }
 
 export interface GoHome extends BaseAction {

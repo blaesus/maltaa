@@ -11,6 +11,7 @@ import { Article, ArticleId, CommentId, Comment } from "../../../../../definitio
 import { ObjectMap } from "../../../../../definitions/Objects";
 import { UserId, UserPublic } from "../../../../../definitions/User";
 import { Preferences } from "../../../../../definitions/Preferences";
+import { CommentContent } from "./CommentContent";
 
 type DisplayMode = "peek" | "extend-all" | "fold";
 
@@ -139,18 +140,13 @@ export function CommentTree(props: {
             />
             {
                 rootAsComment && author &&
-                <div
-                    className="Content"
-                    data-prefer-indent={heuristicallyShouldIndent(rootAsComment.content, myContentWidth) || undefined}
-                    ref={contentDom}
-                >
-                    <HtmlRender html={rootAsComment.content} />
-                    <Byline
-                        author={author}
-                        publishTime={rootAsComment.createdAt}
-                        onAuthorClick={() => props.onUserTagClick && author && props.onUserTagClick(author.userName)}
-                    />
-                </div>
+                <CommentContent
+                    comment={rootAsComment}
+                    author={author}
+                    treeWidth={myContentWidth}
+                    domRef={contentDom}
+                    onAuthorClick={() => props.onUserTagClick && author && props.onUserTagClick(author.userName)}
+                />
             }
             {
                 subCommentsForDisplay.map((comment) =>

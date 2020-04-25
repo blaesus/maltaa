@@ -1,23 +1,36 @@
 import * as React from "react";
+import { useState } from "react";
 
 import "./UserPage.css";
 
-import { UserId, UserPublic } from "../../../../definitions/User";
+import { UserId } from "../../../../definitions/User";
+import { ClientState } from "../../states/reducer";
+import { MaltaaDispatch } from "../../uiUtils";
+import { ArticleSort } from "../../../../sorts";
+import { UserPageTab } from "../../../../definitions/UI";
 
 import { AnchorButton } from "../AnchorButton/AnchorButton";
+import { Chooser, OptionList } from "../Chooser/Chooser";
+import { CommentContent } from "../ArticlePage/CommentTree/CommentContent";
+import { AssortmentList } from "../AssortmentEditor/AssortmentList";
+import { ArticleList } from "../ArticleList/ArticleList";
+import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorControl";
 
 import { USER_URL_SIGIL } from "../../../../settings";
 import { INFINITY_JSON, readableDateTime } from "../../../../utils";
-import { AssortmentList } from "../AssortmentEditor/AssortmentList";
-import { ClientState } from "../../states/reducer";
-import { MaltaaDispatch } from "../../uiUtils";
-import { useEffect, useState } from "react";
-import { ArticleList } from "../ArticleList/ArticleList";
-import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorControl";
-import { ArticleSort } from "../../../../sorts";
 import { userIdToSerial } from "../../../../mattersSpecifics";
 
-type UserPageTab = "articles" | "comments";
+
+const TabOptions: OptionList<UserPageTab> = [
+    {
+        value: "articles",
+        label: "文章",
+    },
+    {
+        value: "comments",
+        label: "評論",
+    },
+];
 
 export function UserPage(props: {
     state: ClientState,
@@ -25,13 +38,13 @@ export function UserPage(props: {
 }) {
     const {state, dispatch} = props;
     const {entities, ui: {pages}, preferences} = state;
-    const [tab, setTab] = useState<UserPageTab>("articles");
+    const tab = pages.user.tab;
     const [sort, setSort] = useState<ArticleSort>("recent");
     const [period, setPeriod] = useState<number>(INFINITY_JSON);
 
-    const user = Object.values(entities.users).find(user => user.userName === pages.user.name)
+    const user = Object.values(entities.users).find(user => user.userName === pages.user.name);
 
-    const onToggleScreen= (userId: UserId) => {
+    const onToggleScreen = (userId: UserId) => {
         const currentlyScreened = state.preferences.data.screenedUsers.includes(userId);
         dispatch({
             type: "SetMyPreferences", preferencesPatch: {
@@ -40,10 +53,10 @@ export function UserPage(props: {
                     screenedUsers:
                         currentlyScreened
                             ? state.preferences.data.screenedUsers.filter(u => u !== userId)
-                            : [...state.preferences.data.screenedUsers, userId]
-                }
-            }
-        })
+                            : [...state.preferences.data.screenedUsers, userId],
+                },
+            },
+        });
     };
 
     if (pages.current !== "user") {
@@ -79,17 +92,47 @@ export function UserPage(props: {
                 dispatch={dispatch}
             />
 
-            {
-                tab === "articles" &&
-                <ArticleListCursorControl
-                    mode="user"
-                    listSetting={state.ui.pages.user.articles}
-                    dispatch={dispatch}
-                >
-                    <ArticleList state={state} mode="user" dispatch={dispatch} />
-                </ArticleListCursorControl>
-            }
-
+            <section>
+                <Chooser
+                    options={TabOptions}
+                    chosen={tab}
+                    onChoose={chosenTab => {
+                        dispatch({
+                            type: "ViewUser",
+                            username: user.userName,
+                            tab: chosenTab,
+                        })
+                    }}
+                />
+                {
+                    tab === "articles" &&
+                    <ArticleListCursorControl
+                        mode="user"
+                        listSetting={state.ui.pages.user.articles}
+                        dispatch={dispatch}
+                    >
+                        <ArticleList state={state} mode="user" dispatch={dispatch}/>
+                    </ArticleListCursorControl>
+                }
+                {
+                    tab === "comments" &&
+                    <div>
+                        {
+                            Object.values(state.entities.comments)
+                                  .filter(c => c.author === user.id)
+                                .map(c => (
+                                    <CommentContent
+                                        key={c.id}
+                                        comment={c}
+                                        author={user}
+                                        treeWidth={0}
+                                        onAuthorClick={() => {}}
+                                    />
+                                ))
+                        }
+                    </div>
+                }
+            </section>
         </div>
-    )
+    );
 }

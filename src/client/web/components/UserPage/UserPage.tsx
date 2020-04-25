@@ -71,7 +71,14 @@ export function UserPage(props: {
                     {preferences.data.screenedUsers.includes(user.id) ? "取消屏蔽" : "屏蔽"}
                 </AnchorButton>
             </div>
-            
+
+            <AssortmentList
+                entityId={user.id}
+                entityType={"user"}
+                state={state}
+                dispatch={dispatch}
+            />
+
             {
                 tab === "articles" &&
                 <ArticleListCursorControl
@@ -82,13 +89,6 @@ export function UserPage(props: {
                     <ArticleList state={state} mode="user" dispatch={dispatch} />
                 </ArticleListCursorControl>
             }
-
-            <AssortmentList
-                entityId={user.id}
-                entityType={"user"}
-                state={state}
-                dispatch={dispatch}
-            />
 
         </div>
     )

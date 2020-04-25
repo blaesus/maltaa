@@ -82,6 +82,7 @@ async function findActiveArticles(params: ArticleQueryInternalParams): Promise<A
                             .sort(sortConditions)
                             .skip(pageNumber * pageSize)
                             .limit(pageSize)
+                            .project({_id: 0})
                             .toArray();
     }
     else {
@@ -107,6 +108,8 @@ function paramsConvert(sortConditions: {}, params: SortedArticleQueryParams): Ar
         author: params.author,
     };
 }
+
+const skipInternalId = {_id: 0};
 
 const mongodb = {
     async connect() {
@@ -247,6 +250,7 @@ const mongodb = {
                                         { $match: constructQuery(conditions) },
                                         { $sample: {size: count}},
                                     ])
+                                    .project(skipInternalId)
                                     .toArray();
             }
             else {
@@ -312,7 +316,10 @@ const mongodb = {
         },
         async findActiveByIds(ids: TransactionMaltaaId[]): Promise<Transaction[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("transactions").find({mid: {$in: ids}}).toArray();
+                return mattersSyncDB.collection("transactions")
+                                    .find({mid: {$in: ids}})
+                                    .project(skipInternalId)
+                                    .toArray();
             }
             else {
                 return [];
@@ -322,7 +329,7 @@ const mongodb = {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("transactions")
                              .find()
-                             .project({mid: 1})
+                             .project({mid: 1, ...skipInternalId})
                              // .map((tx: Transaction) => tx.mid)
                              .toArray();
             }
@@ -447,7 +454,10 @@ const mongodb = {
         },
         async findByIds(ids: UserId[]): Promise<UserPublic[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("users").find({id: {$in: ids}}).toArray();
+                return mattersSyncDB.collection("users")
+                                    .find({id: {$in: ids}})
+                                    .project(skipInternalId)
+                                    .toArray();
             }
             else {
                 return [];
@@ -455,7 +465,9 @@ const mongodb = {
         },
         async findByUserName(userName: UserId): Promise<UserPublic | null> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("users").findOne({userName});
+                return mattersSyncDB.collection("users")
+                                    .findOne({userName}, {projection: skipInternalId})
+                    ;
             }
             else {
                 return null;
@@ -463,7 +475,10 @@ const mongodb = {
         },
         async getAllIds(): Promise<UserId[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("users").find().project({id: 1}).map((user: UserPublic) => user.id).toArray();
+                return mattersSyncDB.collection("users").find()
+                                    .project({id: 1})
+                                    .map((user: UserPublic) => user.id)
+                                    .toArray();
             }
             else {
                 return [];
@@ -501,7 +516,10 @@ const mongodb = {
         },
         async findActiveByIds(ids: TagId[]): Promise<Tag[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("tags").find({id: {$in: ids}}).toArray();
+                return mattersSyncDB.collection("tags")
+                                    .find({id: {$in: ids}})
+                                    .project(skipInternalId)
+                                    .toArray();
             }
             else {
                 return [];
@@ -509,7 +527,11 @@ const mongodb = {
         },
         async getAllIds(): Promise<TagId[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("tags").find().map((tag: Tag) => tag.id).toArray();
+                return mattersSyncDB.collection("tags")
+                                    .find()
+                                    .project({id: 1})
+                                    .map((tag: Tag) => tag.id)
+                                    .toArray();
             }
             else {
                 return [];
@@ -603,17 +625,17 @@ const mongodb = {
         async findByUserName(username: string): Promise<MaltaaAccount | null> {
             return mainDB && mainDB.collection("accounts").findOne({
                 username,
-            });
+            }, {projection: skipInternalId});
         },
         async findById(id: AccountId): Promise<MaltaaAccount | null> {
             return mainDB && mainDB.collection("accounts").findOne({
                 id,
-            });
+            }, {projection: skipInternalId});
         },
         async findByMattersId(id: UserId): Promise<MaltaaAccount | null> {
             return mainDB && mainDB.collection("accounts").findOne({
                 "matters.id": id,
-            });
+            }, {projection: skipInternalId});
         },
         async exists(id: string): Promise<boolean> {
             if (mainDB) {
@@ -653,13 +675,13 @@ const mongodb = {
         async findById(id: AssortmentId): Promise<Assortment | null> {
             return mainDB && mainDB.collection("assortments").findOne({
                 id,
-            });
+            }, {projection: skipInternalId});
         },
         async findByIds(ids: AssortmentId[]): Promise<Assortment[]> {
             if (mainDB) {
                 return mainDB.collection("assortments").find({
                     id: {$in: ids}
-                }).toArray();
+                }).project(skipInternalId).toArray();
             }
             else {
                 return [];
@@ -672,7 +694,7 @@ const mongodb = {
                 subpath,
                 owner,
                 contentType,
-            });
+            }, {projection: skipInternalId});
         },
         async findByOwners(owners: UserId[]): Promise<Assortment[]> {
             if (!mainDB) {
@@ -680,13 +702,13 @@ const mongodb = {
             }
             return mainDB.collection("assortments").find({
                 owner: {$in: owners},
-            }).toArray();
+            }).project(skipInternalId).toArray();
         },
         async findByItemIds(ids: string[]): Promise<Assortment[]> {
             if (mainDB) {
                 return mainDB.collection("assortments").find({
                     "items.id": {$in: ids},
-                }).toArray();
+                }).project(skipInternalId).toArray();
             }
             else {
                 return [];
@@ -696,7 +718,7 @@ const mongodb = {
             if (mainDB) {
                 return mainDB.collection("assortments").find({
                     "upstreams": {$in: upstreams},
-                }).toArray();
+                }).project(skipInternalId).toArray();
             }
             else {
                 return [];

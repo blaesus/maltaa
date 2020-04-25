@@ -1,6 +1,6 @@
 import { Article, Comment } from "./definitions/Article";
 
-export type ArticleSort = "comments" | "recent" | "old" | "appreciationAmount"
+export type ArticleSort = "comments" | "recent" | "old" | "appreciationAmount" | "random"
 
 export type CommentSort = "recent" | "old"
 
@@ -14,4 +14,5 @@ export const articleSorts: {[key in ArticleSort]: (a: Article, b: Article) => nu
     recent: (a, b) => b.createdAt - a.createdAt,
     old: (a, b) => a.createdAt - b.createdAt,
     appreciationAmount: (a, b) => b.derived.appreciationAmount - a.derived.appreciationAmount,
+    random: (a, b) => Math.random() - 0.5,
 };

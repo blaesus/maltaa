@@ -57,6 +57,14 @@ async function queryArticles(params: {
             });
             break;
         }
+        case "random": {
+            articles = await db.article.findRandomActive(undefined, {
+                earliest,
+                latest,
+                author,
+            });
+            break;
+        }
         default: {
             articles = await db.article.findActiveByRecency({
                 pageNumber,

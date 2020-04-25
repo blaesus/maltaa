@@ -25,47 +25,57 @@ let mainDB: Db | null = null;
 let mattersSyncDB: Db | null = null;
 let activityDB: Db | null = null;
 
-interface ArticleQueryInternalParams {
-    sortConditions: {},
-    pageNumber: number,
-    pageSize: number,
+interface FilterConditions {
     earliest?: number,
     latest?: number,
     author?: UserId | null,
+}
+
+interface ArticleQueryInternalParams extends FilterConditions {
+    sortConditions: {},
+    pageNumber: number,
+    pageSize: number,
 }
 
 const fallbackParams: SortedArticleQueryParams = {
     pageNumber: 0,
 }
 
+function constructQuery(conditions: FilterConditions): any {
+    const {earliest, latest, author} = conditions;
+    const activeQuery = {state: "active"};
+    const earliestCondition = {$gt: earliest};
+    const latestCondition = {$lt: latest};
+
+    let query: any = {...activeQuery};
+
+    if (earliest && latest) {
+        query = {
+            $and: [
+                activeQuery,
+                {createdAt: earliestCondition},
+                {createdAt: latestCondition},
+            ],
+        };
+    }
+    else if (earliest) {
+        query.createdAt = earliestCondition;
+    }
+    else if (latest) {
+        query.createdAt = latestCondition;
+    }
+
+    if (author) {
+        query.author = author;
+    }
+
+    return query;
+}
+
 async function findActiveArticles(params: ArticleQueryInternalParams): Promise<Article[]> {
-    const {sortConditions, pageNumber, pageSize, earliest, latest, author} = params;
+    const {sortConditions, pageNumber, pageSize} = params;
     if (mattersSyncDB) {
-        const activeQuery = {state: "active"};
-        const earliestCondition = {$gt: earliest};
-        const latestCondition = {$lt: latest};
-
-        let query: any = {...activeQuery};
-
-        if (earliest && latest) {
-            query = {
-                $and: [
-                    activeQuery,
-                    {createdAt: earliestCondition},
-                    {createdAt: latestCondition},
-                ],
-            };
-        }
-        else if (earliest) {
-            query.createdAt = earliestCondition;
-        }
-        else if (latest) {
-            query.createdAt = latestCondition;
-        }
-
-        if (author) {
-            query.author = author;
-        }
+        const query = constructQuery(params);
 
         return mattersSyncDB.collection("articles")
                             .find(query)
@@ -204,11 +214,14 @@ const mongodb = {
             }
         },
         async findActiveById(id: string): Promise<Article | null> {
-            return mattersSyncDB && mattersSyncDB.collection("articles").findOne({id, state: "active"});
+            return mattersSyncDB && mattersSyncDB.collection("articles")
+                                                 .findOne({id, state: "active"});
         },
         async findActiveByIds(ids: string[]): Promise<Article[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("articles").find({id: {$in: ids}, state: "active"}).toArray();
+                return mattersSyncDB.collection("articles")
+                                    .find({id: {$in: ids}, state: "active"})
+                                    .toArray();
             }
             else {
                 return [];
@@ -216,17 +229,22 @@ const mongodb = {
         },
         async findActiveByMHs(mhs: string[]): Promise<Article[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("articles").find({mediaHash: {$in: mhs}, state: "active"}).toArray();
+                return mattersSyncDB.collection("articles")
+                                    .find({mediaHash: {$in: mhs}, state: "active"})
+                                    .toArray();
             }
             else {
                 return [];
             }
         },
-        async findRandomActive(count: number): Promise<Article[]> {
+        async findRandomActive(
+            count: number = DEFAULT_PAGE_SIZE,
+            conditions: FilterConditions = {},
+        ): Promise<Article[]> {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("articles")
                                     .aggregate([
-                                        { $match: { state : "active" } },
+                                        { $match: constructQuery(conditions) },
                                         { $sample: {size: count}},
                                     ])
                                     .toArray();

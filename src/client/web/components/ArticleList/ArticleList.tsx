@@ -8,7 +8,7 @@ import { ArticleListSetting, PageName } from "../../states/uiReducer";
 
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 
-import { daysAgoInEpoch } from "../../../../utils";
+import { daysAgoInEpoch, dedupeById } from "../../../../utils";
 import { ArticleSort, articleSorts } from "../../../../sorts";
 import { MaltaaDispatch } from "../../uiUtils";
 import { UserId } from "../../../../definitions/User";
@@ -86,32 +86,45 @@ export function ArticleList(props: {
     useLoadArticleList(state.ui.pages.current, page, authorId, dispatch);
 
     let articlesForDisplay = Object.values(articles)
-                                     .filter(a =>
-                                         a.createdAt >= daysAgoInEpoch(period + backtrack)
-                                         && a.createdAt <= daysAgoInEpoch(backtrack)
-                                         && !blockedUsers.includes(a.author),
-                                     );
+                                   .filter(a =>
+                                       a.createdAt >= daysAgoInEpoch(period + backtrack)
+                                       && a.createdAt <= daysAgoInEpoch(backtrack)
+                                       && !blockedUsers.includes(a.author),
+                                   );
 
     if (mode === "user" && state.ui.pages.user.name) {
         articlesForDisplay = articlesForDisplay.filter(a => a.author === authorId);
     }
 
+    if (sort === "random") {
+        articlesForDisplay = articlesForDisplay.filter(a => page.pagination.receivedItems.includes(a.id));
+    }
+    else {
+        articlesForDisplay = articlesForDisplay.sort(articleSorts[sort])
+                                               .filter(a =>
+                                                   a.createdAt >= daysAgoInEpoch(period + backtrack)
+                                                   && a.createdAt <= daysAgoInEpoch(backtrack)
+                                                   && !blockedUsers.includes(a.author),
+                                               )
+                                               .slice(0, page.pagination.receivedItems.length);
+    }
+
+    articlesForDisplay = dedupeById(articlesForDisplay);
+
     return (
         <div className="ArticleList">
             {
-                articlesForDisplay.sort(articleSorts[sort])
-                                  .slice(0, page.pagination.receivedItems)
-                                  .map(
-                                      article => (
-                                          <ArticleSummary
-                                              key={article.id}
-                                              article={article}
-                                              author={users[article.author]}
-                                              hoverPreview={state.preferences.podium.hoverPreview}
-                                              onClick={() => dispatch({type: "ViewArticle", article: article.id})}
-                                          />
-                                      ),
-                                  )
+                articlesForDisplay.map(
+                    article => (
+                        <ArticleSummary
+                            key={article.id}
+                            article={article}
+                            author={users[article.author]}
+                            hoverPreview={state.preferences.podium.hoverPreview}
+                            onClick={() => dispatch({type: "ViewArticle", article: article.id})}
+                        />
+                    ),
+                )
             }
             <a
                 className="More"

@@ -5,7 +5,6 @@ import { ArticlePeriodChooser, ArticleSortChooser } from "../PreferenceChoosers"
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 
 import { DAY, readableDateTime } from "../../../../utils";
-import { ArticleSort } from "../../../../sorts";
 import { ArticleListSetting } from "../../states/uiReducer";
 import { MaltaaDispatch } from "../../uiUtils";
 
@@ -46,7 +45,7 @@ export function ArticleListCursorControl(props: {
             period,
             backtrack: Math.max(backtrack - delta, 0),
         });
-    }
+    };
 
     return (
         <div className="ArticleListCursorControl">
@@ -105,20 +104,20 @@ export function ArticleListCursorControl(props: {
                     >
                         {">>"}
                     </AnchorButton>
-                    {
-                        backtrack !== 0 &&
-                        <AnchorButton onClick={() => {
-                            dispatch({
-                                type: "SetArticleCursor",
-                                mode,
-                                sort,
-                                period,
-                                backtrack: 0,
-                            });
-                        }}>
-                            {"今"}
-                        </AnchorButton>
-                    }
+                        {
+                            backtrack !== 0 &&
+                            <AnchorButton onClick={() => {
+                                dispatch({
+                                    type: "SetArticleCursor",
+                                    mode,
+                                    sort,
+                                    period,
+                                    backtrack: 0,
+                                });
+                            }}>
+                                {"今"}
+                            </AnchorButton>
+                        }
                 </span>
                 }
             </nav>

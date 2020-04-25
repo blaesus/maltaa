@@ -485,7 +485,11 @@ function isSearchResultArticleRedirect(data: any): boolean {
         return false;
     }
                 
-    if (!(data.type === "SearchResultArticleRedirect")) {
+    if (!(data.type === "SearchResult")) {
+        return false;
+    }
+
+    if (!(data.subtype === "ArticleRedirect")) {
         return false;
     }
 
@@ -496,6 +500,8 @@ function isSearchResultArticleRedirect(data: any): boolean {
     return true;
 }
         
+const isSearchResult = isSearchResultArticleRedirect;
+
 function isGoToPage(data: any): boolean {
     if (typeof data !== "object") {
         return false;
@@ -927,7 +933,7 @@ function isMaltaaAction(data: any): boolean {
     || isCancelDialog(data)
     || isStartPreferencesDialog(data)
     || isRegister(data)
-    || isSearchResultArticleRedirect(data)
+    || isSearchResult(data)
     || isStartMeDialog(data)
     || isGoToPage(data)
     || isGetMyData(data)
@@ -943,6 +949,7 @@ function isArticleSort(data: any): boolean {
     || data === "recent"
     || data === "old"
     || data === "appreciationAmount"
+    || data === "random"
 }
 function isCommentSort(data: any): boolean {
     return data === "recent" || data === "old"

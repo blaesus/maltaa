@@ -7,7 +7,7 @@ import { INFINITY_JSON } from "../../../utils";
 
 export interface PaginationStatus {
     nextPage: number,
-    receivedItems: number,
+    receivedItems: ArticleId[],
     loading: boolean,
     exhausted: boolean,
 }
@@ -15,7 +15,7 @@ export interface PaginationStatus {
 export function getEmptyPaginationStatus(): PaginationStatus {
     return {
         nextPage: 0,
-        receivedItems: 0,
+        receivedItems: [],
         loading: false,
         exhausted: false,
     }
@@ -116,7 +116,7 @@ function handleProvideEntities(
             if (request.author) {
                 const pageExpected = ui.pages.user.articles.pagination.nextPage === request.pageNumber;
                 if (pageExpected) {
-                    const articleCount = response.data?.articles ? response.data?.articles.length : 0;
+                    const newArticles = response.data?.articles || [];
                     nextUi.pages = {
                         ...ui.pages,
                         user: {
@@ -126,9 +126,12 @@ function handleProvideEntities(
                                 pagination: {
                                     ...ui.pages.user.articles.pagination,
                                     loading: false,
-                                    exhausted: articleCount === 0,
+                                    exhausted: !newArticles.length,
                                     nextPage: ui.pages.user.articles.pagination.nextPage + 1,
-                                    receivedItems: ui.pages.user.articles.pagination.receivedItems + articleCount
+                                    receivedItems: [
+                                        ...ui.pages.user.articles.pagination.receivedItems,
+                                        ...(newArticles.map(a => a.id))
+                                    ],
                                 }
                             }
                         }
@@ -138,16 +141,19 @@ function handleProvideEntities(
             else {
                 const pageExpected = ui.pages.podium.pagination.nextPage === request.pageNumber;
                 if (pageExpected) {
-                    const articleCount = response.data?.articles ? response.data?.articles.length : 0;
+                    const newArticles = response.data?.articles || [];
                     nextUi.pages = {
                         ...ui.pages,
                         podium: {
                             ...ui.pages.podium,
                             pagination: {
                                 loading: false,
-                                exhausted: articleCount === 0,
+                                exhausted: !newArticles.length,
                                 nextPage: ui.pages.podium.pagination.nextPage + 1,
-                                receivedItems: ui.pages.podium.pagination.receivedItems + articleCount
+                                receivedItems: [
+                                    ...ui.pages.podium.pagination.receivedItems,
+                                    ...(newArticles.map(a => a.id))
+                                ],
                             }
                         }
                     };

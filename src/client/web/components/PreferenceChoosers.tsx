@@ -20,6 +20,10 @@ const sortOptions: OptionList<ArticleSort> = [
         value: "old",
         label: "最早",
     },
+    {
+        value: "random",
+        label: "隨緣",
+    },
 ];
 
 const periodOptions: OptionList<number> = [

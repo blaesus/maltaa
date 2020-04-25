@@ -109,8 +109,6 @@ export function ArticleList(props: {
                                                .slice(0, page.pagination.receivedItems.length);
     }
 
-    articlesForDisplay = dedupeById(articlesForDisplay);
-
     return (
         <div className="ArticleList">
             {

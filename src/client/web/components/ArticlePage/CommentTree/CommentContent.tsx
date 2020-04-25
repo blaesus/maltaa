@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import "./CommentContent.css";
+
 import { Comment } from "../../../../../definitions/Article";
 
 import { HtmlRender } from "../../HtmlRender/HtmlRender";

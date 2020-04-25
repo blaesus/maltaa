@@ -3,12 +3,12 @@ import * as React from "react";
 import "./CommentContent.css";
 
 import { Comment } from "../../../../../definitions/Article";
+import { UserPublic } from "../../../../../definitions/User";
 
 import { HtmlRender } from "../../HtmlRender/HtmlRender";
 import { Byline } from "../../Byline/Byline";
 
 import { heuristicallyShouldIndent } from "./shouldIndent";
-import { UserPublic } from "../../../../../definitions/User";
 
 export function CommentContent(props: {
     comment: Comment,

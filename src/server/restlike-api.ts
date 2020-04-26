@@ -5,11 +5,11 @@ import * as KoaBody from "koa-body";
 import { db, SortedArticleQueryParams } from "./db";
 import { fetchArticle, fetchComment, fetchTag, fetchUser } from "./matters-graphq-api";
 import { API_PORT } from "./server-configs";
-import { ClientRequest, MaltaaAction } from "../definitions/Actions";
+import { ClientRequest } from "../definitions/Actions";
 import { respond } from "./action-api";
 import { Article, ArticleId, Comment } from "../definitions/Article";
 import { TOKEN_LIFE } from "../settings";
-import { isClientRequest, isMaltaaAction } from "../checkers";
+import { isClientRequest } from "../checkers";
 
 function getEntityRequestHandler<T>(
     idFieldName: string,

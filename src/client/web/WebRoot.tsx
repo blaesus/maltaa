@@ -7,8 +7,8 @@ import { StateInspector, useReducer as useReducerInspected } from "reinspect"
 import "./normalize.css"
 import "./WebRoot.css"
 
-import { PageName } from "./states/uiReducer";
 import { ClientRequest, MaltaaAction } from "../../definitions/Actions";
+import { PageName } from "../../definitions/UI";
 import { ClientState, getInitialClientState, reducer } from "./states/reducer";
 
 import { ArticlePage } from "./components/ArticlePage/ArticlePage";

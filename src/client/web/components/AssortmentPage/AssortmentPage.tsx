@@ -17,7 +17,6 @@ import { assortmentNames, hasIntersection, readableDateTime } from "../../../../
 import {
     assortmentPath,
     assortmentPathPrefix,
-    AssortmentUIIdentifier,
     findAssortmentFromState,
     MaltaaDispatch,
 } from "../../uiUtils";
@@ -25,6 +24,7 @@ import { AssortmentCreator } from "../AssortmentEditor/AssortmentCreator";
 import { AssortmentSummary } from "../AssortmentSummary/AssortmentSummary";
 import { AssortmentSummaryConnected } from "../AssortmentSummary/AssortmentSummaryConnected";
 import { EntitiesState } from "../../states/entitiesReducer";
+import { AssortmentUIIdentifier } from "../../../../definitions/UI";
 
 function AssortmentItemCard(props: {
     item: AssortmentItem,

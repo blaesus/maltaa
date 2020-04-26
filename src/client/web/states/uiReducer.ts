@@ -1,10 +1,10 @@
 import { MaltaaAction, ProvideEntities } from "../../../definitions/Actions";
 import { ArticleSort } from "../../../sorts";
-import { AssortmentUIIdentifier, parsePathName } from "../uiUtils";
+import { parsePathName } from "../uiUtils";
 import { ArticleId } from "../../../definitions/Article";
 import { Preferences } from "../../../definitions/Preferences";
 import { INFINITY_JSON } from "../../../utils";
-import { UserPageTab } from "../../../definitions/UI";
+import { AssortmentUIIdentifier, PageName, UserPageTab } from "../../../definitions/UI";
 import { defaultUserTab } from "../../uiSettings";
 
 export interface PaginationStatus {
@@ -20,7 +20,7 @@ export function getEmptyPaginationStatus(): PaginationStatus {
         receivedItems: [],
         loading: false,
         exhausted: false,
-    }
+    };
 }
 
 export interface ArticleListSetting {
@@ -36,7 +36,7 @@ export function getEmptyArticleListState(): ArticleListSetting {
         period: INFINITY_JSON,
         backtrack: 0,
         pagination: getEmptyPaginationStatus(),
-    }
+    };
 }
 
 export interface PodiumPageState extends ArticleListSetting {
@@ -51,13 +51,6 @@ export interface UserPageState {
     tab: UserPageTab,
     articles: ArticleListSetting,
 }
-
-export type PageName =
-    "podium"
-    | "study"
-    | "article"
-    | "user"
-    | "assortment"
 
 export interface StudyPageState {
 
@@ -134,12 +127,12 @@ function handleProvideEntities(
                                     nextPage: ui.pages.user.articles.pagination.nextPage + 1,
                                     receivedItems: [
                                         ...ui.pages.user.articles.pagination.receivedItems,
-                                        ...(newArticles.map(a => a.id))
+                                        ...(newArticles.map(a => a.id)),
                                     ],
-                                }
-                            }
-                        }
-                    }
+                                },
+                            },
+                        },
+                    };
                 }
             }
             else {
@@ -156,10 +149,10 @@ function handleProvideEntities(
                                 nextPage: ui.pages.podium.pagination.nextPage + 1,
                                 receivedItems: [
                                     ...ui.pages.podium.pagination.receivedItems,
-                                    ...(newArticles.map(a => a.id))
+                                    ...(newArticles.map(a => a.id)),
                                 ],
-                            }
-                        }
+                            },
+                        },
                     };
                 }
             }
@@ -170,8 +163,9 @@ function handleProvideEntities(
                 return {
                     ...ui,
                     dialog: null,
-                }
-            } else {
+                };
+            }
+            else {
                 return ui;
             }
         }
@@ -193,7 +187,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                     current: "podium",
                 },
                 dialog: null,
-            }
+            };
         }
         case "ChangePathname": {
             const pathState = parsePathName(action.pathname);
@@ -204,11 +198,12 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                         ...ui.pages,
                         current: "article",
                         article: {
-                            id: pathState.articleId
-                        }
-                    }
-                }
-            } else if (pathState.username) {
+                            id: pathState.articleId,
+                        },
+                    },
+                };
+            }
+            else if (pathState.username) {
                 if (pathState.assortment) {
                     return {
                         ...ui,
@@ -216,10 +211,10 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                             ...ui.pages,
                             current: "assortment",
                             assortment: {
-                                identifier: pathState.assortment
+                                identifier: pathState.assortment,
                             },
-                        }
-                    }
+                        },
+                    };
                 }
                 else {
                     return {
@@ -231,9 +226,9 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                                 ...ui.pages.user,
                                 name: pathState.username,
                                 articles: getEmptyArticleListState(),
-                            }
-                        }
-                    }
+                            },
+                        },
+                    };
                 }
             }
             else if (pathState.page === "study") {
@@ -242,16 +237,17 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                     pages: {
                         ...ui.pages,
                         current: "study",
-                    }
-                }
-            } else {
+                    },
+                };
+            }
+            else {
                 return {
                     ...ui,
                     pages: {
                         ...ui.pages,
                         current: "podium",
-                    }
-                }
+                    },
+                };
             }
         }
         case "ViewArticle": {
@@ -263,8 +259,8 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                     article: {
                         id: action.article,
                     },
-                }
-            }
+                },
+            };
         }
         case "ViewUser": {
             return {
@@ -278,7 +274,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                         articles: getEmptyArticleListState(),
                         tab: action.tab || ui.pages.user.tab,
                     },
-                }
+                },
             };
         }
         case "ProvideEntities": {
@@ -305,19 +301,19 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
             return {
                 ...ui,
                 dialog: "auth",
-            }
+            };
         }
         case "StartPreferencesDialog": {
             return {
                 ...ui,
                 dialog: "preferences",
-            }
+            };
         }
         case "CancelDialog": {
             return {
                 ...ui,
                 dialog: null,
-            }
+            };
         }
         case "SearchResult": {
             switch (action.subtype) {
@@ -328,10 +324,10 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                             ...ui.pages,
                             current: "article",
                             article: {
-                                id: action.id
+                                id: action.id,
                             },
-                        }
-                    }
+                        },
+                    };
                 }
                 default: {
                     return ui;
@@ -361,7 +357,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                 period: action.period,
                 backtrack: action.backtrack || 0,
                 pagination: nextPagination,
-            }
+            };
             if (action.mode === "podium") {
                 return {
                     ...ui,
@@ -391,14 +387,14 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                 pages: {
                     ...ui.pages,
                     current: action.page,
-                }
-            }
+                },
+            };
         }
         case "StartMeDialog": {
             return {
                 ...ui,
                 dialog: "me",
-            }
+            };
         }
         case "Signout": {
             return getInitialUIState();

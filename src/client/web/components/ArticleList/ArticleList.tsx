@@ -4,21 +4,22 @@ import "./ArticleList.css";
 
 import { MaltaaAction } from "../../../../definitions/Actions";
 import { ClientState } from "../../states/reducer";
-import { ArticleListSetting, PageName } from "../../states/uiReducer";
+import { ArticleListSetting } from "../../states/uiReducer";
 
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 
-import { daysAgoInEpoch, dedupeById } from "../../../../utils";
-import { ArticleSort, articleSorts } from "../../../../sorts";
+import { daysAgoInEpoch } from "../../../../utils";
+import { articleSorts } from "../../../../sorts";
 import { MaltaaDispatch } from "../../uiUtils";
 import { UserId } from "../../../../definitions/User";
 import { usePrevious } from "../../hooks/usePrevious";
+import { PageName } from "../../../../definitions/UI";
 
 function useLoadArticleList(
     currentPage: PageName,
     listState: ArticleListSetting,
     author: UserId | null,
-    dispatch: MaltaaDispatch
+    dispatch: MaltaaDispatch,
 ) {
     const {sort, period, backtrack} = listState;
     const prevCurrentPage = usePrevious(currentPage);
@@ -27,7 +28,7 @@ function useLoadArticleList(
     const prevEnd = usePrevious(backtrack);
 
     function updatePodium() {
-        const switchToPodium = prevCurrentPage !== "podium" && currentPage === "podium"
+        const switchToPodium = prevCurrentPage !== "podium" && currentPage === "podium";
 
         const shouldLoad =
             prevSort !== sort

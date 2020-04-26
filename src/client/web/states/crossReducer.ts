@@ -1,13 +1,12 @@
 import { MaltaaAction } from "../../../definitions/Actions";
 import { ClientState } from "./reducer";
-import { AssortmentUIIdentifier } from "../uiUtils";
-import { AssortmentContentType } from "../../../definitions/Assortment";
+import { AssortmentUIIdentifier } from "../../../definitions/UI";
 
 // Executed before all branched reducers
 export function crossPreReducer(state: ClientState, action: MaltaaAction): ClientState {
     switch (action.type) {
         default: {
-            return state
+            return state;
         }
     }
 }
@@ -26,10 +25,11 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                             ownerUsername: owner.userName,
                             subpath: assortment.subpath,
                             contentType: assortment.contentType,
-                        }
+                        };
                     }
                 }
-            } else if (typeof action.assortment === "object") {
+            }
+            else if (typeof action.assortment === "object") {
                 identifier = action.assortment;
             }
 
@@ -43,11 +43,12 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                             current: "assortment",
                             assortment: {
                                 identifier,
-                            }
-                        }
-                    }
-                }
-            } else {
+                            },
+                        },
+                    },
+                };
+            }
+            else {
                 return state;
             }
         }
@@ -73,11 +74,11 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                                                 ownerUsername: owner.userName,
                                                 contentType: target.contentType,
                                                 subpath: target.subpath,
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                                            },
+                                        },
+                                    },
+                                },
+                            };
                         }
                     }
                     return state;
@@ -99,11 +100,11 @@ export function crossPostReducer(state: ClientState, action: MaltaaAction): Clie
                                                 ownerUsername: owner.userName,
                                                 contentType: created.contentType,
                                                 subpath: created.subpath,
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                                            },
+                                        },
+                                    },
+                                },
+                            };
                         }
                     }
                     return state;

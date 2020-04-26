@@ -1,5 +1,4 @@
 import { ArticleSort } from "../sorts";
-import { PageName } from "../client/web/states/uiReducer";
 import { AuthToken } from "./AuthToken";
 import {
     Assortment,
@@ -9,12 +8,11 @@ import {
     AssortmentPolicy,
     MattersEntityType,
 } from "./Assortment";
-import { AssortmentUIIdentifier } from "../client/web/uiUtils";
 import { AccountId, AccountSelf } from "./MaltaaAccount";
 import { Article, ArticleId, Comment } from "./Article";
 import { UserId, UserPublic } from "./User";
 import { Preferences } from "./Preferences";
-import { UserPageTab } from "./UI";
+import { AssortmentUIIdentifier, PageName, UserPageTab } from "./UI";
 
 export interface BaseMeta {
 
@@ -250,7 +248,7 @@ export type UpdateAssortment =
     | UpdateAssortmentEditSubpath
     | UpdateAssortmentEditUpstreams
     | UpdateAssortmentSyncFromUpstreams
-;
+    ;
 
 export interface Signout extends BaseAction {
     type: "Signout",
@@ -274,7 +272,7 @@ export type ClientRequest =
     | Signin
     | Signout
     | SetMyPreferences
-;
+    ;
 
 export type MaltaaAction =
     ChangePathname
@@ -302,4 +300,4 @@ export type MaltaaAction =
     | UpdateAssortment
     | Signin
     | ViewAssortment
-;
+    ;

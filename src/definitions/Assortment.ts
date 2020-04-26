@@ -32,6 +32,7 @@ export interface AssortmentIdentifier {
     subpath: string,
 }
 
+
 export interface AssortmentPolicy {
     archived: boolean,
     allowForking: boolean

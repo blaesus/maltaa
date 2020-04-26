@@ -1,18 +1,13 @@
 import { MaltaaAction } from "../../definitions/Actions";
 import { ClientUIState } from "./states/uiReducer";
-import { Assortment, AssortmentContentType, AssortmentIdentifier } from "../../definitions/Assortment";
+import { Assortment } from "../../definitions/Assortment";
 import { ClientState } from "./states/reducer";
 import { Preferences } from "../../definitions/Preferences";
+import { AssortmentUIIdentifier } from "../../definitions/UI";
 
 import { STUDY_SUBPATH, THREAD_PREFIX, USER_URL_SIGIL } from "../../settings";
 import { articleIdToSerial, articleSerialToId } from "../../mattersSpecifics";
 import { assortmentSigil, assortmentTypes } from "../../utils";
-
-export interface AssortmentUIIdentifier extends Omit<AssortmentIdentifier, "owner"> {
-    ownerUsername: string,
-    contentType: AssortmentContentType
-    subpath: string,
-}
 
 export function assortmentPathPrefix(identifier: Pick<AssortmentUIIdentifier, "ownerUsername" | "contentType">): string {
     const {ownerUsername, contentType} = identifier;
@@ -69,7 +64,7 @@ export function parsePathName(pathName: string): PathState {
     }
     else if (firstSegment === STUDY_SUBPATH) {
         return {
-            page: "study"
+            page: "study",
         };
     }
 

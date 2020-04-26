@@ -12,7 +12,7 @@ import { ObjectMap } from "../../../../../definitions/Objects";
 import { UserId, UserPublic } from "../../../../../definitions/User";
 import { Preferences } from "../../../../../definitions/Preferences";
 import { CommentContent } from "./CommentContent";
-import { useWidth } from "./useWidth";
+import { useContentWidth } from "../../../hooks/useContentWidth";
 
 type DisplayMode = "peek" | "extend-all" | "fold";
 
@@ -77,7 +77,7 @@ export function CommentTree(props: {
 }) {
     const { root, articles, comments, users, level, preferences, parentTreeWidth } = props;
 
-    const {contentWidth: treeWidth, contentDom} = useWidth(parentTreeWidth)
+    const {contentWidth: treeWidth, contentDom} = useContentWidth(parentTreeWidth)
 
     const peekThreshold = level === 0
         ? preferences.comments.firstLevel.displayThreshold

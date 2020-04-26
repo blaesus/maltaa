@@ -12,14 +12,7 @@ import { daysAgoInEpoch, dedupeById } from "../../../../utils";
 import { ArticleSort, articleSorts } from "../../../../sorts";
 import { MaltaaDispatch } from "../../uiUtils";
 import { UserId } from "../../../../definitions/User";
-
-function usePrevious<T>(value: T) {
-    const ref = React.useRef<T>();
-    useEffect(() => {
-        ref.current = value;
-    });
-    return ref.current;
-}
+import { usePrevious } from "../../hooks/usePrevious";
 
 function useLoadArticleList(
     currentPage: PageName,

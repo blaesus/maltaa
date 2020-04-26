@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export function useWidth(fallbackWidth?: number) {
+export function useContentWidth(fallbackWidth?: number) {
     const contentDom = React.useRef<HTMLDivElement>(null);
     const [myContentWidth, setMyContentWidth] = React.useState(fallbackWidth || 0);
     React.useEffect(() => {

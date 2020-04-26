@@ -160,6 +160,7 @@ export function getFallbackPreferences(): Preferences {
                 sort: "old",
                 displayThreshold: 2,
             },
+            showVotes: false,
         },
 
         identity: {

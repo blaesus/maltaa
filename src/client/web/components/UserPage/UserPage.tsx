@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./UserPage.css";
 
@@ -39,10 +39,19 @@ export function UserPage(props: {
     const {state, dispatch} = props;
     const {entities, ui: {pages}, preferences} = state;
     const tab = pages.user.tab;
-    const [sort, setSort] = useState<ArticleSort>("recent");
-    const [period, setPeriod] = useState<number>(INFINITY_JSON);
 
     const user = Object.values(entities.users).find(user => user.userName === pages.user.name);
+
+    useEffect(() => {
+        if (tab === "comments" && user) {
+            dispatch({
+                type: "LoadComments",
+                sort: pages.user.comments.sort,
+                pageNumber: pages.user.comments.pagination.nextPage,
+                author: user.id,
+            })
+        }
+    }, [tab])
 
     const onToggleScreen = (userId: UserId) => {
         const currentlyScreened = state.preferences.data.screenedUsers.includes(userId);

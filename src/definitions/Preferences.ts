@@ -30,6 +30,7 @@ export interface Preferences {
     comments: {
         firstLevel: LeveledCommentPreferences,
         secondLevel: LeveledCommentPreferences,
+        showVotes: boolean,
     },
 
     identity: {

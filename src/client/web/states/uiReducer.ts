@@ -1,11 +1,14 @@
 import { MaltaaAction, ProvideEntities } from "../../../definitions/Actions";
-import { ArticleSort } from "../../../sorts";
+import { ArticleSort, CommentSort } from "../../../sorts";
 import { parsePathName } from "../uiUtils";
 import { ArticleId } from "../../../definitions/Article";
 import { Preferences } from "../../../definitions/Preferences";
 import { INFINITY_JSON } from "../../../utils";
 import { AssortmentUIIdentifier, PageName, UserPageTab } from "../../../definitions/UI";
 import { defaultUserTab } from "../../uiSettings";
+
+const fallbackArticleSort: ArticleSort = "recent";
+const fallbackCommentSort: CommentSort = "recent";
 
 export interface PaginationStatus {
     nextPage: number,
@@ -23,16 +26,18 @@ export function getEmptyPaginationStatus(): PaginationStatus {
     };
 }
 
-export interface ArticleListSetting {
-    sort: ArticleSort,
+export interface ListSetting<Sort> {
+    sort: Sort,
     period: number,
     backtrack: number,
     pagination: PaginationStatus
 }
 
-export function getEmptyArticleListState(): ArticleListSetting {
+export type ArticleListSetting = ListSetting<ArticleSort>;
+
+export function getEmptyListState<T>(sort: T): ListSetting<T> {
     return {
-        sort: "recent",
+        sort,
         period: INFINITY_JSON,
         backtrack: 0,
         pagination: getEmptyPaginationStatus(),
@@ -50,6 +55,7 @@ export interface UserPageState {
     name: string | null,
     tab: UserPageTab,
     articles: ArticleListSetting,
+    comments: ListSetting<CommentSort>,
 }
 
 export interface StudyPageState {
@@ -90,7 +96,8 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
             user: {
                 name: "",
                 tab: defaultUserTab,
-                articles: getEmptyArticleListState(),
+                articles: getEmptyListState("recent"),
+                comments: getEmptyListState("recent"),
             },
             study: {},
             assortment: {
@@ -225,7 +232,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                             user: {
                                 ...ui.pages.user,
                                 name: pathState.username,
-                                articles: getEmptyArticleListState(),
+                                articles: getEmptyListState(fallbackArticleSort),
                             },
                         },
                     };
@@ -271,7 +278,7 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
                     user: {
                         ...ui.pages.user,
                         name: action.username,
-                        articles: getEmptyArticleListState(),
+                        articles: getEmptyListState(fallbackArticleSort),
                         tab: action.tab || ui.pages.user.tab,
                     },
                 },

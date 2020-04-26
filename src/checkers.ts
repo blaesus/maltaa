@@ -188,6 +188,34 @@ function isLoadArticles(data: any): boolean {
     return true;
 }
         
+function isLoadComments(data: any): boolean {
+    if (typeof data !== "object") {
+        return false;
+    }
+    
+    if (!data) {
+        return false;
+    }
+                
+    if (!(data.type === "LoadComments")) {
+        return false;
+    }
+
+    if (!(isCommentSort(data.sort))) {
+        return false;
+    }
+
+    if (!(isnumber(data.pageNumber))) {
+        return false;
+    }
+
+    if (!(isUserId(data.author))) {
+        return false;
+    }
+    
+    return true;
+}
+        
 function isViewArticle(data: any): boolean {
     if (typeof data !== "object") {
         return false;
@@ -919,6 +947,7 @@ function isClientRequest(data: any): boolean {
     || isSignin(data)
     || isSignout(data)
     || isSetMyPreferences(data)
+    || isLoadComments(data)
 }
 export 
 function isMaltaaAction(data: any): boolean {
@@ -956,7 +985,7 @@ function isArticleSort(data: any): boolean {
     || data === "random"
 }
 function isCommentSort(data: any): boolean {
-    return data === "recent" || data === "old"
+    return data === "recent" || data === "old" || data === "upvotes"
 }
 const isArticleId = isstring;
 

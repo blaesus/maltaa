@@ -31,7 +31,7 @@ interface FilterConditions {
     author?: UserId | null,
 }
 
-interface ArticleQueryInternalParams extends FilterConditions {
+interface ListQueryInternalParams extends FilterConditions {
     sortConditions: {},
     pageNumber: number,
     pageSize: number,
@@ -72,12 +72,15 @@ function constructQuery(conditions: FilterConditions): any {
     return query;
 }
 
-async function findActiveArticles(params: ArticleQueryInternalParams): Promise<Article[]> {
+async function findActive<T>(
+    collection: "articles" | "comments",
+    params: ListQueryInternalParams
+): Promise<T[]> {
     const {sortConditions, pageNumber, pageSize} = params;
     if (mattersSyncDB) {
         const query = constructQuery(params);
 
-        return mattersSyncDB.collection("articles")
+        return mattersSyncDB.collection(collection)
                             .find(query)
                             .sort(sortConditions)
                             .skip(pageNumber * pageSize)
@@ -98,7 +101,7 @@ export interface SortedArticleQueryParams {
     author?: UserId | null,
 }
 
-function paramsConvert(sortConditions: {}, params: SortedArticleQueryParams): ArticleQueryInternalParams {
+function paramsConvert(sortConditions: {}, params: SortedArticleQueryParams): ListQueryInternalParams {
     return {
         sortConditions,
         pageNumber: params.pageNumber,
@@ -183,6 +186,8 @@ const mongodb = {
                 await mattersSyncDB.createIndex("comments", {
                     parent: 1,
                     state: 1,
+                    createdAt: 1,
+                    "derived.upvotes": 1,
                 });
             }
             {
@@ -277,16 +282,16 @@ const mongodb = {
             }
         },
         async findActiveByRecency(params = fallbackParams): Promise<Article[]> {
-            return findActiveArticles(paramsConvert({createdAt: -1}, params));
+            return findActive<Article>("articles", paramsConvert({createdAt: -1}, params));
         },
         async findActiveByAge(params = fallbackParams): Promise<Article[]> {
-            return findActiveArticles(paramsConvert({createdAt: 1}, params));
+            return findActive<Article>("articles", paramsConvert({createdAt: 1}, params));
         },
         async findActiveByComments(params = fallbackParams): Promise<Article[]> {
-            return findActiveArticles(paramsConvert({"derived.comments": -1}, params));
+            return findActive<Article>("articles", paramsConvert({"derived.comments": -1}, params));
         },
         async findActiveByAppreciationAmount(params = fallbackParams): Promise<Article[]> {
-            return findActiveArticles(paramsConvert({"derived.appreciationAmount": -1}, params));
+            return findActive<Article>("articles", paramsConvert({"derived.appreciationAmount": -1}, params));
         },
         internal: {
             async findById(id: string): Promise<Article | null> {
@@ -423,6 +428,12 @@ const mongodb = {
             else {
                 return [];
             }
+        },
+        async findActiveByRecency(params = fallbackParams): Promise<Comment[]> {
+            return findActive<Comment>("comments", paramsConvert({createdAt: -1}, params));
+        },
+        async findActiveByAge(params = fallbackParams): Promise<Comment[]> {
+            return findActive<Comment>("comments", paramsConvert({createdAt: 1}, params));
         },
         internal: {
             async findByIds(ids: TransactionMaltaaId[]): Promise<Comment[]> {

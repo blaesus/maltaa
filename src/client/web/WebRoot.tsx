@@ -37,6 +37,7 @@ const clientRequestRecords: {[key in ClientRequest["type"]]: boolean} = {
     "Signin": true,
     "Signout": true,
     "SetMyPreferences": true,
+    "LoadComments": true,
 };
 
 const pageOptions: OptionList<PageName> = [

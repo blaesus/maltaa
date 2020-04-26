@@ -279,32 +279,22 @@ export type ClientRequest =
     | Signin
     | Signout
     | SetMyPreferences
+    | LoadComments
     ;
 
 export type MaltaaAction =
-    ChangePathname
+    ClientRequest
+    | ChangePathname
     | ProvideEntities
     | SetArticleCursor
-    | ViewArticle
-    | ViewUser
     | GoHome
-    | Search
     | StartAuthenticationDialog
-    | LoadArticles
-    | SetMyPreferences
     | GenericError
     | LoadedStoredPreferences
     | CancelDialog
     | StartPreferencesDialog
-    | Register
     | SearchResult
     | StartMeDialog
     | GoToPage
-    | GetMyData
-    | CreateAssortment
-    | Signout
     | GenericOk
-    | UpdateAssortment
-    | Signin
-    | ViewAssortment
     ;

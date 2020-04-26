@@ -12,6 +12,7 @@ import { search } from "./mappers/search";
 import { getMyData } from "./mappers/getMyData";
 import { viewUser } from "./mappers/viewUser";
 import { loadArticles } from "./mappers/loadArticles";
+import { loadComments } from "./mappers/loadComments";
 
 export async function routeRequest(request: ClientRequest): Promise<MaltaaAction> {
     switch (request.type) {
@@ -50,6 +51,9 @@ export async function routeRequest(request: ClientRequest): Promise<MaltaaAction
         }
         case "SetMyPreferences": {
             return setMyPreferences(request);
+        }
+        case "LoadComments": {
+            return loadComments(request);
         }
         default: {
             return {

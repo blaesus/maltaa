@@ -15,8 +15,8 @@ export function CommentContent(props: {
     comment: Comment,
     author: UserPublic,
     fallbackWidth?: number,
-    meta?: React.ReactNode,
-    onAuthorClick(): void
+    ResponseBase?: React.ReactNode,
+    onAuthorClick?(): void
 }) {
     const {comment, author, fallbackWidth, onAuthorClick} = props;
     const {contentWidth, contentRef} = useContentWidth(fallbackWidth);
@@ -26,7 +26,7 @@ export function CommentContent(props: {
             data-prefer-indent={heuristicallyShouldIndent(comment.content, contentWidth) || undefined}
             ref={contentRef}
         >
-            {props.meta}
+            {props.ResponseBase}
             <HtmlRender html={comment.content}/>
             <Byline
                 author={author}

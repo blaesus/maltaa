@@ -90,7 +90,7 @@ async function findActive<T>(
                             .sort(sortConditions)
                             .skip(pageNumber * pageSize)
                             .limit(pageSize)
-                            .project({_id: 0})
+                            .project(skipInternalId)
                             .toArray();
     }
     else {
@@ -378,14 +378,15 @@ const mongodb = {
                 return false;
             }
         },
-        async findActiveByIds(ids: TransactionMaltaaId[]): Promise<Comment[]> {
+        async findActiveByIds(ids: CommentId[]): Promise<Comment[]> {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("comments")
-                             .find({
-                                 id: {$in: ids},
-                                 state: "active",
-                             })
-                             .toArray();
+                                    .find({
+                                        id: {$in: ids},
+                                        state: "active",
+                                    })
+                                    .project(skipInternalId)
+                                    .toArray();
             }
             else {
                 return [];
@@ -409,7 +410,10 @@ const mongodb = {
         },
         async findByRoot(root: ArticleId): Promise<Comment[]> {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("comments").find({"derived.root": root}).toArray();
+                return mattersSyncDB.collection("comments")
+                                    .find({"derived.root": root})
+                                    .project(skipInternalId)
+                                    .toArray();
             }
             else {
                 return [];
@@ -419,7 +423,7 @@ const mongodb = {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("comments")
                              .find()
-                             .project({id: 1})
+                             .project({id: 1, ...skipInternalId})
                              .map((comment: Comment) => comment.id)
                              .toArray();
             }

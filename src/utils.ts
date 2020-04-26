@@ -242,3 +242,13 @@ export function splinter<T>(array: T[], f: (item: T) => boolean): {yes: T[], no:
     }
     return {yes, no}
 }
+
+export function filterNulls<T>(array: (T | null)[]): T[] {
+    const result: T[] = [];
+    for (const item of array) {
+        if (item !== null) {
+            result.push(item)
+        }
+    }
+    return result;
+}

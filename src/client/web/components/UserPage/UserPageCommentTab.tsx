@@ -40,6 +40,10 @@ export function UserPageCommentTab(props: {
                           .filter(c => c.author === user.id)
                           .sort(commentSorts[sort])
                           .map(c => {
+                              const rootArticle = state.entities.articles[c.derived.root];
+                              const articleAuthor = state.entities.users[rootArticle?.author];
+                              const replyTarget = c.replyTarget && state.entities.comments[c.replyTarget];
+                              const replyTargetAuthor = replyTarget && state.entities.users[replyTarget.author];
                               return (
                                   <CommentContent
                                       key={c.id}
@@ -49,9 +53,30 @@ export function UserPageCommentTab(props: {
                                       onAuthorClick={() => {
                                           dispatch({type: "ViewUser", username: user.userName})
                                       }}
-                                      meta={
-                                          <div>
-                                          </div>
+                                      ResponseBase={
+                                          <section className="ResponseBase">
+                                              {
+                                                  rootArticle && articleAuthor &&
+                                                  <ArticleSummary
+                                                      article={rootArticle}
+                                                      author={articleAuthor}
+                                                  />
+                                              }
+                                              <div style={
+                                                  {
+                                                      fontSize: "0.9em",
+                                                      background: "#eee",
+                                                  }
+                                              }>
+                                              {
+                                                  replyTarget && replyTargetAuthor &&
+                                                  <CommentContent
+                                                      comment={replyTarget}
+                                                      author={replyTargetAuthor}
+                                                  />
+                                              }
+                                              </div>
+                                          </section>
                                       }
                                   />
                               )

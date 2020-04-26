@@ -15,7 +15,7 @@ import { articleUrl, getAnchorClickHandler } from "../../uiUtils";
 export function ArticleSummary(props: {
     article: Article,
     author: UserPublic,
-    hoverPreview: boolean,
+    hoverPreview?: boolean,
     onClick?(): void
 }) {
     const [extend, setExtend] = useState(false);

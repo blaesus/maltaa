@@ -1,3 +1,12 @@
+.UserPage {
+    margin: 0 var(--side-margin);
+}
+
 .UserPage .Description {
     white-space: pre-wrap;
+}
+
+.UserPage .HtmlRender {
+    --base-left-offset: 0;
+
 }

@@ -1,13 +1,10 @@
 import * as React from "react";
 import "./CommentTree.css";
-import {commentSorts} from "../../../../../sorts";
-import {commentIdToSerial} from "../../../../../mattersSpecifics";
-import {Byline} from "../../Byline/Byline";
-import {HtmlRender} from "../../HtmlRender/HtmlRender";
-import { heuristicallyShouldIndent } from "./shouldIndent";
+import { commentSorts } from "../../../../../sorts";
+import { commentIdToSerial } from "../../../../../mattersSpecifics";
 import { AnchorButton } from "../../AnchorButton/AnchorButton";
-import {INFINITY_JSON} from "../../../../../utils";
-import { Article, ArticleId, CommentId, Comment } from "../../../../../definitions/Article";
+import { INFINITY_JSON } from "../../../../../utils";
+import { Article, ArticleId, Comment, CommentId } from "../../../../../definitions/Article";
 import { ObjectMap } from "../../../../../definitions/Objects";
 import { UserId, UserPublic } from "../../../../../definitions/User";
 import { Preferences } from "../../../../../definitions/Preferences";
@@ -19,42 +16,42 @@ type DisplayMode = "peek" | "extend-all" | "fold";
 function extendButtonText(
     mode: DisplayMode,
     reminders: number,
-    level: number
+    level: number,
 ): string {
     let instruction: string = "";
     switch (mode) {
         case "peek": {
             if (reminders) {
-                instruction =`查看之後${reminders}條`
+                instruction = `查看之後${reminders}條`;
             }
             else {
-                instruction = "摺疊"
+                instruction = "摺疊";
             }
             break;
         }
         case "extend-all": {
-            instruction ="摺疊";
+            instruction = "摺疊";
             break;
         }
         case "fold": {
             if (reminders) {
-                instruction = `展開${reminders}條`
+                instruction = `展開${reminders}條`;
             }
             else {
-                instruction = "摺疊"
+                instruction = "摺疊";
             }
             break;
         }
     }
     if (level >= 1) {
-        instruction = `> ${instruction}`
+        instruction = `> ${instruction}`;
     }
-    return instruction
+    return instruction;
 }
 
 function thresholdToMode(threshold: number): DisplayMode {
     if (threshold === 0) {
-        return "fold"
+        return "fold";
     }
     else if (threshold >= INFINITY_JSON) {
         return "extend-all";
@@ -75,13 +72,13 @@ export function CommentTree(props: {
     onUserTagClick?(username: string): void
     parentTreeWidth?: number,
 }) {
-    const { root, articles, comments, users, level, preferences, parentTreeWidth } = props;
+    const {root, articles, comments, users, level, preferences, parentTreeWidth} = props;
 
-    const {contentWidth: treeWidth, contentDom} = useContentWidth(parentTreeWidth)
+    const {contentWidth: treeWidth, contentDom} = useContentWidth(parentTreeWidth);
 
     const peekThreshold = level === 0
         ? preferences.comments.firstLevel.displayThreshold
-        : preferences.comments.secondLevel.displayThreshold
+        : preferences.comments.secondLevel.displayThreshold;
     const initialMode: DisplayMode = thresholdToMode(peekThreshold);
     const [displayMode, setDisplayMode] = React.useState<DisplayMode>(initialMode);
     let allSubComments: Comment[] = [];
@@ -103,7 +100,7 @@ export function CommentTree(props: {
         ? commentSorts[preferences.comments.firstLevel.sort]
         : commentSorts[preferences.comments.secondLevel.sort];
     const filteredSubComments = allSubComments.filter(
-        c => !props.screenedUsers.includes(c.author) && c.state === "active"
+        c => !props.screenedUsers.includes(c.author) && c.state === "active",
     );
     const sortedSubComments = filteredSubComments.sort(commentSort);
     const domId = rootAsComment ? rootAsComment.id : undefined;
@@ -156,7 +153,7 @@ export function CommentTree(props: {
                         screenedUsers={props.screenedUsers}
                         onUserTagClick={props.onUserTagClick}
                         parentTreeWidth={treeWidth}
-                    />
+                    />,
                 )
             }
             {
@@ -187,5 +184,5 @@ export function CommentTree(props: {
                 </AnchorButton>
             }
         </div>
-    )
+    );
 }

@@ -1,4 +1,4 @@
-import { CommentContent } from "../ArticlePage/CommentTree/CommentContent";
+import { CommentContent } from "./CommentTree/CommentContent";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 import * as React from "react";
 import { Article, Comment } from "../../../../definitions/Article";

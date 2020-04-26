@@ -1,5 +1,5 @@
 import { CommentListCursorControl } from "./CommentListCursorControl";
-import { CommentContent } from "../ArticlePage/CommentTree/CommentContent";
+import { CommentContent } from "../Comments/CommentTree/CommentContent";
 import * as React from "react";
 import { ClientState } from "../../states/reducer";
 import { MaltaaDispatch } from "../../uiUtils";
@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { commentSorts } from "../../../../sorts";
 import { ListButton } from "../ListButton/ListButton";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
-import { CommentContentWithBackground } from "./CommentContentWithBackground";
+import { CommentContentWithBackground } from "../Comments/CommentContentWithBackground";
 
 export function UserPageCommentTab(props: {
     user: UserPublic,

@@ -11,7 +11,7 @@ import { UserPageTab } from "../../../../definitions/UI";
 
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { Chooser, OptionList } from "../Chooser/Chooser";
-import { CommentContent } from "../ArticlePage/CommentTree/CommentContent";
+import { CommentContent } from "../Comments/CommentTree/CommentContent";
 import { AssortmentList } from "../AssortmentEditor/AssortmentList";
 import { ArticleList } from "../ArticleList/ArticleList";
 import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorControl";

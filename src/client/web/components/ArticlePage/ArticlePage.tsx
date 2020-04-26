@@ -7,7 +7,7 @@ import { MaltaaAction } from "../../../../definitions/Actions";
 import { ArticleSort } from "../../../../sorts";
 import { ClientState } from "../../states/reducer";
 
-import { CommentTree } from "./CommentTree/CommentTree";
+import { CommentTree } from "../Comments/CommentTree/CommentTree";
 import { Byline } from "../Byline/Byline";
 import { HtmlRender } from "../HtmlRender/HtmlRender";
 import { Divider } from "./Divider/Divider";

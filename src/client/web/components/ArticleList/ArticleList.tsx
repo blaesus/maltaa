@@ -14,6 +14,7 @@ import { MaltaaDispatch } from "../../uiUtils";
 import { UserId } from "../../../../definitions/User";
 import { usePrevious } from "../../hooks/usePrevious";
 import { PageName } from "../../../../definitions/UI";
+import { ListButton } from "../ListButton/ListButton";
 
 function useLoadArticleList(
     currentPage: PageName,
@@ -118,8 +119,7 @@ export function ArticleList(props: {
                     ),
                 )
             }
-            <a
-                className="More"
+            <ListButton
                 onClick={() => dispatch({
                     type: "LoadArticles",
                     sort,
@@ -128,15 +128,8 @@ export function ArticleList(props: {
                     pageNumber: page.pagination.nextPage,
                     author: authorId,
                 })}
-            >
-                {
-                    page.pagination.exhausted ?
-                        "没了" :
-                        page.pagination.loading
-                            ? "正加載，請稍候……"
-                            : "再來幾篇"
-                }
-            </a>
+                pagination={page.pagination}
+            />
         </div>
     );
 }

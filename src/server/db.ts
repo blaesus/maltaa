@@ -14,7 +14,7 @@ import { isLegalAssortment } from "../rules";
 import { DataStatus } from "../definitions/DataStatus";
 
 const DEFAULT_PAGE_SIZE = 20;
-const MAX_PAGE_SIZE = 128;
+const MAX_PAGE_SIZE = 32;
 
 const mainDBName = "maltaa";
 const mattersSyncDBName = "maltaaMattersSync";

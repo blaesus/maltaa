@@ -1,8 +1,13 @@
 .CommentTree {
     position: relative;
-    border-top: 1px solid #ccc;
     overflow: hidden;
-    --second-level-tree-indent: 2em;
+    --second-level-tree-indent: 5em;
+}
+
+@media only screen and (max-width: 768px) {
+    .CommentTree {
+        --second-level-tree-indent: 2em;
+    }
 }
 
 .CommentTree .CommentScrollAnchor {
@@ -13,7 +18,7 @@
 
 .CommentTree .DisplayModeButton {
     display: inline-block;
-    margin: 0 0 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .CommentTree .DisplayModeButton.indent {
@@ -28,4 +33,3 @@
 .CommentTree[data-level="2"] {
     margin-left: var(--second-level-tree-indent);
 }
-

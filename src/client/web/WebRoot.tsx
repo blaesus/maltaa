@@ -186,7 +186,7 @@ function WebRoot(props: {
                 state={state}
                 dispatch={dispatch}
             />
-            <div>
+            <nav className="PageChooser">
                 <Chooser
                     options={pageOptions}
                     chosen={state.ui.pages.current}
@@ -197,7 +197,7 @@ function WebRoot(props: {
                         })
                     }}
                 />
-            </div>
+            </nav>
             <Podium state={state} dispatch={dispatch}/>
             <Study state={state} dispatch={dispatch}/>
             <ArticlePage articleId={page.article.id} dispatch={dispatch} state={state}/>

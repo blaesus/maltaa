@@ -9,20 +9,21 @@ import { HtmlRender } from "../../HtmlRender/HtmlRender";
 import { Byline } from "../../Byline/Byline";
 
 import { heuristicallyShouldIndent } from "./shouldIndent";
+import { useWidth } from "./useWidth";
 
 export function CommentContent(props: {
     comment: Comment,
     author: UserPublic,
-    treeWidth: number,
-    domRef?: React.RefObject<HTMLDivElement>,
+    fallbackWidth?: number,
     onAuthorClick(): void
 }) {
-    const {comment, author, treeWidth, domRef, onAuthorClick} = props;
+    const {comment, author, fallbackWidth, onAuthorClick} = props;
+    const {contentWidth, contentDom} = useWidth(fallbackWidth);
     return (
         <div
-            className="Content"
-            data-prefer-indent={heuristicallyShouldIndent(comment.content, treeWidth) || undefined}
-            ref={domRef}
+            className="CommentContent"
+            data-prefer-indent={heuristicallyShouldIndent(comment.content, contentWidth) || undefined}
+            ref={contentDom}
         >
             <HtmlRender html={comment.content}/>
             <Byline

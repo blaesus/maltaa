@@ -65,6 +65,7 @@ export function UserPage(props: {
     else if (!user) {
         return <span>...</span>;
     }
+    const screened = preferences.data.screenedUsers.includes(user.id);
     return (
         <div className="UserPage">
             <h1>
@@ -81,7 +82,7 @@ export function UserPage(props: {
                 <AnchorButton
                     onClick={() => onToggleScreen(user.id)}
                 >
-                    {preferences.data.screenedUsers.includes(user.id) ? "取消屏蔽" : "屏蔽"}
+                    {screened ? "取消屏蔽" : "屏蔽"}
                 </AnchorButton>
             </div>
 
@@ -92,47 +93,49 @@ export function UserPage(props: {
                 dispatch={dispatch}
             />
 
-            <section>
-                <Chooser
-                    options={TabOptions}
-                    chosen={tab}
-                    onChoose={chosenTab => {
-                        dispatch({
-                            type: "ViewUser",
-                            username: user.userName,
-                            tab: chosenTab,
-                        })
-                    }}
-                />
-                {
-                    tab === "articles" &&
-                    <ArticleListCursorControl
-                        mode="user"
-                        listSetting={state.ui.pages.user.articles}
-                        dispatch={dispatch}
-                    >
-                        <ArticleList state={state} mode="user" dispatch={dispatch}/>
-                    </ArticleListCursorControl>
-                }
-                {
-                    tab === "comments" &&
-                    <div>
-                        {
-                            Object.values(state.entities.comments)
-                                  .filter(c => c.author === user.id)
-                                .map(c => (
-                                    <CommentContent
-                                        key={c.id}
-                                        comment={c}
-                                        author={user}
-                                        treeWidth={0}
-                                        onAuthorClick={() => {}}
-                                    />
-                                ))
-                        }
-                    </div>
-                }
-            </section>
+            {
+                !screened &&
+                <section>
+                    <Chooser
+                        options={TabOptions}
+                        chosen={tab}
+                        onChoose={chosenTab => {
+                            dispatch({
+                                type: "ViewUser",
+                                username: user.userName,
+                                tab: chosenTab,
+                            })
+                        }}
+                    />
+                    {
+                        tab === "articles" &&
+                        <ArticleListCursorControl
+                            mode="user"
+                            listSetting={state.ui.pages.user.articles}
+                            dispatch={dispatch}
+                        >
+                            <ArticleList state={state} mode="user" dispatch={dispatch}/>
+                        </ArticleListCursorControl>
+                    }
+                    {
+                        tab === "comments" &&
+                        <div>
+                            {
+                                Object.values(state.entities.comments)
+                                      .filter(c => c.author === user.id)
+                                      .map(c => (
+                                          <CommentContent
+                                              key={c.id}
+                                              comment={c}
+                                              author={user}
+                                              onAuthorClick={() => {}}
+                                          />
+                                      ))
+                            }
+                        </div>
+                    }
+                </section>
+            }
         </div>
     );
 }

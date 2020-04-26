@@ -12,6 +12,7 @@ import { ObjectMap } from "../../../../../definitions/Objects";
 import { UserId, UserPublic } from "../../../../../definitions/User";
 import { Preferences } from "../../../../../definitions/Preferences";
 import { CommentContent } from "./CommentContent";
+import { useWidth } from "./useWidth";
 
 type DisplayMode = "peek" | "extend-all" | "fold";
 
@@ -72,16 +73,11 @@ export function CommentTree(props: {
     screenedUsers: UserId[],
     preferences: Preferences,
     onUserTagClick?(username: string): void
-    parentWidth?: number,
+    parentTreeWidth?: number,
 }) {
-    const { root, articles, comments, users, level, preferences, parentWidth } = props;
+    const { root, articles, comments, users, level, preferences, parentTreeWidth } = props;
 
-    const contentDom = React.useRef<HTMLDivElement>(null);
-    const [myContentWidth, setMyContentWidth] = React.useState(parentWidth || 0);
-    React.useEffect(() => {
-        const width = contentDom.current ? contentDom.current.getBoundingClientRect().width : 0;
-        setMyContentWidth(width);
-    }, [contentDom.current]);
+    const {contentWidth: treeWidth, contentDom} = useWidth(parentTreeWidth)
 
     const peekThreshold = level === 0
         ? preferences.comments.firstLevel.displayThreshold
@@ -133,7 +129,7 @@ export function CommentTree(props: {
     const shouldModeButtonIndent = level >= 1 && displayMode !== "fold";
 
     return (
-        <div className="CommentTree" id={domId} data-level={level}>
+        <div className="CommentTree" id={domId} data-level={level} ref={contentDom}>
             <a
                 className="CommentScrollAnchor"
                 id={rootAsComment ? commentIdToSerial(rootAsComment.id, atob).toString() : ""}
@@ -143,8 +139,7 @@ export function CommentTree(props: {
                 <CommentContent
                     comment={rootAsComment}
                     author={author}
-                    treeWidth={myContentWidth}
-                    domRef={contentDom}
+                    fallbackWidth={treeWidth}
                     onAuthorClick={() => props.onUserTagClick && author && props.onUserTagClick(author.userName)}
                 />
             }
@@ -160,7 +155,7 @@ export function CommentTree(props: {
                         preferences={preferences}
                         screenedUsers={props.screenedUsers}
                         onUserTagClick={props.onUserTagClick}
-                        parentWidth={myContentWidth}
+                        parentTreeWidth={treeWidth}
                     />
                 )
             }

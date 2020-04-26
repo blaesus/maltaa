@@ -1,3 +1,10 @@
 .ResponseBackground .CommentContent {
-    opacity: 0.9;
+    width: 80%;
+    background: #eee;
+}
+
+@media only screen and (max-width: 768px) {
+    .ResponseBackground .CommentContent {
+        width: initial;
+    }
 }

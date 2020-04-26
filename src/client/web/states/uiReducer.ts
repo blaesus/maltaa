@@ -174,7 +174,7 @@ function handleProvideEntities(
                         ...ui.pages.user,
                         comments: {
                             ...ui.pages.user.comments,
-                            pagination: getNextPagination(ui.pages.user.articles.pagination, newComments),
+                            pagination: getNextPagination(ui.pages.user.comments.pagination, newComments),
                         },
                     },
                 };

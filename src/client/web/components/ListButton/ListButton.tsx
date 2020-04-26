@@ -20,5 +20,5 @@ export function ListButton(props: {
                         : "再來幾篇"
             }
         </a>
-        )
+    )
 }

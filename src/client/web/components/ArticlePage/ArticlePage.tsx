@@ -136,7 +136,7 @@ export function ArticlePage(props: {
                     users={users}
                     screenedUsers={screenedUsers}
                     preferences={state.preferences}
-                    onUserTagClick={username => dispatch({type: "ViewUser", username})}
+                    onUserLabelClick={username => dispatch({type: "ViewUser", username})}
                 />
             </section>
         </article>

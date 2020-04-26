@@ -69,7 +69,7 @@ export function CommentTree(props: {
     users: ObjectMap<UserPublic>,
     screenedUsers: UserId[],
     preferences: Preferences,
-    onUserTagClick?(username: string): void
+    onUserLabelClick?(username: string): void
     parentTreeWidth?: number,
 }) {
     const {root, articles, comments, users, level, preferences, parentTreeWidth} = props;
@@ -137,7 +137,7 @@ export function CommentTree(props: {
                     comment={rootAsComment}
                     author={author}
                     fallbackWidth={treeWidth}
-                    onAuthorClick={() => props.onUserTagClick && author && props.onUserTagClick(author.userName)}
+                    onAuthorClick={() => props.onUserLabelClick && author && props.onUserLabelClick(author.userName)}
                 />
             }
             {
@@ -151,7 +151,7 @@ export function CommentTree(props: {
                         users={users}
                         preferences={preferences}
                         screenedUsers={props.screenedUsers}
-                        onUserTagClick={props.onUserTagClick}
+                        onUserLabelClick={props.onUserLabelClick}
                         parentTreeWidth={treeWidth}
                     />,
                 )

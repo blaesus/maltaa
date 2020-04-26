@@ -7,6 +7,7 @@ import { UserPublic } from "../../../../definitions/User";
 import { useEffect } from "react";
 import { commentSorts } from "../../../../sorts";
 import { ListButton } from "../ListButton/ListButton";
+import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 
 export function UserPageCommentTab(props: {
     user: UserPublic,
@@ -38,15 +39,23 @@ export function UserPageCommentTab(props: {
                           .filter(c => commentPage.pagination.receivedItems.includes(c.id))
                           .filter(c => c.author === user.id)
                           .sort(commentSorts[sort])
-                          .map(c => (
-                              <CommentContent
-                                  key={c.id}
-                                  comment={c}
-                                  author={user}
-                                  fallbackWidth={pageWidth}
-                                  onAuthorClick={() => {}}
-                              />
-                          ))
+                          .map(c => {
+                              return (
+                                  <CommentContent
+                                      key={c.id}
+                                      comment={c}
+                                      author={user}
+                                      fallbackWidth={pageWidth}
+                                      onAuthorClick={() => {
+                                          dispatch({type: "ViewUser", username: user.userName})
+                                      }}
+                                      meta={
+                                          <div>
+                                          </div>
+                                      }
+                                  />
+                              )
+                          })
                 }
             </CommentListCursorControl>
             <ListButton

@@ -2,14 +2,14 @@ import * as React from "react";
 
 export function useContentWidth(fallbackWidth?: number) {
     const contentDom = React.useRef<HTMLDivElement>(null);
-    const [myContentWidth, setMyContentWidth] = React.useState(fallbackWidth || 0);
+    const [contentWidth, setContentWidth] = React.useState(fallbackWidth || 0);
     React.useEffect(() => {
         const width = contentDom.current ? contentDom.current.getBoundingClientRect().width : 0;
-        setMyContentWidth(width);
+        setContentWidth(width);
     }, [contentDom.current]);
 
     return {
-        contentWidth: myContentWidth,
+        contentWidth,
         contentDom,
     }
 }

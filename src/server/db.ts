@@ -407,6 +407,14 @@ const mongodb = {
                 return [];
             }
         },
+        async findByRoot(root: ArticleId): Promise<Comment[]> {
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments").find({"derived.root": root}).toArray();
+            }
+            else {
+                return [];
+            }
+        },
         async getAllIds(): Promise<UserId[]> {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("comments")

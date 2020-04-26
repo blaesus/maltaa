@@ -59,11 +59,7 @@ function getEntityRequestHandler<T>(
 }
 
 export async function findCommentsUnderArticle(id: ArticleId): Promise<Comment[]> {
-    const firstLevelComments = await db.comment.findByParent(id);
-    const firstLevelCommentsIds = firstLevelComments.map(comment => comment.id);
-    const secondLevelComments = await db.comment.findByParents(firstLevelCommentsIds);
-    const comments = [...firstLevelComments, ...secondLevelComments];
-    return comments;
+    return db.comment.findByRoot(id);
 }
 
 async function getComments(context: Koa.Context, next: any) {

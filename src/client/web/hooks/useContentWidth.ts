@@ -1,8 +1,6 @@
 import * as React from "react";
 
-const heuristicInitialWidth = 640;
-
-export function useContentWidth(fallbackWidth = heuristicInitialWidth) {
+export function useContentWidth(fallbackWidth = 0) {
     const contentDom = React.useRef<HTMLDivElement>(null);
     const [contentWidth, setContentWidth] = React.useState(fallbackWidth);
     React.useEffect(() => {

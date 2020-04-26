@@ -1,5 +1,5 @@
 import { CommentListCursorControl } from "./CommentListCursorControl";
-import { CommentContent } from "../Comments/CommentTree/CommentContent";
+import { CommentContent } from "../Comments/CommentContent";
 import * as React from "react";
 import { ClientState } from "../../states/reducer";
 import { MaltaaDispatch } from "../../uiUtils";

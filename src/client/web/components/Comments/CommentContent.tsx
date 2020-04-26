@@ -2,14 +2,14 @@ import * as React from "react";
 
 import "./CommentContent.css";
 
-import { Comment } from "../../../../../definitions/Article";
-import { UserPublic } from "../../../../../definitions/User";
+import { Comment } from "../../../../definitions/Article";
+import { UserPublic } from "../../../../definitions/User";
 
-import { HtmlRender } from "../../HtmlRender/HtmlRender";
-import { Byline } from "../../Byline/Byline";
+import { HtmlRender } from "../HtmlRender/HtmlRender";
+import { Byline } from "../Byline/Byline";
 
 import { heuristicallyShouldIndent } from "./shouldIndent";
-import { useContentWidth } from "../../../hooks/useContentWidth";
+import { useContentWidth } from "../../hooks/useContentWidth";
 
 export function CommentContent(props: {
     comment: Comment,

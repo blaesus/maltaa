@@ -1,15 +1,15 @@
 import * as React from "react";
 import "./CommentTree.css";
-import { commentSorts } from "../../../../../sorts";
-import { commentIdToSerial } from "../../../../../mattersSpecifics";
-import { AnchorButton } from "../../AnchorButton/AnchorButton";
-import { INFINITY_JSON } from "../../../../../utils";
-import { Article, ArticleId, Comment, CommentId } from "../../../../../definitions/Article";
-import { ObjectMap } from "../../../../../definitions/Objects";
-import { UserId, UserPublic } from "../../../../../definitions/User";
-import { Preferences } from "../../../../../definitions/Preferences";
+import { commentSorts } from "../../../../sorts";
+import { commentIdToSerial } from "../../../../mattersSpecifics";
+import { AnchorButton } from "../AnchorButton/AnchorButton";
+import { INFINITY_JSON } from "../../../../utils";
+import { Article, ArticleId, Comment, CommentId } from "../../../../definitions/Article";
+import { ObjectMap } from "../../../../definitions/Objects";
+import { UserId, UserPublic } from "../../../../definitions/User";
+import { Preferences } from "../../../../definitions/Preferences";
 import { CommentContent } from "./CommentContent";
-import { useContentWidth } from "../../../hooks/useContentWidth";
+import { useContentWidth } from "../../hooks/useContentWidth";
 
 type DisplayMode = "peek" | "extend-all" | "fold";
 

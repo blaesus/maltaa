@@ -1,4 +1,4 @@
-import { ArticleSort } from "../sorts";
+import { ArticleSort, CommentSort } from "../sorts";
 import { AuthToken } from "./AuthToken";
 import {
     Assortment,
@@ -70,6 +70,13 @@ export interface LoadArticles extends BaseAction {
     backtrackInDays?: number,
     pageNumber: number,
     author?: UserId | null,
+}
+
+export interface LoadComments extends BaseAction {
+    type: "LoadComments",
+    sort: CommentSort,
+    pageNumber: number,
+    author: UserId,
 }
 
 export interface ViewArticle extends BaseAction {

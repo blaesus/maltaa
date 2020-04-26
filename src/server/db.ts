@@ -187,6 +187,7 @@ const mongodb = {
                     state: 1,
                     createdAt: 1,
                     "derived.upvotes": 1,
+                    "derived.root": 1,
                 });
             }
             {

@@ -224,6 +224,10 @@ function isViewUser(data: any): boolean {
     if (!(isstring(data.username))) {
         return false;
     }
+
+    if (!(isundefined(data.tab) || isUserPageTab(data.tab))) {
+        return false;
+    }
     
     return true;
 }
@@ -1260,7 +1264,9 @@ function isRoom(data: any): boolean {
     return true;
 }
         
-function isPaginationStatus(data: any): boolean {
+const isAuthTokenId = isstring;
+
+function isAuthToken(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1269,26 +1275,30 @@ function isPaginationStatus(data: any): boolean {
         return false;
     }
                 
-    if (!(isnumber(data.nextPage))) {
+    if (!(isAuthTokenId(data.id))) {
         return false;
     }
 
-    if (!(isnumber(data.receivedItems))) {
+    if (!(isAccountId(data.holder))) {
         return false;
     }
 
-    if (!(isboolean(data.loading))) {
+    if (!(isstring(data.secret))) {
         return false;
     }
 
-    if (!(isboolean(data.exhausted))) {
+    if (!(isboolean(data.valid))) {
+        return false;
+    }
+
+    if (!(isnumber(data.created))) {
         return false;
     }
     
     return true;
 }
         
-function isArticleListSetting(data: any): boolean {
+function isTokenRecord(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1297,26 +1307,18 @@ function isArticleListSetting(data: any): boolean {
         return false;
     }
                 
-    if (!(isArticleSort(data.sort))) {
+    if (!(isstring(data.content))) {
         return false;
     }
 
-    if (!(isnumber(data.period))) {
-        return false;
-    }
-
-    if (!(isnumber(data.backtrack))) {
-        return false;
-    }
-
-    if (!(isPaginationStatus(data.pagination))) {
+    if (!(isnumber(data.expiration))) {
         return false;
     }
     
     return true;
 }
         
-function isPodiumPageState(data: any): boolean {
+function isRSAPublicKeyRecord(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1325,27 +1327,23 @@ function isPodiumPageState(data: any): boolean {
         return false;
     }
                 
-    
-    return true;
-}
-        
-function isArticlePageState(data: any): boolean {
-    if (typeof data !== "object") {
+    if (!(data.type === "RSA")) {
         return false;
     }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isArticleId(data.id) || isnull(data.id))) {
+
+    if (!(isstring(data.key))) {
         return false;
     }
     
     return true;
 }
         
-function isUserPageState(data: any): boolean {
+const isPublicKeyRecord = isRSAPublicKeyRecord;
+
+function isPrivileges(data: any): boolean {
+    return data === "admin" || data === "normal"
+}
+function isScryptRecord(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1354,25 +1352,30 @@ function isUserPageState(data: any): boolean {
         return false;
     }
                 
-    if (!(isstring(data.name) || isnull(data.name))) {
+    if (!(data.type === "scrypt")) {
         return false;
     }
 
-    if (!(isArticleListSetting(data.articles))) {
+    if (!(isstring(data.hash))) {
+        return false;
+    }
+
+    if (!(isnumber(data.keylen))) {
+        return false;
+    }
+
+    if (!(isstring(data.salt))) {
         return false;
     }
     
     return true;
 }
         
-function isPageName(data: any): boolean {
-    return data === "podium"
-    || data === "study"
-    || data === "article"
-    || data === "user"
-    || data === "assortment"
-}
-function isStudyPageState(data: any): boolean {
+const isPasswordRecord = isScryptRecord;
+
+const isAccountId = isstring;
+
+function isMaltaaAccount(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1381,63 +1384,38 @@ function isStudyPageState(data: any): boolean {
         return false;
     }
                 
-    
-    return true;
-}
-        
-function isAssortmentPageState(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isAssortmentUIIdentifier(data.identifier) || isnull(data.identifier))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-function isPagesState(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isPageName(data.current))) {
+    if (!(isAccountId(data.id))) {
         return false;
     }
 
-    if (!(isPodiumPageState(data.podium))) {
+    if (!(isstring(data.username))) {
         return false;
     }
 
-    if (!(isArticlePageState(data.article))) {
+    if (!(isArray(isPrivileges)(data.privileges))) {
         return false;
     }
 
-    if (!(isUserPageState(data.user))) {
+    if (!(isPreferences(data.preferences))) {
         return false;
     }
 
-    if (!(isStudyPageState(data.study))) {
+    if (!(isPasswordRecord(data.password))) {
         return false;
     }
 
-    if (!(isAssortmentPageState(data.assortment))) {
+    if (!(isArray(isUserId)(data.mattersIds))) {
+        return false;
+    }
+
+    if (!(isArray(isPublicKeyRecord)(data.publicKeys))) {
         return false;
     }
     
     return true;
 }
         
-function isClientUIState(data: any): boolean {
+function is__PickMaltaaAccount(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1446,21 +1424,32 @@ function isClientUIState(data: any): boolean {
         return false;
     }
                 
-    if (!(isPagesState(data.pages))) {
+    if (!(isAccountId(data.id))) {
         return false;
     }
 
-    if (!(data.dialog === "auth"
-    || data.dialog === "preferences"
-    || data.dialog === "me"
-    || isnull(data.dialog))) {
+    if (!(isstring(data.username))) {
+        return false;
+    }
+
+    if (!(isArray(isPrivileges)(data.privileges))) {
+        return false;
+    }
+
+    if (!(isPreferences(data.preferences))) {
+        return false;
+    }
+
+    if (!(isArray(isUserId)(data.mattersIds))) {
         return false;
     }
     
     return true;
 }
         
-function isAssortmentUIIdentifier(data: any): boolean {
+const isAccountSelf = is__PickMaltaaAccount;
+
+function isPreferences(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1469,22 +1458,14 @@ function isAssortmentUIIdentifier(data: any): boolean {
         return false;
     }
                 
-    if (!(isstring(data.ownerUsername))) {
-        return false;
-    }
-
-    if (!(isAssortmentContentType(data.contentType))) {
-        return false;
-    }
-
-    if (!(isstring(data.subpath))) {
+    if (!(isnumber(data.version))) {
         return false;
     }
     
     return true;
 }
         
-function isPathState(data: any): boolean {
+function isLeveledCommentPreferences(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1493,19 +1474,11 @@ function isPathState(data: any): boolean {
         return false;
     }
                 
-    if (!(isundefined(data.username) || isstring(data.username))) {
+    if (!(isCommentSort(data.sort))) {
         return false;
     }
 
-    if (!(isundefined(data.articleId) || isstring(data.articleId))) {
-        return false;
-    }
-
-    if (!(isundefined(data.assortment) || isAssortmentUIIdentifier(data.assortment))) {
-        return false;
-    }
-
-    if (!(isundefined(data.page) || data.page === "study")) {
+    if (!(isnumber(data.displayThreshold))) {
         return false;
     }
     
@@ -1683,7 +1656,17 @@ function isAssortment(data: any): boolean {
     return true;
 }
         
-function isClientState(data: any): boolean {
+function isUserPageTab(data: any): boolean {
+    return data === "articles" || data === "comments"
+}
+function isPageName(data: any): boolean {
+    return data === "podium"
+    || data === "study"
+    || data === "article"
+    || data === "user"
+    || data === "assortment"
+}
+function isAssortmentUIIdentifier(data: any): boolean {
     if (typeof data !== "object") {
         return false;
     }
@@ -1692,326 +1675,15 @@ function isClientState(data: any): boolean {
         return false;
     }
                 
-    if (!(isEntitiesState(data.entities))) {
+    if (!(isstring(data.ownerUsername))) {
         return false;
     }
 
-    if (!(isClientUIState(data.ui))) {
+    if (!(isAssortmentContentType(data.contentType))) {
         return false;
     }
 
-    if (!(isPreferences(data.preferences))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-function isPreferences(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isnumber(data.version))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-function isLeveledCommentPreferences(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isCommentSort(data.sort))) {
-        return false;
-    }
-
-    if (!(isnumber(data.displayThreshold))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-function isEntitiesState(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(true)) {
-        return false;
-    }
-
-    if (!(true)) {
-        return false;
-    }
-
-    if (!(true)) {
-        return false;
-    }
-
-    if (!(true)) {
-        return false;
-    }
-
-    if (!(isAccountSelf(data.me) || isnull(data.me))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-function isTokenRecord(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isstring(data.content))) {
-        return false;
-    }
-
-    if (!(isnumber(data.expiration))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-function isRSAPublicKeyRecord(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(data.type === "RSA")) {
-        return false;
-    }
-
-    if (!(isstring(data.key))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-const isPublicKeyRecord = isRSAPublicKeyRecord;
-
-function isPrivileges(data: any): boolean {
-    return data === "admin" || data === "normal"
-}
-function isScryptRecord(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(data.type === "scrypt")) {
-        return false;
-    }
-
-    if (!(isstring(data.hash))) {
-        return false;
-    }
-
-    if (!(isnumber(data.keylen))) {
-        return false;
-    }
-
-    if (!(isstring(data.salt))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-const isPasswordRecord = isScryptRecord;
-
-const isAccountId = isstring;
-
-function isMaltaaAccount(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isAccountId(data.id))) {
-        return false;
-    }
-
-    if (!(isstring(data.username))) {
-        return false;
-    }
-
-    if (!(isArray(isPrivileges)(data.privileges))) {
-        return false;
-    }
-
-    if (!(isPreferences(data.preferences))) {
-        return false;
-    }
-
-    if (!(isPasswordRecord(data.password))) {
-        return false;
-    }
-
-    if (!(isArray(isUserId)(data.mattersIds))) {
-        return false;
-    }
-
-    if (!(isArray(isPublicKeyRecord)(data.publicKeys))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-function is__PickMaltaaAccount(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isAccountId(data.id))) {
-        return false;
-    }
-
-    if (!(isstring(data.username))) {
-        return false;
-    }
-
-    if (!(isArray(isPrivileges)(data.privileges))) {
-        return false;
-    }
-
-    if (!(isPreferences(data.preferences))) {
-        return false;
-    }
-
-    if (!(isArray(isUserId)(data.mattersIds))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-const isAccountSelf = is__PickMaltaaAccount;
-
-function isTokenInfo(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isstring(data.uuid))) {
-        return false;
-    }
-
-    if (!(isnumber(data.iatS))) {
-        return false;
-    }
-
-    if (!(isnumber(data.expS))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-const isTagId = isstring;
-
-function isTag(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isTagId(data.id))) {
-        return false;
-    }
-
-    if (!(isstring(data.content))) {
-        return false;
-    }
-
-    if (!(isnumber(data.createdAt))) {
-        return false;
-    }
-
-    if (!(isstring(data.cover))) {
-        return false;
-    }
-
-    if (!(isstring(data.description) || isnull(data.description))) {
-        return false;
-    }
-    
-    return true;
-}
-        
-const isAuthTokenId = isstring;
-
-function isAuthToken(data: any): boolean {
-    if (typeof data !== "object") {
-        return false;
-    }
-    
-    if (!data) {
-        return false;
-    }
-                
-    if (!(isAuthTokenId(data.id))) {
-        return false;
-    }
-
-    if (!(isAccountId(data.holder))) {
-        return false;
-    }
-
-    if (!(isstring(data.secret))) {
-        return false;
-    }
-
-    if (!(isboolean(data.valid))) {
-        return false;
-    }
-
-    if (!(isnumber(data.created))) {
+    if (!(isstring(data.subpath))) {
         return false;
     }
     

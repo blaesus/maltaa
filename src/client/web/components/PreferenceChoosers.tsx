@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Chooser, OptionList } from "./Chooser/Chooser";
-import { ArticleSort } from "../../../sorts";
+import { ArticleSort, CommentSort } from "../../../sorts";
 import { INFINITY_JSON } from "../../../utils";
 
-const sortOptions: OptionList<ArticleSort> = [
+const articleSortOptions: OptionList<ArticleSort> = [
     {
         value: "comments",
         label: "評論量",
@@ -56,7 +56,7 @@ export function ArticleSortChooser(props: {
     const { chosen } = props;
     return (
         <Chooser
-            options={sortOptions}
+            options={articleSortOptions}
             chosen={props.chosen}
             onChoose={(newSort: ArticleSort) => {
                 if (newSort !== chosen) {
@@ -85,4 +85,32 @@ export function ArticlePeriodChooser(props: {
     )
 }
 
+const commentSortOptions: OptionList<CommentSort> = [
+    {
+        value: "recent",
+        label: "最新",
+    },
+    {
+        value: "old",
+        label: "最早",
+    },
+];
 
+
+export function CommentSortChooser(props: {
+    chosen: CommentSort,
+    onChange(value: CommentSort): void
+}) {
+    const { chosen } = props;
+    return (
+        <Chooser
+            options={commentSortOptions}
+            chosen={props.chosen}
+            onChoose={(newSort: CommentSort) => {
+                if (newSort !== chosen) {
+                    props.onChange(newSort);
+                }
+            }}
+        />
+    )
+}

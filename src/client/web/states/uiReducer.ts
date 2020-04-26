@@ -406,6 +406,21 @@ export function uiReducer(ui: ClientUIState, action: MaltaaAction): ClientUIStat
         case "Signout": {
             return getInitialUIState();
         }
+        case "SetUserCommentCursor": {
+            return {
+                ...ui,
+                pages: {
+                    ...ui.pages,
+                    user: {
+                        ...ui.pages.user,
+                        comments: {
+                            ...ui.pages.user.comments,
+                            sort: action.sort,
+                        }
+                    }
+                }
+            }
+        }
 
         default: {
             return ui;

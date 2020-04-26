@@ -62,7 +62,6 @@ export interface SetArticleCursor extends BaseAction {
     backtrack?: number,
 }
 
-
 export interface LoadArticles extends BaseAction {
     type: "LoadArticles",
     sort: ArticleSort,
@@ -88,6 +87,11 @@ export interface ViewUser extends BaseAction {
     type: "ViewUser",
     username: string,
     tab?: UserPageTab,
+}
+
+export interface SetUserCommentCursor extends BaseAction {
+    type: "SetUserCommentCursor",
+    sort: CommentSort,
 }
 
 export interface GoHome extends BaseAction {
@@ -296,5 +300,6 @@ export type MaltaaAction =
     | SearchResult
     | StartMeDialog
     | GoToPage
+    | SetUserCommentCursor
     | GenericOk
     ;

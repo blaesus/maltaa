@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "tsc-for-server",
       script: "node_modules/.bin/tsc",
-      args: "--watch",
+      args: "--project tsconfig.dev.server.json --watch",
       cwd: ".",
     },
     {

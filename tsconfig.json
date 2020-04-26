@@ -7,14 +7,6 @@
         "jsx": "react",
         "sourceMap": false
     },
-    "files":  [
-        "src/server/restlike-api.ts",
-        "src/server/action-api.ts",
-        "src/server/spider.ts"
-    ],
-    "include": [
-        "src/server/migration/*.ts"
-    ],
     "exclude": [
         "node_modules"
     ]

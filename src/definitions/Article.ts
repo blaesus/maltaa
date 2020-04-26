@@ -10,11 +10,12 @@ export interface Comment {
     createdAt: number,
     content: string,
     author: string,
-    parent: string | null,
+    parent: string,
     replyTarget: string | null,
     derived: {
         upvotes: number,
         downvotes: number,
+        root: ArticleId,
     }
 }
 export interface Article {

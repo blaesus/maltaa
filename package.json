@@ -9,7 +9,8 @@
     "push": "sh ops/push.sh",
     "deploy": "sh ops/deploy.sh",
     "deploy_nginx": "sh ops/deploy_nginx.sh",
-    "make_checkers": "sh dev/makeCheckers.sh"
+    "make_checkers": "sh dev/makeCheckers.sh",
+    "migrate_local": "node built/server/migrate.js"
   },
   "author": "",
   "license": "MIT",

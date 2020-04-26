@@ -443,7 +443,7 @@ interface ArticleFetchData {
 }
 
 function processCommentNode(node: CommentResponseNode): Comment {
-    const comment = {
+    const comment: Comment = {
         ...node,
         author: node.author.id,
         replyTarget: node.replyTo ? node.replyTo.id : null,
@@ -452,6 +452,7 @@ function processCommentNode(node: CommentResponseNode): Comment {
         derived: {
             upvotes: node.upvotes,
             downvotes: node.downvotes,
+            root: node.article.id,
         },
     }
     delete (comment as any)["parentComment"];

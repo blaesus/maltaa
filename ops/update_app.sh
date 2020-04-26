@@ -2,5 +2,5 @@
 
 npm install;
 pm2 stop all;
-pm2 start pm2.prod.config.js;
-
+node server/server/migrations/migrate.js
+pm2 start pm2.prod.config.js --update-env;

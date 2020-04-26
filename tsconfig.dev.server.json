@@ -3,10 +3,11 @@
   "files":  [
     "src/server/restlike-api.ts",
     "src/server/action-api.ts",
-    "src/server/spider.ts"
+    "src/server/spider.ts",
+    "src/server/migrate.ts"
   ],
   "include": [
-    "src/server/migration/*.ts"
+    "src/server/migrations/*.ts"
   ],
   "exclude": [
     "node_modules"

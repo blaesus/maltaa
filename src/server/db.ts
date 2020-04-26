@@ -11,6 +11,7 @@ import { SiteConfig } from "../definitions/SiteConfig";
 import { Tag, TagId } from "../definitions/Tag";
 import { AccountId, MaltaaAccount } from "../definitions/MaltaaAccount";
 import { isLegalAssortment } from "../rules";
+import { DataStatus } from "../definitions/DataStatus";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 128;
@@ -24,6 +25,10 @@ let client: MongoClient | null = null;
 let mainDB: Db | null = null;
 let mattersSyncDB: Db | null = null;
 let activityDB: Db | null = null;
+
+const fallbackDataStatus: DataStatus = {
+    appliedMigrations: {},
+}
 
 interface FilterConditions {
     earliest?: number,
@@ -154,6 +159,14 @@ const mongodb = {
                     max: 1,
                 })
             }
+            {
+                await mainDB.createCollection("dataStatus", {
+                    capped: true,
+                    size: 1024 * 1024,
+                    max: 1,
+                })
+            }
+
         }
         if (mattersSyncDB) {
             {
@@ -439,6 +452,17 @@ const mongodb = {
             async findByIds(ids: TransactionMaltaaId[]): Promise<Comment[]> {
                 if (mattersSyncDB) {
                     return mattersSyncDB.collection("comments").find({id: {$in: ids}}).toArray();
+                }
+                else {
+                    return [];
+                }
+            },
+            async getAllIds(): Promise<UserId[]> {
+                if (mattersSyncDB) {
+                    return mattersSyncDB.collection("comments").find()
+                                        .project({id: 1})
+                                        .map((comment: Comment) => comment.id)
+                                        .toArray();
                 }
                 else {
                     return [];
@@ -762,6 +786,28 @@ const mongodb = {
             );
         },
     },
+
+    dataStatus: {
+        async get(): Promise<DataStatus | null> {
+            return mainDB && mainDB.collection("dataStatus").findOne({});
+        },
+        async getWithFallback(): Promise<DataStatus> {
+            if (mainDB) {
+                return (await mainDB.collection("dataStatus").findOne({})) || fallbackDataStatus;
+            }
+            else {
+                return fallbackDataStatus;
+            }
+        },
+        async set(status: DataStatus) {
+            return mainDB && await mainDB.collection("dataStatus").replaceOne(
+                {},
+                status,
+                {upsert: true},
+            );
+        },
+    },
+
     async close() {
         return client?.close();
     },

@@ -1,9 +1,9 @@
 import * as React from "react";
 import "./NavBar.css";
 import { MaltaaDispatch } from "../../uiUtils";
-import {ClientState} from "../../states/reducer";
-import {AnchorButton} from "../AnchorButton/AnchorButton";
-import { isArticleId } from "../../../../mattersSpecifics";
+import { ClientState } from "../../states/reducer";
+import { AnchorButton } from "../AnchorButton/AnchorButton";
+import { deprefixUserName, isArticleId, isFullUserName } from "../../../../mattersSpecifics";
 import { isThreadSubpath, threadSubpathToMattersArticleId } from "../../../../maltaaSpecifics";
 
 function MenuItem(props: {
@@ -14,7 +14,7 @@ function MenuItem(props: {
         <AnchorButton onClick={props.onClick}>
             {props.title}
         </AnchorButton>
-    )
+    );
 }
 
 export function NavBar(props: {
@@ -34,13 +34,14 @@ export function NavBar(props: {
                 setExtendMain(false);
             }
         }
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [ref]);
 
     function onHomeClick() {
         dispatch({type: "GoHome"});
-        window.scrollTo(0, 0); 
+        window.scrollTo(0, 0);
     }
 
     return (
@@ -64,14 +65,20 @@ export function NavBar(props: {
                                         dispatch({
                                             type: "ViewArticle",
                                             article: input,
-                                        })
+                                        });
                                     }
                                     else if (isThreadSubpath(input)) {
                                         const id = threadSubpathToMattersArticleId(input, btoa);
                                         dispatch({
                                             type: "ViewArticle",
                                             article: id,
-                                        })
+                                        });
+                                    }
+                                    else if (isFullUserName(input)) {
+                                        dispatch({
+                                            type: "ViewUser",
+                                            username: deprefixUserName(input),
+                                        });
                                     }
                                     else {
                                         dispatch({type: "Search", keyword: input});
@@ -114,7 +121,7 @@ export function NavBar(props: {
 
                 </div>
             </nav>
-            <div className="NavBarSpacer" />
+            <div className="NavBarSpacer"/>
         </div>
     );
 }

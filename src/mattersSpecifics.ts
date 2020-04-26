@@ -45,6 +45,16 @@ export function isArticleId(s: string, atob: (s: string) => string): boolean {
     }
 }
 
+const mattersUserNamePrefix = `@`;
+
+export function isFullUserName(s: string): boolean {
+    return s.startsWith(mattersUserNamePrefix) && s.length >= 2;
+}
+
+export function deprefixUserName(s: string): string {
+    return s.slice(mattersUserNamePrefix.length);
+}
+
 export function isMattersArticleUrl(url: string): boolean {
     const regex = /matters\.news\/@.*\/.*/;
     return !!regex.exec(url);

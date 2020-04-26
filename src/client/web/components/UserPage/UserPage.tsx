@@ -1,27 +1,24 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
 
 import "./UserPage.css";
 
 import { UserId } from "../../../../definitions/User";
 import { ClientState } from "../../states/reducer";
 import { MaltaaDispatch } from "../../uiUtils";
-import { ArticleSort } from "../../../../sorts";
 import { UserPageTab } from "../../../../definitions/UI";
+
+import { useContentWidth } from "../../hooks/useContentWidth";
 
 import { AnchorButton } from "../AnchorButton/AnchorButton";
 import { Chooser, OptionList } from "../Chooser/Chooser";
-import { CommentContent } from "../Comments/CommentContent";
 import { AssortmentList } from "../AssortmentEditor/AssortmentList";
 import { ArticleList } from "../ArticleList/ArticleList";
 import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorControl";
+import { UserPageCommentTab } from "./UserPageCommentTab";
 
 import { USER_URL_SIGIL } from "../../../../settings";
-import { INFINITY_JSON, readableDateTime } from "../../../../utils";
-import { mattersArticleUrl, mattersUserUrl, userIdToSerial } from "../../../../mattersSpecifics";
-import { CommentListCursorControl } from "./CommentListCursorControl";
-import { UserPageCommentTab } from "./UserPageCommentTab";
-import { useContentWidth } from "../../hooks/useContentWidth";
+import { readableDateTime } from "../../../../utils";
+import { mattersUserUrl, userIdToSerial } from "../../../../mattersSpecifics";
 
 
 const TabOptions: OptionList<UserPageTab> = [
@@ -116,7 +113,7 @@ export function UserPage(props: {
                                     type: "ViewUser",
                                     username: user.userName,
                                     tab: chosenTab,
-                                })
+                                });
                             }}
                         />
                     </nav>

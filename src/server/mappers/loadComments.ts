@@ -25,7 +25,8 @@ export async function loadComments(request: LoadComments): Promise<MaltaaAction>
             break;
         }
     }
-    const replyTargets = await db.comment.findActiveByIds(filterNulls(comments.map(comment => comment.replyTarget).filter(Boolean)));
+    const replyTargetIds = filterNulls(comments.map(comment => comment.replyTarget).filter(Boolean));
+    const replyTargets = await db.comment.findActiveByIds(replyTargetIds);
 
     comments = dedupeById([...comments, ...replyTargets]);
     const rootArticles = await db.article.findActiveByIds(comments.map(c => c.derived.root));

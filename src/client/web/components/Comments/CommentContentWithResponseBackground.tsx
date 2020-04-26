@@ -1,11 +1,15 @@
-import { CommentContent } from "./CommentContent";
-import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
 import * as React from "react";
+
+import "./CommentContentWithResponseBackground.css"
+
 import { Article, Comment } from "../../../../definitions/Article";
 import { UserPublic } from "../../../../definitions/User";
 import { MaltaaDispatch } from "../../uiUtils";
 
-export function CommentContentWithBackground(props: {
+import { CommentContent } from "./CommentContent";
+import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
+
+export function CommentContentWithResponseBackground(props: {
     comment: Comment,
     commentAuthor: UserPublic,
 
@@ -26,8 +30,8 @@ export function CommentContentWithBackground(props: {
             onAuthorClick={() => {
                 dispatch({type: "ViewUser", username: commentAuthor.userName})
             }}
-            ResponseBackground={
-                <section className="ResponseBase">
+            preamble={
+                <section className="ResponseBackground">
                     {
                         rootArticle && articleAuthor &&
                         <ArticleSummary
@@ -35,20 +39,13 @@ export function CommentContentWithBackground(props: {
                             author={articleAuthor}
                         />
                     }
-                    <div style={
-                        {
-                            fontSize: "0.9em",
-                            background: "#eee",
-                        }
-                    }>
-                        {
-                            replyTarget && replyTargetAuthor &&
-                            <CommentContent
-                                comment={replyTarget}
-                                author={replyTargetAuthor}
-                            />
-                        }
-                    </div>
+                    {
+                        replyTarget && replyTargetAuthor &&
+                        <CommentContent
+                            comment={replyTarget}
+                            author={replyTargetAuthor}
+                        />
+                    }
                 </section>
             }
         />

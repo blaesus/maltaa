@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { commentSorts } from "../../../../sorts";
 import { ListButton } from "../ListButton/ListButton";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
-import { CommentContentWithBackground } from "../Comments/CommentContentWithBackground";
+import { CommentContentWithResponseBackground } from "../Comments/CommentContentWithResponseBackground";
 
 export function UserPageCommentTab(props: {
     user: UserPublic,
@@ -46,7 +46,7 @@ export function UserPageCommentTab(props: {
                               const replyTarget = c.replyTarget ? state.entities.comments[c.replyTarget] : null;
                               const replyTargetAuthor = replyTarget ? state.entities.users[replyTarget.author] : null;
                               return (
-                                  <CommentContentWithBackground
+                                  <CommentContentWithResponseBackground
                                       key={c.id}
                                       comment={c}
                                       commentAuthor={user}

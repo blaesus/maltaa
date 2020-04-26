@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { commentSorts } from "../../../../sorts";
 import { ListButton } from "../ListButton/ListButton";
 import { ArticleSummary } from "../ArticleSummary/ArticleSummary";
+import { CommentContentWithBackground } from "./CommentContentWithBackground";
 
 export function UserPageCommentTab(props: {
     user: UserPublic,
@@ -42,42 +43,19 @@ export function UserPageCommentTab(props: {
                           .map(c => {
                               const rootArticle = state.entities.articles[c.derived.root];
                               const articleAuthor = state.entities.users[rootArticle?.author];
-                              const replyTarget = c.replyTarget && state.entities.comments[c.replyTarget];
-                              const replyTargetAuthor = replyTarget && state.entities.users[replyTarget.author];
+                              const replyTarget = c.replyTarget ? state.entities.comments[c.replyTarget] : null;
+                              const replyTargetAuthor = replyTarget ? state.entities.users[replyTarget.author] : null;
                               return (
-                                  <CommentContent
+                                  <CommentContentWithBackground
                                       key={c.id}
                                       comment={c}
-                                      author={user}
+                                      commentAuthor={user}
+                                      rootArticle={rootArticle}
+                                      articleAuthor={articleAuthor}
+                                      replyTarget={replyTarget}
+                                      replyTargetAuthor={replyTargetAuthor}
                                       fallbackWidth={pageWidth}
-                                      onAuthorClick={() => {
-                                          dispatch({type: "ViewUser", username: user.userName})
-                                      }}
-                                      ResponseBase={
-                                          <section className="ResponseBase">
-                                              {
-                                                  rootArticle && articleAuthor &&
-                                                  <ArticleSummary
-                                                      article={rootArticle}
-                                                      author={articleAuthor}
-                                                  />
-                                              }
-                                              <div style={
-                                                  {
-                                                      fontSize: "0.9em",
-                                                      background: "#eee",
-                                                  }
-                                              }>
-                                              {
-                                                  replyTarget && replyTargetAuthor &&
-                                                  <CommentContent
-                                                      comment={replyTarget}
-                                                      author={replyTargetAuthor}
-                                                  />
-                                              }
-                                              </div>
-                                          </section>
-                                      }
+                                      dispatch={dispatch}
                                   />
                               )
                           })

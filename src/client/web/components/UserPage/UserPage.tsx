@@ -18,7 +18,7 @@ import { ArticleListCursorControl } from "../ArticleList/ArticleListCursorContro
 
 import { USER_URL_SIGIL } from "../../../../settings";
 import { INFINITY_JSON, readableDateTime } from "../../../../utils";
-import { userIdToSerial } from "../../../../mattersSpecifics";
+import { mattersArticleUrl, mattersUserUrl, userIdToSerial } from "../../../../mattersSpecifics";
 import { CommentListCursorControl } from "./CommentListCursorControl";
 import { UserPageCommentTab } from "./UserPageCommentTab";
 import { useContentWidth } from "../../hooks/useContentWidth";
@@ -86,6 +86,15 @@ export function UserPage(props: {
                 >
                     {screened ? "取消屏蔽" : "屏蔽"}
                 </AnchorButton>
+            </div>
+
+            <div>
+                <a
+                    className="MattersOrigin"
+                    href={mattersUserUrl(user)}
+                >
+                    Matters源
+                </a>
             </div>
 
             <AssortmentList

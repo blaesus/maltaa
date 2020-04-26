@@ -45,14 +45,14 @@ export function isArticleId(s: string, atob: (s: string) => string): boolean {
     }
 }
 
-const mattersUserNamePrefix = `@`;
+const usernameSigil = `@`;
 
 export function isFullUserName(s: string): boolean {
-    return s.startsWith(mattersUserNamePrefix) && s.length >= 2;
+    return s.startsWith(usernameSigil) && s.length >= 2;
 }
 
 export function deprefixUserName(s: string): string {
-    return s.slice(mattersUserNamePrefix.length);
+    return s.slice(usernameSigil.length);
 }
 
 export function isMattersArticleUrl(url: string): boolean {
@@ -62,7 +62,12 @@ export function isMattersArticleUrl(url: string): boolean {
 
 export function mattersArticleUrl(article: Article, author?: UserPublic): string {
     // username is insignificant by March 2020.
-    return `https://matters.news/@${author ? author.userName : "_"}/${article.slug}-${article.mediaHash}`;
+    return `https://matters.news/${usernameSigil}${author?.userName || "_"}/${article.slug}-${article.mediaHash}`;
+}
+
+export function mattersUserUrl(user: UserPublic): string {
+    // username is insignificant by March 2020.
+    return `https://matters.news/${usernameSigil}${user.userName}`;
 }
 
 interface TokenInfo {

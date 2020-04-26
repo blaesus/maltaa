@@ -1,4 +1,24 @@
 .CommentContent {
     margin: 1rem 0;
+    --comment-indent: 1em;
 }
+
+.CommentContent .HtmlRender p  {
+    text-indent: 0;
+}
+
+.CommentContent .HtmlRender blockquote,
+.CommentContent .HtmlRender ol
+{
+    margin-left: 0;
+}
+
+.CommentContent[data-prefer-indent="true"] .HtmlRender p {
+    text-indent: var(--comment-indent);
+}
+
+.CommentContent[data-prefer-indent="true"] .HtmlRender blockquote {
+    margin-left: var(--comment-indent);
+}
+
 

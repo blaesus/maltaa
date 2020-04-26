@@ -18,12 +18,12 @@ export function CommentContent(props: {
     onAuthorClick(): void
 }) {
     const {comment, author, fallbackWidth, onAuthorClick} = props;
-    const {contentWidth, contentDom} = useContentWidth(fallbackWidth);
+    const {contentWidth, contentRef} = useContentWidth(fallbackWidth);
     return (
         <div
             className="CommentContent"
             data-prefer-indent={heuristicallyShouldIndent(comment.content, contentWidth) || undefined}
-            ref={contentDom}
+            ref={contentRef}
         >
             <HtmlRender html={comment.content}/>
             <Byline

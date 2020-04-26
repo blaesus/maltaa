@@ -2,8 +2,7 @@
     position: relative;
     border-top: 1px solid #ccc;
     overflow: hidden;
-    --comment-indent: 1em;
-    --secondary-comment-indent: 2em;
+    --second-level-tree-indent: 2em;
 }
 
 .CommentTree .CommentScrollAnchor {
@@ -11,23 +10,6 @@
     top: calc(var(--top-bar-height) * -1);
 }
 
-.CommentTree .HtmlRender p  {
-    text-indent: 0;
-}
-
-.CommentTree .HtmlRender blockquote,
-.CommentTree .HtmlRender ol
-{
-    margin-left: 0;
-}
-
-.CommentTree [data-prefer-indent="true"] .HtmlRender p {
-    text-indent: var(--comment-indent);
-}
-
-.CommentTree [data-prefer-indent="true"] .HtmlRender blockquote {
-    margin-left: var(--comment-indent);
-}
 
 .CommentTree .DisplayModeButton {
     display: inline-block;
@@ -35,7 +17,7 @@
 }
 
 .CommentTree .DisplayModeButton.indent {
-    margin-left: var(--secondary-comment-indent);
+    margin-left: var(--second-level-tree-indent);
 }
 
 
@@ -44,6 +26,6 @@
 }
 
 .CommentTree[data-level="2"] {
-    margin-left: var(--secondary-comment-indent);
+    margin-left: var(--second-level-tree-indent);
 }
 

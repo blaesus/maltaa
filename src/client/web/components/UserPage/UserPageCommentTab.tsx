@@ -11,9 +11,10 @@ import { ListButton } from "../ListButton/ListButton";
 export function UserPageCommentTab(props: {
     user: UserPublic,
     state: ClientState,
+    pageWidth?: number,
     dispatch: MaltaaDispatch,
 }) {
-    const {user, state, dispatch} = props;
+    const {user, pageWidth, state, dispatch} = props;
 
     const commentPage = state.ui.pages.user.comments;
     const {sort} = commentPage;
@@ -42,6 +43,7 @@ export function UserPageCommentTab(props: {
                                   key={c.id}
                                   comment={c}
                                   author={user}
+                                  fallbackWidth={pageWidth}
                                   onAuthorClick={() => {}}
                               />
                           ))

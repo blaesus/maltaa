@@ -21,6 +21,7 @@ import { INFINITY_JSON, readableDateTime } from "../../../../utils";
 import { userIdToSerial } from "../../../../mattersSpecifics";
 import { CommentListCursorControl } from "./CommentListCursorControl";
 import { UserPageCommentTab } from "./UserPageCommentTab";
+import { useContentWidth } from "../../hooks/useContentWidth";
 
 
 const TabOptions: OptionList<UserPageTab> = [
@@ -41,6 +42,7 @@ export function UserPage(props: {
     const {state, dispatch} = props;
     const {entities, ui: {pages}, preferences} = state;
     const tab = pages.user.tab;
+    const {contentWidth, contentRef} = useContentWidth();
 
     const user = Object.values(entities.users).find(user => user.userName === pages.user.name);
 
@@ -67,7 +69,7 @@ export function UserPage(props: {
     }
     const screened = preferences.data.screenedUsers.includes(user.id);
     return (
-        <div className="UserPage">
+        <div className="UserPage" ref={contentRef}>
             <h1>
                 {user.displayName}(<span>{USER_URL_SIGIL}{user.userName}</span>)
             </h1>
@@ -122,6 +124,7 @@ export function UserPage(props: {
                         <UserPageCommentTab
                             user={user}
                             state={state}
+                            pageWidth={contentWidth}
                             dispatch={dispatch}
                         />
                     }

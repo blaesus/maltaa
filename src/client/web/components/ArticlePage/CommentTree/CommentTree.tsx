@@ -74,7 +74,7 @@ export function CommentTree(props: {
 }) {
     const {root, articles, comments, users, level, preferences, parentTreeWidth} = props;
 
-    const {contentWidth: treeWidth, contentDom} = useContentWidth(parentTreeWidth);
+    const {contentWidth: treeWidth, contentRef} = useContentWidth(parentTreeWidth);
 
     const peekThreshold = level === 0
         ? preferences.comments.firstLevel.displayThreshold
@@ -126,7 +126,7 @@ export function CommentTree(props: {
     const shouldModeButtonIndent = level >= 1 && displayMode !== "fold";
 
     return (
-        <div className="CommentTree" id={domId} data-level={level} ref={contentDom}>
+        <div className="CommentTree" id={domId} data-level={level} ref={contentRef}>
             <a
                 className="CommentScrollAnchor"
                 id={rootAsComment ? commentIdToSerial(rootAsComment.id, atob).toString() : ""}

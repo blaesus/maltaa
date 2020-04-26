@@ -32,6 +32,7 @@ export function UserPageCommentTab(props: {
         >
             {
                 Object.values(state.entities.comments)
+                      .filter(c => commentPage.pagination.receivedItems.includes(c.id))
                       .filter(c => c.author === user.id)
                       .sort(commentSorts[sort])
                       .map(c => (

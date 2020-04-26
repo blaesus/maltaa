@@ -6,6 +6,7 @@ import { Preferences } from "../../../definitions/Preferences";
 import { INFINITY_JSON } from "../../../utils";
 import { AssortmentUIIdentifier, PageName, UserPageTab } from "../../../definitions/UI";
 import { defaultUserTab } from "../../uiSettings";
+import { ObjectWithId } from "../../../definitions/Objects";
 
 const fallbackArticleSort: ArticleSort = "recent";
 const fallbackCommentSort: CommentSort = "recent";
@@ -108,6 +109,21 @@ export function getInitialUIState(preferences?: Preferences): ClientUIState {
     };
 }
 
+function getNextPagination(
+    previousPagination: PaginationStatus,
+    newItems: ObjectWithId[],
+): PaginationStatus {
+    return {
+        ...previousPagination,
+        loading: false,
+        exhausted: !newItems.length,
+        nextPage: previousPagination.nextPage + 1,
+        receivedItems: [
+            ...previousPagination.receivedItems,
+            ...(newItems.map(a => a.id)),
+        ],
+    }
+}
 
 function handleProvideEntities(
     ui: ClientUIState,
@@ -127,16 +143,7 @@ function handleProvideEntities(
                             ...ui.pages.user,
                             articles: {
                                 ...ui.pages.user.articles,
-                                pagination: {
-                                    ...ui.pages.user.articles.pagination,
-                                    loading: false,
-                                    exhausted: !newArticles.length,
-                                    nextPage: ui.pages.user.articles.pagination.nextPage + 1,
-                                    receivedItems: [
-                                        ...ui.pages.user.articles.pagination.receivedItems,
-                                        ...(newArticles.map(a => a.id)),
-                                    ],
-                                },
+                                pagination: getNextPagination(ui.pages.user.articles.pagination, newArticles),
                             },
                         },
                     };
@@ -150,18 +157,27 @@ function handleProvideEntities(
                         ...ui.pages,
                         podium: {
                             ...ui.pages.podium,
-                            pagination: {
-                                loading: false,
-                                exhausted: !newArticles.length,
-                                nextPage: ui.pages.podium.pagination.nextPage + 1,
-                                receivedItems: [
-                                    ...ui.pages.podium.pagination.receivedItems,
-                                    ...(newArticles.map(a => a.id)),
-                                ],
-                            },
+                            pagination: getNextPagination(ui.pages.podium.pagination, newArticles),
                         },
                     };
                 }
+            }
+            return nextUi;
+        }
+        case "LoadComments": {
+            const pageExpected = ui.pages.user.comments.pagination.nextPage === request.pageNumber;
+            if (pageExpected) {
+                const newComments = response.data?.comments || [];
+                nextUi.pages = {
+                    ...ui.pages,
+                    user: {
+                        ...ui.pages.user,
+                        comments: {
+                            ...ui.pages.user.comments,
+                            pagination: getNextPagination(ui.pages.user.articles.pagination, newComments),
+                        },
+                    },
+                };
             }
             return nextUi;
         }

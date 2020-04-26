@@ -28,7 +28,7 @@ export function UserPageCommentTab(props: {
         })
     }, [commentPage.sort])
     return (
-        <section>
+        <section className="UserPageCommentTab">
             <CommentListCursorControl
                 listSetting={commentPage}
                 dispatch={dispatch}

@@ -10,3 +10,7 @@
     --base-left-offset: 0;
 
 }
+
+.UserPage .TabChooser {
+    font-size: 1.5rem;
+}

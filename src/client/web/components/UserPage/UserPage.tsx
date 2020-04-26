@@ -98,17 +98,19 @@ export function UserPage(props: {
             {
                 !screened &&
                 <section>
-                    <Chooser
-                        options={TabOptions}
-                        chosen={tab}
-                        onChoose={chosenTab => {
-                            dispatch({
-                                type: "ViewUser",
-                                username: user.userName,
-                                tab: chosenTab,
-                            })
-                        }}
-                    />
+                    <nav className="TabChooser">
+                        <Chooser
+                            options={TabOptions}
+                            chosen={tab}
+                            onChoose={chosenTab => {
+                                dispatch({
+                                    type: "ViewUser",
+                                    username: user.userName,
+                                    tab: chosenTab,
+                                })
+                            }}
+                        />
+                    </nav>
                     {
                         tab === "articles" &&
                         <ArticleListCursorControl

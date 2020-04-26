@@ -152,21 +152,6 @@ const mongodb = {
                 await mainDB.createIndex("assortments", {upstreams: 1});
                 await mainDB.createIndex("assortments", {"items.id": 1});
             }
-            {
-                await mainDB.createCollection("siteConfig", {
-                    capped: true,
-                    size: 1024 * 1024,
-                    max: 1,
-                })
-            }
-            {
-                await mainDB.createCollection("dataStatus", {
-                    capped: true,
-                    size: 1024 * 1024,
-                    max: 1,
-                })
-            }
-
         }
         if (mattersSyncDB) {
             {
@@ -175,13 +160,14 @@ const mongodb = {
                 await mattersSyncDB.createIndex("articles", {
                     createdAt: 1,
                     author: 1,
+                    upstreams: 1,
                     state: 1,
                     "derived.comments": 1,
                     "derived.commenters": 1,
                     "derived.appreciations": 1,
                     "derived.appreciationAmount": 1,
                 }, {
-                    name: "article-sorts",
+                    name: "article-cursor",
                 });
             }
             {

@@ -25,9 +25,7 @@ async function migrate() {
                 }
             }
         }
-        if (index % 10 === 0) {
-            console.info(`${index++}/${commentIds.length}`)
-        }
+        console.info(`${index++}/${commentIds.length}`)
     }
 }
 

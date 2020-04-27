@@ -1,7 +1,7 @@
-import { ArticleId } from "./Article";
+import { ArticleId, CommentId } from "./Article";
 import { UserId } from "./User";
 
-export type MattersEntityType = "article" | "user"
+export type MattersEntityType = "article" | "user" | "comment"
 
 export interface AssortmentBaseItem {
     id: string,
@@ -15,7 +15,7 @@ export interface AssortmentBaseItem {
 }
 
 export interface MattersEntityItem extends AssortmentBaseItem {
-    id: ArticleId | UserId,
+    id: ArticleId | UserId | CommentId,
     source: "matters",
     entityType: MattersEntityType,
 }

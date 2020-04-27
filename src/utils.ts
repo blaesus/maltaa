@@ -212,9 +212,9 @@ export const assortmentNames: { [key in AssortmentContentType]: string } = {
 }
 
 export const assortmentEntityTypes: { [key in AssortmentContentType]: MattersEntityType[] } = {
-    anthology: ["article"],
+    anthology: ["article", "comment"],
     roll: ["user"],
-    mixture: ["article", "user"],
+    mixture: ["article", "comment", "user"],
 }
 
 export function hasIntersection<T>(a?: T[], b?: T[]): boolean {

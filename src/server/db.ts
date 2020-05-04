@@ -193,6 +193,7 @@ const mongodb = {
             {
                 await mattersSyncDB.createIndex("transactions", {mid: 1}, {unique: true});
                 await mattersSyncDB.createIndex("transactions", {target: 1});
+                await mattersSyncDB.createIndex("transactions", {createdAt: 1});
             }
             {
                 await mattersSyncDB.createIndex("tags", {id: 1}, {unique: true});
@@ -352,7 +353,7 @@ const mongodb = {
         },
         async deleteById(id: string) {
             if (mattersSyncDB) {
-                return mattersSyncDB.collection("comments").deleteMany({
+                return mattersSyncDB.collection("transactions").deleteMany({
                     id,
                 });
             }
@@ -360,6 +361,36 @@ const mongodb = {
                 return [];
             }
         },
+        internal: {
+            async deleteByCreatedAt(createdAt: number) {
+                if (mattersSyncDB) {
+                    return mattersSyncDB.collection("transactions").deleteMany({
+                        createdAt,
+                    });
+                }
+                else {
+                    return [];
+                }
+            },
+
+            async upsertByMid(mid: string, transaction: Transaction) {
+                return mattersSyncDB && await mattersSyncDB.collection("transactions").replaceOne(
+                    {mid},
+                    transaction,
+                    {upsert: true},
+                );
+            },
+
+            async findByMid(mid: TransactionMaltaaId): Promise<Transaction | null> {
+                if (mattersSyncDB) {
+                    return mattersSyncDB.collection("transactions")
+                                        .findOne({mid}, {projection: skipInternalId})
+                }
+                else {
+                    return null;
+                }
+            },
+        }
     },
     comment: {
         async upsert(comment: Comment) {
@@ -528,8 +559,8 @@ const mongodb = {
                 return [];
             }
         },
-        internal: {},
-
+        internal: {
+        },
     },
     tag: {
         async upsert(tag: Tag) {

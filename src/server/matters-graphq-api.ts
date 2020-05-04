@@ -543,7 +543,7 @@ export async function fetchArticle(id: ArticleId): Promise<ArticleFetchData | nu
 
     const transactions: Transaction[] = appreciationsEdges.map(edge => ({
         ...edge.node,
-        mid: uuidv4(),
+        mid: `${articleResponse.id}_${edge.node.sender.id}`,
         sender: edge.node.sender.id,
         createdAt: +new Date(edge.node.createdAt),
         target: articleResponse.id,

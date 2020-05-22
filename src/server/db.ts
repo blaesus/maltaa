@@ -450,6 +450,20 @@ const mongodb = {
                 return [];
             }
         },
+        async countBetween(start: number, end: number): Promise<number> {
+            if (mattersSyncDB) {
+                return mattersSyncDB.collection("comments")
+                                    .count({
+                                        createdAt: {
+                                            $gt: start,
+                                            $lt: end,
+                                        }
+                                    })
+            }
+            else {
+                return 0;
+            }
+        },
         async getAllIds(): Promise<UserId[]> {
             if (mattersSyncDB) {
                 return mattersSyncDB.collection("comments")

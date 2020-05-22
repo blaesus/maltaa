@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.dev.server.json",
-  "compilerOptions": {
-    "outDir": "built/dist/server",
-    "sourceMap": false
-  }
-}

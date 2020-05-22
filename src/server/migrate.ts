@@ -7,6 +7,7 @@ const readdirAsync = promisify(fs.readdir);
 
 async function applyMigrations() {
     await db.connect();
+    await db.setupCollections();
     const dataStatus = await db.dataStatus.getWithFallback();
     const migrationsPath = path.join(__dirname, "migrations");
     const filePaths = await readdirAsync(migrationsPath);

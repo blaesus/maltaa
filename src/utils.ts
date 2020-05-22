@@ -117,13 +117,6 @@ export function daysAgoInEpoch(days: number): number {
     return Date.now() - daysToMs(days);
 }
 
-export type DeepPartial<T> = {
-    [P in keyof T]?:
-    T[P] extends Array<infer U> ? Array<DeepPartial<U>> :
-        T[P] extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> :
-            DeepPartial<T[P]>
-};
-
 export function getFallbackPreferences(): Preferences {
     return {
         version: 1,

@@ -605,7 +605,6 @@ function userBasicsGql() {
       }
       status {
         state,
-        role,
         unreadFolloweeArticles,
         unreadResponseInfoPopUp,
       }

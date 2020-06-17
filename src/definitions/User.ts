@@ -16,7 +16,7 @@ export interface UserPublic {
     followees: UserId[]
     status: {
         state: "active" | "onboarding" | "banned" | "frozen" | "archived",
-        role: "admin" | "user",
+        role?: "admin" | "user",
         unreadFolloweeArticles: boolean,
         unreadResponseInfoPopup: boolean,
     },

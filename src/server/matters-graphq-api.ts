@@ -195,7 +195,7 @@ const commentNodeGql = `
   },
   upvotes,
   downvotes,
-`
+`;
 
 function commentEdgeGql(after?: string) {
     return `

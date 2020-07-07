@@ -3,7 +3,7 @@ import { Db, MongoClient } from "mongodb";
 import { AuthToken, AuthTokenId } from "../definitions/AuthToken";
 import { Assortment, AssortmentId, AssortmentIdentifier } from "../definitions/Assortment";
 import { Activity } from "../definitions/Activity";
-import { Article, ArticleId, Comment, CommentId } from "../definitions/Article";
+import { Article, ArticleId, Comment, CommentId, IPFSHash, IPFSRendering } from "../definitions/Article";
 import { Transaction, TransactionMaltaaId } from "../definitions/Transaction";
 import { UserId, UserPublic } from "../definitions/User";
 import { SpiderRecord, SpiderRecordEntity, SpiderState } from "../definitions/Spider";
@@ -722,6 +722,20 @@ const mongodb = {
         },
         async findById(id: AuthTokenId): Promise<AuthToken | null> {
             return mainDB && mainDB.collection("tokens").findOne({
+                id,
+            });
+        },
+    },
+    rendering: {
+        async upsert(rendering: IPFSRendering) {
+            return mainDB && await mainDB.collection("rendering").replaceOne(
+                {id: rendering.id},
+                rendering,
+                {upsert: true},
+            );
+        },
+        async findById(id: IPFSHash): Promise<IPFSRendering | null> {
+            return mainDB && mainDB.collection("rendering").findOne({
                 id,
             });
         },

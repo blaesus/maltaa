@@ -3,6 +3,7 @@ import { RoomId } from "./Room";
 
 export type ArticleId = string;
 export type CommentId = string
+export type IPFSHash = string;
 
 export interface Comment {
     id: CommentId,
@@ -18,6 +19,7 @@ export interface Comment {
         root: ArticleId,
     }
 }
+
 export interface Article {
     id: ArticleId,
     mediaHash: string,
@@ -31,7 +33,7 @@ export interface Article {
     cover: string | null,
     summary: string,
     author: UserId,
-    dataHash: string,
+    dataHash: IPFSHash,
     sticky: boolean,
     content: string,
     tags: string[],
@@ -53,6 +55,11 @@ export interface Article {
     }
 }
 
+export interface IPFSRendering {
+    id: IPFSHash,
+    content: string,
+}
+
 type License =
     "UNLICENSED"
     | "NOCLAIM"
@@ -62,7 +69,7 @@ type License =
     | "CC BY-NC-SA"
     | "CC BY-NC-ND"
     | "CC0"
-    ;
+;
 
 interface ArticleVersion {
     time: number,

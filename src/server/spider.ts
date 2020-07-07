@@ -3,6 +3,8 @@ import * as KoaLogger from "koa-logger";
 import * as KoaBody from "koa-body";
 import * as KoaRouter from "koa-router";
 
+import * as fetch from "isomorphic-fetch";
+
 import { ArticleId } from "../definitions/Article";
 import { EntityState, SpiderState } from "../definitions/Spider";
 import { UserId } from "../definitions/User";
@@ -160,14 +162,14 @@ const dailyRecentArticleReindexer = makeRecentArticleReindexer({
     backoff: DAILY_INDEXER_INTERVAL,
     newestRange: DAILY_NEWEST_RANGE,
     staleLimit: DAILY_NEW_ARTICLE_STALE_LIMIT,
-})
+});
 
 const weeklyRecentArticleReindexer = makeRecentArticleReindexer({
     name: "weekly",
     backoff: WEEKLY_INDEXER_INTERVAL,
     newestRange: WEEKLY_NEWEST_RANGE,
     staleLimit: WEEKLY_NEW_ARTICLE_STALE_LIMIT,
-})
+});
 
 function makeSerialIndexer<IdType extends string>(props: {
     entityName: string,
@@ -286,6 +288,16 @@ async function downloadArticle(
         for (const comment of comments) {
             await db.comment.upsert(comment)
         }
+        if (!entity.content) {
+            const ipfsGateway = `https://d26g9c7mfuzstv.cloudfront.net/ipfs/${entity.dataHash}/`;
+            const response = await fetch(ipfsGateway);
+            const content = await response.text();
+            const ipfsRendering = {
+                id: entity.dataHash,
+                content,
+            };
+            await db.rendering.upsert(ipfsRendering);
+        }
 
         if (downloadMentionedEntities) {
             supplyIds(mentionedUsers, state.users, true);
@@ -333,7 +345,7 @@ const articleFetcher = makeFetcher({
     entityState: state.articles,
     download: downloadArticle,
     downloadMentioned: true,
-})
+});
 
 async function downloadUser(
     nextId: UserId,

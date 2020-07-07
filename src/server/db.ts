@@ -198,6 +198,9 @@ const mongodb = {
             {
                 await mattersSyncDB.createIndex("tags", {id: 1}, {unique: true});
             }
+            {
+                await mattersSyncDB.createIndex("renderings", {id: 1}, {unique: true});
+            }
         }
         if (activityDB) {
             {
@@ -728,14 +731,14 @@ const mongodb = {
     },
     rendering: {
         async upsert(rendering: IPFSRendering) {
-            return mainDB && await mainDB.collection("rendering").replaceOne(
+            return mattersSyncDB && await mattersSyncDB.collection("renderings").replaceOne(
                 {id: rendering.id},
                 rendering,
                 {upsert: true},
             );
         },
         async findById(id: IPFSHash): Promise<IPFSRendering | null> {
-            return mainDB && mainDB.collection("rendering").findOne({
+            return mattersSyncDB && mattersSyncDB.collection("renderings").findOne({
                 id,
             });
         },

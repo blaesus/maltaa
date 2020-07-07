@@ -3,7 +3,7 @@ import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
 import * as fetch from "isomorphic-fetch";
 
-import { Article, ArticleId, Comment } from "../definitions/Article";
+import { Article, ArticleId, Comment, IPFSRendering } from "../definitions/Article";
 import { UserId, UserPublic } from "../definitions/User";
 import { Transaction } from "../definitions/Transaction";
 import { Tag } from "../definitions/Tag";
